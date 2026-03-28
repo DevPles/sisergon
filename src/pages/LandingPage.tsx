@@ -262,7 +262,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   };
 
   const canAdvanceStep1 = industry !== '' && companyType !== '';
-  const inputClasses = "w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-400/20 transition-all bg-white/80 placeholder:text-gray-400";
+  const inputClasses = "w-full px-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-300/30 transition-all bg-white placeholder:text-gray-400";
 
   if (!open) return null;
 
