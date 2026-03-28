@@ -65,6 +65,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   const [comments, setComments] = useState<Record<number, string>>({});
   const [saving, setSaving] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [autoAdvanceBlocked, setAutoAdvanceBlocked] = useState(false);
   // step 0 = Identification, step 1..N = question pages, step N+1 = review/actions
 
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'psicossocial');
