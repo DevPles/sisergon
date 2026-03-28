@@ -424,7 +424,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-secondary/50"><DollarSign className="h-5 w-5 text-secondary-foreground" /></div>
+            <div>
             <div>
               <p className="text-xs text-muted-foreground">Pendente</p>
               <p className="text-lg font-bold text-foreground">R$ {totalPendente.toFixed(2)}</p>
