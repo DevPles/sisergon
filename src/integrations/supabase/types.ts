@@ -753,9 +753,11 @@ export type Database = {
           data_inicio: string | null
           empresa_id: string
           id: string
+          nome: string | null
           plano_id: string | null
           status: string | null
           updated_at: string
+          validade: string | null
           valor: number | null
         }
         Insert: {
@@ -764,9 +766,11 @@ export type Database = {
           data_inicio?: string | null
           empresa_id: string
           id?: string
+          nome?: string | null
           plano_id?: string | null
           status?: string | null
           updated_at?: string
+          validade?: string | null
           valor?: number | null
         }
         Update: {
@@ -775,9 +779,11 @@ export type Database = {
           data_inicio?: string | null
           empresa_id?: string
           id?: string
+          nome?: string | null
           plano_id?: string | null
           status?: string | null
           updated_at?: string
+          validade?: string | null
           valor?: number | null
         }
         Relationships: [
@@ -860,12 +866,14 @@ export type Database = {
           logo_url: string | null
           nome_fantasia: string | null
           plano_id: string | null
+          proxima_cobranca: string | null
           razao_social: string
           responsavel_email: string | null
           responsavel_nome: string | null
           responsavel_telefone: string | null
           status_financeiro: string | null
           updated_at: string
+          valor_em_aberto: number | null
         }
         Insert: {
           ativa?: boolean
@@ -885,12 +893,14 @@ export type Database = {
           logo_url?: string | null
           nome_fantasia?: string | null
           plano_id?: string | null
+          proxima_cobranca?: string | null
           razao_social: string
           responsavel_email?: string | null
           responsavel_nome?: string | null
           responsavel_telefone?: string | null
           status_financeiro?: string | null
           updated_at?: string
+          valor_em_aberto?: number | null
         }
         Update: {
           ativa?: boolean
@@ -910,12 +920,14 @@ export type Database = {
           logo_url?: string | null
           nome_fantasia?: string | null
           plano_id?: string | null
+          proxima_cobranca?: string | null
           razao_social?: string
           responsavel_email?: string | null
           responsavel_nome?: string | null
           responsavel_telefone?: string | null
           status_financeiro?: string | null
           updated_at?: string
+          valor_em_aberto?: number | null
         }
         Relationships: [
           {
