@@ -470,6 +470,7 @@ const CadastrosPage = () => {
   const [faturamentoEmpresa, setFaturamentoEmpresa] = useState('');
   const [templateEmpresa, setTemplateEmpresa] = useState('');
   const [templateNewTrigger, setTemplateNewTrigger] = useState(0);
+  const [templateShowFilters, setTemplateShowFilters] = useState(false);
   const [colabSearch, setColabSearch] = useState('');
   const [showEmpresaForm, setShowEmpresaForm] = useState(false);
   const [editingEmpresaId, setEditingEmpresaId] = useState<string | null>(null);
@@ -584,6 +585,9 @@ const CadastrosPage = () => {
                       {empresas?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
                     </SelectContent>
                   </Select>
+                  <Button variant="outline" size="sm" onClick={() => setTemplateShowFilters(prev => !prev)} className="gap-1.5">
+                    <span className="text-xs">Filtros</span>
+                  </Button>
                   <Button onClick={() => setTemplateNewTrigger(Date.now())} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap">
                     Novo Formulário
                   </Button>
@@ -684,7 +688,7 @@ const CadastrosPage = () => {
             </TabsContent>
 
             <TabsContent value="templates" className="mt-0 p-6">
-              <TemplatesTab selectedEmpresa={templateEmpresa} onSelectedEmpresaChange={setTemplateEmpresa} externalNewTrigger={templateNewTrigger} />
+              <TemplatesTab selectedEmpresa={templateEmpresa} onSelectedEmpresaChange={setTemplateEmpresa} externalNewTrigger={templateNewTrigger} externalShowFilters={templateShowFilters} />
             </TabsContent>
 
 

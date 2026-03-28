@@ -569,6 +569,7 @@ interface TemplatesTabProps {
   selectedEmpresa?: string;
   onSelectedEmpresaChange?: (v: string) => void;
   externalNewTrigger?: number;
+  externalShowFilters?: boolean;
 }
 
 const FILTER_TIPOS = [
@@ -588,7 +589,7 @@ const FILTER_STATUS = [
   { value: 'inativo', label: 'Inativo' },
 ];
 
-const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChange, externalNewTrigger }: TemplatesTabProps = {}) => {
+const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChange, externalNewTrigger, externalShowFilters }: TemplatesTabProps = {}) => {
   const { user, isAdmin, isConsultor } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -847,24 +848,8 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
         </div>
       )}
 
-      {/* Filter toggle when using external toolbar */}
-      {!showInternalToolbar && (
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setShowFilters(prev => !prev)} className="gap-1.5">
-            <span className="text-xs">Filtros</span>
-            {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
-              <Badge className="h-5 w-5 p-0 flex items-center justify-center text-[10px]">!</Badge>
-            )}
-          </Button>
-          {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
-            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => { setFilterTipo('__all__'); setFilterStatus('__all__'); setFilterPadrao('__all__'); setSearchName(''); }}>
-              Limpar
-            </Button>
-          )}
-        </div>
-      )}
 
-      {showFilters && (
+      {(showFilters || externalShowFilters) && (
         <div className="flex flex-wrap items-end gap-3 p-3 rounded-xl bg-muted/30 border border-border animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="min-w-[160px] space-y-1">
             <Label className="text-xs text-muted-foreground">Buscar</Label>
