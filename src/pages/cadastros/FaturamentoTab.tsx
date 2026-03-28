@@ -17,14 +17,29 @@ import { CreditCard, DollarSign, AlertTriangle, CheckCircle, FileText, Plus } fr
 
 const MODULOS = ['AEP', 'AET', 'Psicossocial', 'PCMSO', 'Checklists', 'Testes', 'Documentos', 'Financeiro'];
 
-const emptyForm = {
+type CobrancaForm = {
+  valor: string;
+  data_vencimento: string;
+  forma_pagamento: string;
+  observacoes: string;
+  descricao: string;
+  email_pagador: string;
+  tipo_cobranca: 'pontual' | 'recorrente';
+  card_number: string;
+  card_expiry: string;
+  card_cvv: string;
+  card_holder_name: string;
+  card_holder_cpf: string;
+};
+
+const emptyForm: CobrancaForm = {
   valor: '',
   data_vencimento: '',
   forma_pagamento: '',
   observacoes: '',
   descricao: '',
   email_pagador: '',
-  tipo_cobranca: 'pontual' as 'pontual' | 'recorrente',
+  tipo_cobranca: 'pontual',
   card_number: '',
   card_expiry: '',
   card_cvv: '',
