@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -35,6 +36,7 @@ const STATUS_MAP: Record<string, string> = {
 const fmtDate = (d: string | null) => d ? format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR }) : '—';
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('visao-geral');
   const [selectedEmpresa, setSelectedEmpresa] = useState<string>('all');
   const [showReportModal, setShowReportModal] = useState(false);
@@ -560,7 +562,7 @@ const DashboardPage = () => {
                     const role = userRoles.find((r: any) => r.user_id === p.id);
                     const empresa = empresas.find((e: any) => e.id === p.empresa_id);
                     return (
-                      <TableRow key={p.id}>
+                      <TableRow key={p.id} className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => navigate('/configuracoes?tab=usuarios')}>
                         <TableCell className="font-medium">{p.full_name || '—'}</TableCell>
                         <TableCell>{p.email || '—'}</TableCell>
                         <TableCell>
