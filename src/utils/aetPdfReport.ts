@@ -60,7 +60,7 @@ function header(doc: jsPDF, brand: string | null, company: string | null) {
   doc.text('ERGON — Sistema de Gestao Ergonomica', pw - M, 10, { align: 'right' });
   doc.text(`Emitido: ${new Date().toLocaleDateString('pt-BR')}`, pw - M, 14, { align: 'right' });
   doc.setTextColor(...C.text);
-  return 24;
+  return 30;
 }
 
 function footer(doc: jsPDF, pg: number, total: number) {
