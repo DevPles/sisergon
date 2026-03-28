@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { CreditCard, DollarSign, AlertTriangle, CheckCircle, FileText, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 const MODULOS = ['AEP', 'AET', 'Psicossocial', 'PCMSO', 'Checklists', 'Testes', 'Documentos', 'Financeiro'];
 
