@@ -20,6 +20,7 @@ interface AuthContextType {
   isEmpresaAdmin: boolean;
   isColaborador: boolean;
   primaryRole: AppRole | null;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
