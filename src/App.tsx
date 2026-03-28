@@ -32,7 +32,7 @@ import PCMSOPage from "./pages/pcmso/PCMSOPage";
 import AtestadosPage from "./pages/atestados/AtestadosPage";
 import DocumentosPage from "./pages/documentos/DocumentosPage";
 import NotificacoesPage from "./pages/notificacoes/NotificacoesPage";
-import FaturamentoDashboard from "./pages/faturamento/FaturamentoDashboard";
+
 import MeuPerfil from "./pages/perfil/MeuPerfil";
 import NotFound from "./pages/NotFound";
 
