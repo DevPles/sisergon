@@ -183,6 +183,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
   useEffect(() => {
     if (!open) {
       setForm({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
+      setSelectedEmpresaId(initialEmpresaId || '__global__');
       setStages([]);
       setBehavioralQuestions([]);
       setBehavioralEnabled(false);
