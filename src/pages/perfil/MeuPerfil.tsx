@@ -21,7 +21,7 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const MeuPerfil = () => {
-  const { user, profile, roles, primaryRole } = useAuth();
+  const { user, profile, roles, primaryRole, refreshProfile } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -89,8 +89,9 @@ const MeuPerfil = () => {
         .eq('id', user!.id);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['meu-perfil'] });
+      await refreshProfile();
       toast({ title: 'Perfil atualizado com sucesso' });
     },
     onError: (err: any) => {
