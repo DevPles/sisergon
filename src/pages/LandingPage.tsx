@@ -274,37 +274,43 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
       >
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={reset} />
+        <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-[6px]" onClick={reset} />
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.97, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+          exit={{ opacity: 0, scale: 0.97, y: 16 }}
+          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+          className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-[0_24px_80px_-12px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col border border-gray-100"
         >
           {/* Header */}
-          <div className="p-6 border-b border-gray-100 flex items-start justify-between">
+          <div className="px-7 pt-6 pb-5 flex items-start justify-between">
             <div>
-              <h2 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'Space Grotesk' }}>
+              <h2 className="text-lg font-semibold text-gray-900 tracking-[-0.01em]" style={{ fontFamily: 'Space Grotesk' }}>
                 {step === 1 && 'Identifique sua empresa'}
                 {step === 2 && 'Monte seu plano de proteção'}
                 {step === 3 && 'Escolha o período'}
                 {step === 4 && 'Finalizar contratação'}
               </h2>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-[13px] text-gray-500 mt-0.5">
                 {step === 1 && 'Vamos analisar os riscos do seu segmento'}
                 {step === 2 && (industryProfile ? `Serviços recomendados para ${industryProfile.label}` : 'Selecione os serviços')}
                 {step === 3 && 'Quanto maior o período, menor o investimento'}
                 {step === 4 && 'Preencha seus dados para a proposta'}
               </p>
             </div>
-            <button onClick={reset} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-              <span className="text-gray-400">✕</span>
+            <button onClick={reset} className="p-1.5 -mr-1.5 -mt-1 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-gray-400"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
 
-          {/* Step counter */}
-          <div className="px-6 pt-3">
-            <p className="text-xs text-gray-400">Etapa {step} de 4</p>
+          {/* Step progress bar */}
+          <div className="px-7 pb-4">
+            <div className="flex items-center gap-1.5">
+              {[1, 2, 3, 4].map(s => (
+                <div key={s} className={`h-1 flex-1 rounded-full transition-all duration-300 ${s <= step ? 'bg-gray-800' : 'bg-gray-100'}`} />
+              ))}
+            </div>
+            <p className="text-[11px] text-gray-400 mt-2 tracking-wide uppercase">Etapa {step} de 4</p>
           </div>
 
           {/* Content */}
