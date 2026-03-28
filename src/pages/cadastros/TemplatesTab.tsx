@@ -375,6 +375,16 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
               </div>
             </div>
             <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Empresa *</Label>
+              <Select value={selectedEmpresaId} onValueChange={setSelectedEmpresaId}>
+                <SelectTrigger><SelectValue placeholder="Selecione a empresa" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__global__">Global (Padrão do Sistema)</SelectItem>
+                  {empresasModal?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Descrição</Label>
               <Textarea value={form.descricao} onChange={e => setForm(f => ({ ...f, descricao: e.target.value }))} rows={3} placeholder="Descrição do template..." maxLength={2000} />
             </div>
