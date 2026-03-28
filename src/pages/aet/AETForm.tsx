@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,10 +13,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { generateAetPdf } from '@/utils/aetPdfReport';
 import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
+import { ChevronLeft, ChevronRight, Check, CircleDot, Circle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── NR-17 Compliant AET Structure ────────────────────────────────────────────
 
