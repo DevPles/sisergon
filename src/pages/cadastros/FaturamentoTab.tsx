@@ -373,6 +373,20 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
     },
   });
 
+  const { data: assinatura } = useQuery({
+    queryKey: ['empresa-assinatura-financeiro', empresaId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('empresa_assinaturas' as any)
+        .select('*')
+        .eq('empresa_id', empresaId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data as any;
+    },
+  });
+
   const addPagamento = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from('empresa_pagamentos' as any).insert({
