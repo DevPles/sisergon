@@ -340,6 +340,8 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
     card_holder_name: '',
     card_holder_cpf: '',
   });
+
+  const { data: pagamentos, isLoading } = useQuery({
     queryKey: ['empresa-pagamentos', empresaId],
     queryFn: async () => {
       const { data } = await supabase
