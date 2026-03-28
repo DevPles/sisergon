@@ -285,7 +285,8 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ valor: '', data_vencimento: '', forma_pagamento: '', observacoes: '' });
+  const [form, setForm] = useState({ valor: '', data_vencimento: '', forma_pagamento: '', observacoes: '', descricao: '', email_pagador: '' });
+  const [creatingMP, setCreatingMP] = useState(false);
 
   const { data: pagamentos, isLoading } = useQuery({
     queryKey: ['empresa-pagamentos', empresaId],
@@ -299,10 +300,23 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
     },
   });
 
+  // Also fetch faturas from faturamento table (MP integrated)
+  const { data: faturas } = useQuery({
+    queryKey: ['empresa-faturas-mp', empresaId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('faturamento')
+        .select('*')
+        .eq('empresa_id', empresaId)
+        .order('created_at', { ascending: false });
+      return (data || []) as any[];
+    },
+  });
+
   const { data: empresa } = useQuery({
     queryKey: ['empresa-financeiro', empresaId],
     queryFn: async () => {
-      const { data } = await supabase.from('empresas').select('status_financeiro, data_inicio_contrato, proxima_cobranca, valor_em_aberto').eq('id', empresaId).single();
+      const { data } = await supabase.from('empresas').select('status_financeiro, data_inicio_contrato, proxima_cobranca, valor_em_aberto, responsavel_email').eq('id', empresaId).single();
       return data as any;
     },
   });
@@ -324,10 +338,92 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
       queryClient.invalidateQueries({ queryKey: ['empresa-pagamentos', empresaId] });
       toast({ title: 'Pagamento registrado' });
       setShowForm(false);
-      setForm({ valor: '', data_vencimento: '', forma_pagamento: '', observacoes: '' });
+      setForm({ valor: '', data_vencimento: '', forma_pagamento: '', observacoes: '', descricao: '', email_pagador: '' });
     },
     onError: (err: Error) => toast({ title: 'Erro', description: err.message, variant: 'destructive' }),
   });
+
+  // Create payment via Mercado Pago
+  const createMPPayment = async () => {
+    if (!form.valor || !form.descricao) {
+      toast({ title: 'Preencha valor e descrição', variant: 'destructive' });
+      return;
+    }
+    setCreatingMP(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const res = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/mercadopago-create-payment`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.session?.access_token}`,
+          },
+          body: JSON.stringify({
+            empresa_id: empresaId,
+            valor: Number(form.valor),
+            descricao: form.descricao || `Cobrança - ${form.observacoes || 'Mensalidade'}`,
+            data_vencimento: form.data_vencimento || undefined,
+            email_pagador: form.email_pagador || empresa?.responsavel_email || undefined,
+          }),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Erro ao criar cobrança');
+      }
+      const data = await res.json();
+      toast({ title: 'Cobrança criada no Mercado Pago!', description: 'Link de pagamento gerado.' });
+      if (data.payment_link) {
+        await navigator.clipboard.writeText(data.payment_link);
+        toast({ title: 'Link copiado para a área de transferência!' });
+      }
+      queryClient.invalidateQueries({ queryKey: ['empresa-faturas-mp', empresaId] });
+      queryClient.invalidateQueries({ queryKey: ['empresa-pagamentos', empresaId] });
+      setShowForm(false);
+      setForm({ valor: '', data_vencimento: '', forma_pagamento: '', observacoes: '', descricao: '', email_pagador: '' });
+    } catch (err: any) {
+      toast({ title: 'Erro Mercado Pago', description: err.message, variant: 'destructive' });
+    } finally {
+      setCreatingMP(false);
+    }
+  };
+
+  // Generate MP link for existing pending fatura
+  const generateMPLink = async (faturaId: string, valor: number, descricao: string) => {
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const res = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/mercadopago-create-payment`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.session?.access_token}`,
+          },
+          body: JSON.stringify({
+            faturamento_id: faturaId,
+            empresa_id: empresaId,
+            valor,
+            descricao,
+            email_pagador: empresa?.responsavel_email || undefined,
+          }),
+        }
+      );
+      if (!res.ok) throw new Error('Erro ao gerar link');
+      const data = await res.json();
+      if (data.payment_link) {
+        await navigator.clipboard.writeText(data.payment_link);
+        toast({ title: 'Link de pagamento copiado!' });
+      }
+      queryClient.invalidateQueries({ queryKey: ['empresa-faturas-mp', empresaId] });
+    } catch (err: any) {
+      toast({ title: 'Erro', description: err.message, variant: 'destructive' });
+    }
+  };
 
   const marcarPago = useMutation({
     mutationFn: async (id: string) => {
@@ -337,6 +433,17 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['empresa-pagamentos', empresaId] });
       toast({ title: 'Pagamento marcado como pago' });
+    },
+  });
+
+  const marcarFaturaPaga = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('faturamento').update({ status: 'pago', data_pagamento: new Date().toISOString().split('T')[0], metodo_pagamento: 'manual' }).eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['empresa-faturas-mp', empresaId] });
+      toast({ title: 'Fatura marcada como paga' });
     },
   });
 
@@ -374,10 +481,39 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
   });
 
   const statusColor = (s: string) => {
-    if (s === 'pago') return 'default';
-    if (s === 'pendente') return 'secondary';
-    return 'destructive';
+    if (s === 'pago') return 'default' as const;
+    if (s === 'pendente') return 'secondary' as const;
+    return 'destructive' as const;
   };
+
+  const allPayments = [
+    ...(faturas || []).map((f: any) => ({
+      id: f.id,
+      valor: f.valor,
+      data_vencimento: f.data_vencimento,
+      data_pagamento: f.data_pagamento,
+      forma_pagamento: f.metodo_pagamento,
+      status: f.status,
+      descricao: f.descricao,
+      mp_payment_link: f.mp_payment_link,
+      mp_status: f.mp_status,
+      numero_fatura: f.numero_fatura,
+      source: 'faturamento' as const,
+    })),
+    ...(pagamentos || []).map((p: any) => ({
+      id: p.id,
+      valor: p.valor,
+      data_vencimento: p.data_vencimento,
+      data_pagamento: p.data_pagamento,
+      forma_pagamento: p.forma_pagamento,
+      status: p.status,
+      descricao: p.descricao || p.observacoes || '',
+      mp_payment_link: p.mp_payment_link,
+      mp_status: p.mp_status,
+      numero_fatura: p.numero_fatura,
+      source: 'pagamento' as const,
+    })),
+  ].sort((a, b) => (b.data_vencimento || '').localeCompare(a.data_vencimento || ''));
 
   return (
     <div className="space-y-4">
@@ -385,7 +521,7 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
         <h3 className="text-base font-semibold text-foreground">Controle Financeiro</h3>
         <Button variant="outline" size="sm" onClick={() => setShowForm(true)}
           className="rounded-full shadow-[0_4px_14px_0_hsl(var(--border)/0.4)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200">
-          Registrar Pagamento
+          Nova Cobrança
         </Button>
       </div>
 
@@ -418,40 +554,61 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
         </div>
       </div>
 
-      {/* Histórico */}
+      {/* Histórico unificado */}
       <div>
-        <p className="text-sm font-medium text-muted-foreground mb-2">Histórico de Pagamentos</p>
+        <p className="text-sm font-medium text-muted-foreground mb-2">Histórico de Cobranças</p>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Carregando...</p>
-        ) : pagamentos && pagamentos.length > 0 ? (
+        ) : allPayments.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Nº</TableHead>
+                <TableHead>Descrição</TableHead>
                 <TableHead>Valor</TableHead>
                 <TableHead>Vencimento</TableHead>
                 <TableHead>Pagamento</TableHead>
-                <TableHead>Forma</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {pagamentos.map((p: any) => (
-                <TableRow key={p.id}>
+              {allPayments.map((p) => (
+                <TableRow key={`${p.source}-${p.id}`}>
+                  <TableCell className="font-mono text-xs">{p.numero_fatura || '—'}</TableCell>
+                  <TableCell className="max-w-[160px] truncate text-sm">{p.descricao || '—'}</TableCell>
                   <TableCell className="font-medium">R$ {Number(p.valor).toFixed(2)}</TableCell>
                   <TableCell>{p.data_vencimento || '—'}</TableCell>
                   <TableCell>{p.data_pagamento || '—'}</TableCell>
-                  <TableCell>{p.forma_pagamento || '—'}</TableCell>
-                  <TableCell><Badge variant={statusColor(p.status)}>{p.status}</Badge></TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Badge variant={statusColor(p.status)}>{p.status}</Badge>
+                      {p.mp_payment_link && <Badge variant="outline" className="text-xs">MP</Badge>}
+                    </div>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      {p.status === 'pendente' && (
-                        <Button variant="ghost" size="sm" onClick={() => marcarPago.mutate(p.id)}>Marcar Pago</Button>
+                      {p.mp_payment_link && (
+                        <Button variant="ghost" size="sm" onClick={() => {
+                          navigator.clipboard.writeText(p.mp_payment_link);
+                          toast({ title: 'Link copiado!' });
+                        }}>Link</Button>
+                      )}
+                      {p.mp_payment_link && (
+                        <Button variant="ghost" size="sm" onClick={() => window.open(p.mp_payment_link, '_blank')}>Abrir</Button>
+                      )}
+                      {p.status === 'pendente' && !p.mp_payment_link && p.source === 'faturamento' && (
+                        <Button variant="ghost" size="sm" onClick={() => generateMPLink(p.id, Number(p.valor), p.descricao || 'Cobrança')}>Gerar Link MP</Button>
                       )}
                       {p.status === 'pendente' && (
+                        <Button variant="ghost" size="sm" onClick={() =>
+                          p.source === 'faturamento' ? marcarFaturaPaga.mutate(p.id) : marcarPago.mutate(p.id)
+                        }>Pago</Button>
+                      )}
+                      {p.status === 'pendente' && p.source === 'pagamento' && (
                         <Button variant="ghost" size="sm" className="text-destructive" onClick={() => cancelarPagamento.mutate(p.id)}>Cancelar</Button>
                       )}
-                      {p.status === 'pago' && (
+                      {p.status === 'pago' && p.source === 'pagamento' && (
                         <Button variant="ghost" size="sm" className="text-destructive" onClick={() => estornarPagamento.mutate(p.id)}>Estornar</Button>
                       )}
                     </div>
@@ -461,46 +618,63 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
             </TableBody>
           </Table>
         ) : (
-          <p className="text-sm text-muted-foreground">Nenhum pagamento registrado.</p>
+          <p className="text-sm text-muted-foreground">Nenhuma cobrança registrada.</p>
         )}
       </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
         <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>Registrar Pagamento</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>Nova Cobrança</DialogTitle></DialogHeader>
           <form onSubmit={(e) => { e.preventDefault(); addPagamento.mutate(); }} className="space-y-4">
             <div className="space-y-2">
-              <Label>Valor (R$) *</Label>
-              <Input type="number" step="0.01" required value={form.valor} onChange={e => setForm(p => ({ ...p, valor: e.target.value }))} />
+              <Label>Descrição *</Label>
+              <Input required value={form.descricao} onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} placeholder="Ex: Mensalidade Março/2026" />
             </div>
-            <div className="space-y-2">
-              <Label>Data de Vencimento</Label>
-              <Input type="date" value={form.data_vencimento} onChange={e => setForm(p => ({ ...p, data_vencimento: e.target.value }))} />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Valor (R$) *</Label>
+                <Input type="number" step="0.01" required value={form.valor} onChange={e => setForm(p => ({ ...p, valor: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>Vencimento</Label>
+                <Input type="date" value={form.data_vencimento} onChange={e => setForm(p => ({ ...p, data_vencimento: e.target.value }))} />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>Forma de Pagamento</Label>
-              <Select value={form.forma_pagamento} onValueChange={v => setForm(p => ({ ...p, forma_pagamento: v }))}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pix">PIX</SelectItem>
-                  <SelectItem value="boleto">Boleto</SelectItem>
-                  <SelectItem value="cartao">Cartão</SelectItem>
-                  <SelectItem value="transferencia">Transferência</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Forma de Pagamento</Label>
+                <Select value={form.forma_pagamento} onValueChange={v => setForm(p => ({ ...p, forma_pagamento: v }))}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pix">PIX</SelectItem>
+                    <SelectItem value="boleto">Boleto</SelectItem>
+                    <SelectItem value="cartao">Cartão</SelectItem>
+                    <SelectItem value="transferencia">Transferência</SelectItem>
+                    <SelectItem value="mercadopago">Mercado Pago</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>E-mail pagador</Label>
+                <Input type="email" value={form.email_pagador} onChange={e => setForm(p => ({ ...p, email_pagador: e.target.value }))} placeholder={empresa?.responsavel_email || 'email@empresa.com'} />
+              </div>
             </div>
             <div className="space-y-2">
               <Label>Observações</Label>
               <Input value={form.observacoes} onChange={e => setForm(p => ({ ...p, observacoes: e.target.value }))} />
             </div>
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setShowForm(false)}
-                className="rounded-full shadow-[0_4px_14px_0_hsl(var(--border)/0.4)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200">
-                Cancelar
+            <div className="flex flex-col gap-2 pt-2">
+              <Button
+                type="button"
+                onClick={createMPPayment}
+                disabled={!form.valor || !form.descricao || creatingMP}
+                className="w-full rounded-full bg-[hsl(200,80%,50%)] hover:bg-[hsl(200,80%,40%)] text-white shadow-md hover:scale-105 hover:-translate-y-0.5 transition-all duration-200"
+              >
+                {creatingMP ? 'Criando...' : '💳 Cobrar via Mercado Pago'}
               </Button>
-              <Button type="submit" disabled={addPagamento.isPending}
-                className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200">
-                {addPagamento.isPending ? 'Salvando...' : 'Registrar'}
+              <Button type="submit" variant="outline" disabled={addPagamento.isPending}
+                className="w-full rounded-full shadow-[0_4px_14px_0_hsl(var(--border)/0.4)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200">
+                {addPagamento.isPending ? 'Salvando...' : 'Registrar Manual'}
               </Button>
             </div>
           </form>
