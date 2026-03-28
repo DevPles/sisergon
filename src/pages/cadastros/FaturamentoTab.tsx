@@ -328,10 +328,18 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ valor: '', data_vencimento: '', forma_pagamento: '', observacoes: '', descricao: '', email_pagador: '' });
   const [creatingMP, setCreatingMP] = useState(false);
-
-  const { data: pagamentos, isLoading } = useQuery({
+  const [form, setForm] = useState({
+    valor: '',
+    data_vencimento: '',
+    forma_pagamento: '',
+    observacoes: '',
+    descricao: '',
+    email_pagador: '',
+    tipo_cobranca: 'pontual' as 'pontual' | 'recorrente',
+    card_holder_name: '',
+    card_holder_cpf: '',
+  });
     queryKey: ['empresa-pagamentos', empresaId],
     queryFn: async () => {
       const { data } = await supabase
