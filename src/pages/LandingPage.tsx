@@ -330,15 +330,15 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                     <button
                       onClick={handleCnpjSearch}
                       disabled={cnpj.replace(/\D/g, '').length !== 14 || cnpjLoading}
-                      className="px-4 py-3 bg-gray-800 text-white rounded-xl text-sm font-medium hover:bg-gray-900 disabled:opacity-50 transition-colors flex items-center gap-2"
+                      className="px-5 py-3 bg-gray-800 text-white rounded-lg text-sm font-medium hover:bg-gray-900 disabled:opacity-40 transition-colors flex items-center gap-2 whitespace-nowrap"
                     >
-                      {cnpjLoading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <span>Buscar</span>}
+                      {cnpjLoading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
                       Buscar
                     </button>
                   </div>
                   {cnpjError && <p className="text-sm text-red-500 mt-2">{cnpjError}</p>}
                 {cnpjSearched && cnpjData && (
-                    <div className="mt-3 p-4 bg-gray-50 rounded-xl border border-gray-200 space-y-2">
+                    <div className="mt-3 p-4 bg-gray-50/80 rounded-lg border border-gray-150 space-y-2">
                       <span className="font-semibold text-gray-900 text-sm">{cnpjData.nome_fantasia || cnpjData.razao_social}</span>
                       <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
                         <div><span className="font-medium">CNAE:</span> {cnpjData.cnae_fiscal_descricao}</div>
