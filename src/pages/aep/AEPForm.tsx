@@ -130,6 +130,7 @@ const AEPForm = () => {
   const [values, setValues] = useState<Record<string, number>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
 
   // Try to load dynamic template for this empresa
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'aep');
