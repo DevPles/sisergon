@@ -10,11 +10,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { generateAepPdf } from '@/utils/aepPdfReport';
 import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding';
 import { format } from 'date-fns';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
+import { ChevronLeft, ChevronRight, Check, CircleDot, Circle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // AEP Questions per block from the document
 const AEP_BLOCKS = [
