@@ -1000,8 +1000,11 @@ export type Database = {
           created_by: string | null
           empresa_id: string | null
           id: string
+          is_default: boolean | null
           is_global: boolean | null
+          last_used_at: string | null
           nome: string
+          replaced_by: string | null
           status: string | null
           tipo: string
           updated_at: string
@@ -1014,8 +1017,11 @@ export type Database = {
           created_by?: string | null
           empresa_id?: string | null
           id?: string
+          is_default?: boolean | null
           is_global?: boolean | null
+          last_used_at?: string | null
           nome: string
+          replaced_by?: string | null
           status?: string | null
           tipo: string
           updated_at?: string
@@ -1028,8 +1034,11 @@ export type Database = {
           created_by?: string | null
           empresa_id?: string | null
           id?: string
+          is_default?: boolean | null
           is_global?: boolean | null
+          last_used_at?: string | null
           nome?: string
+          replaced_by?: string | null
           status?: string | null
           tipo?: string
           updated_at?: string
@@ -1041,6 +1050,13 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_templates_replaced_by_fkey"
+            columns: ["replaced_by"]
+            isOneToOne: false
+            referencedRelation: "form_templates"
             referencedColumns: ["id"]
           },
         ]

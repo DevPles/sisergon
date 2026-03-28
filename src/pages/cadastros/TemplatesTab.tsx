@@ -569,6 +569,23 @@ interface TemplatesTabProps {
   externalNewTrigger?: number;
 }
 
+const FILTER_TIPOS = [
+  { value: '__all__', label: 'Todos os Tipos' },
+  { value: 'aep', label: 'AEP' },
+  { value: 'aet', label: 'AET' },
+  { value: 'psicossocial', label: 'Psicossocial' },
+  { value: 'checklist', label: 'Checklist' },
+  { value: 'plano_acao', label: 'Plano de Ação' },
+  { value: 'formulario_custom', label: 'Customizado' },
+];
+
+const FILTER_STATUS = [
+  { value: '__all__', label: 'Todos os Status' },
+  { value: 'ativo', label: 'Ativo' },
+  { value: 'arquivado', label: 'Arquivado' },
+  { value: 'inativo', label: 'Inativo' },
+];
+
 const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChange, externalNewTrigger }: TemplatesTabProps = {}) => {
   const { user, isAdmin, isConsultor } = useAuth();
   const { toast } = useToast();
@@ -578,6 +595,12 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
   const setSelectedEmpresa = onSelectedEmpresaChange ?? setInternalEmpresa;
   const [showEditor, setShowEditor] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Filters
+  const [filterTipo, setFilterTipo] = useState('__all__');
+  const [filterStatus, setFilterStatus] = useState('__all__');
+  const [filterPadrao, setFilterPadrao] = useState('__all__');
+  const [searchName, setSearchName] = useState('');
 
   const { data: empresas } = useQuery({
     queryKey: ['empresas-templates', user?.id, isConsultor],
@@ -594,17 +617,89 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
     },
   });
 
+  // Fetch ALL templates (no server filter except empresa scope)
   const { data: templates, isLoading } = useQuery({
     queryKey: ['form-templates', selectedEmpresa],
     queryFn: async () => {
-      let query = supabase.from('form_templates' as any).select('*').order('created_at', { ascending: false });
+      let query = supabase.from('form_templates').select('*').order('created_at', { ascending: false });
       if (selectedEmpresa && selectedEmpresa !== '__global__') {
         query = query.or(`empresa_id.eq.${selectedEmpresa},is_global.eq.true`);
-      } else {
-        query = query.eq('is_global', true);
       }
       const { data } = await query;
       return (data || []) as any[];
+    },
+  });
+
+  // Fetch usage counts from assessments
+  const { data: usageCounts } = useQuery({
+    queryKey: ['template-usage-counts'],
+    queryFn: async () => {
+      // Count assessments per type as a proxy for template usage
+      const { data: assessments } = await supabase.from('assessments').select('type, created_at');
+      const counts: Record<string, { count: number; lastUsed: string | null }> = {};
+      if (assessments) {
+        for (const a of assessments) {
+          const key = a.type?.toLowerCase();
+          if (!counts[key]) counts[key] = { count: 0, lastUsed: null };
+          counts[key].count++;
+          if (!counts[key].lastUsed || a.created_at > counts[key].lastUsed!) {
+            counts[key].lastUsed = a.created_at;
+          }
+        }
+      }
+      return counts;
+    },
+  });
+
+  // Client-side filtering
+  const filteredTemplates = (templates || []).filter((t: any) => {
+    if (filterTipo !== '__all__' && t.tipo !== filterTipo) return false;
+    if (filterStatus !== '__all__' && t.status !== filterStatus) return false;
+    if (filterPadrao === 'padrao' && !t.is_default) return false;
+    if (filterPadrao === 'normal' && t.is_default) return false;
+    if (searchName && !t.nome.toLowerCase().includes(searchName.toLowerCase())) return false;
+    return true;
+  });
+
+  // Set as default
+  const setAsDefault = useMutation({
+    mutationFn: async (template: any) => {
+      // Unset other defaults of same tipo + empresa scope
+      const matchQuery = supabase.from('form_templates').update({ is_default: false } as any).eq('tipo', template.tipo).eq('is_default', true);
+      if (template.empresa_id) {
+        await matchQuery.eq('empresa_id', template.empresa_id);
+      } else {
+        await matchQuery.is('empresa_id', null);
+      }
+      // Set this one
+      await supabase.from('form_templates').update({ is_default: true } as any).eq('id', template.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['form-templates'] });
+      toast({ title: 'Formulário definido como padrão!' });
+    },
+    onError: (e: Error) => toast({ title: 'Erro', description: e.message, variant: 'destructive' }),
+  });
+
+  // Remove default
+  const removeDefault = useMutation({
+    mutationFn: async (id: string) => {
+      await supabase.from('form_templates').update({ is_default: false } as any).eq('id', id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['form-templates'] });
+      toast({ title: 'Padrão removido' });
+    },
+  });
+
+  // Archive
+  const archiveTemplate = useMutation({
+    mutationFn: async (id: string) => {
+      await supabase.from('form_templates').update({ status: 'arquivado', is_default: false } as any).eq('id', id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['form-templates'] });
+      toast({ title: 'Formulário arquivado' });
     },
   });
 
@@ -613,14 +708,28 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
       const { data: orig } = await supabase.from('form_templates' as any).select('*').eq('id', templateId).single();
       if (!orig) throw new Error('Template não encontrado');
       const o = orig as any;
+      const newVersion = (o.versao || 1) + 1;
       const { data: newT, error } = await supabase.from('form_templates' as any).insert({
-        nome: `${o.nome} (Cópia)`, tipo: o.tipo, descricao: o.descricao, status: 'ativo',
-        modulo_destino: o.modulo_destino,
+        nome: `${o.nome} (v${newVersion})`, tipo: o.tipo, descricao: o.descricao, status: 'ativo',
+        modulo_destino: o.modulo_destino, versao: newVersion, is_default: false,
         empresa_id: selectedEmpresa && selectedEmpresa !== '__global__' ? selectedEmpresa : o.empresa_id,
         is_global: false, parent_template_id: templateId, created_by: user?.id,
       } as any).select('id').single();
       if (error) throw error;
 
+      // Copy sections
+      const { data: sections } = await supabase.from('form_template_sections' as any).select('*').eq('template_id', templateId).order('ordem');
+      const sectionMap: Record<string, string> = {};
+      if (sections) {
+        for (const s of sections as any[]) {
+          const { data: ns } = await supabase.from('form_template_sections' as any).insert({
+            template_id: (newT as any).id, nome: s.nome, descricao: s.descricao, ordem: s.ordem,
+          } as any).select('id').single();
+          if (ns) sectionMap[s.id] = (ns as any).id;
+        }
+      }
+
+      // Copy questions + options
       const { data: qs } = await supabase.from('form_template_questions' as any).select('*').eq('template_id', templateId);
       if (qs && qs.length > 0) {
         for (const q of qs as any[]) {
@@ -628,7 +737,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
             template_id: (newT as any).id, texto: q.texto, tipo_resposta: q.tipo_resposta,
             ordem: q.ordem, peso: q.peso, obrigatoria: q.obrigatoria, eliminatoria: q.eliminatoria,
             ativa: q.ativa, observacao: q.observacao, permite_comentario: q.permite_comentario,
-            section_id: null,
+            section_id: q.section_id ? sectionMap[q.section_id] || null : null,
           } as any).select('id').single();
           const { data: opts } = await supabase.from('form_template_options' as any).select('*').eq('question_id', q.id);
           if (opts && opts.length > 0 && newQ) {
@@ -638,28 +747,40 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
           }
         }
       }
+
+      // Mark original as replaced
+      await supabase.from('form_templates').update({ replaced_by: (newT as any).id } as any).eq('id', templateId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['form-templates'] });
-      toast({ title: 'Formulário duplicado' });
+      toast({ title: 'Formulário duplicado com nova versão' });
     },
     onError: (e: Error) => toast({ title: 'Erro', description: e.message, variant: 'destructive' }),
   });
 
   const deleteTemplate = useMutation({
-    mutationFn: async (id: string) => {
-      const { data: qs } = await supabase.from('form_template_questions' as any).select('id').eq('template_id', id);
+    mutationFn: async (template: any) => {
+      // Check if in use
+      const usage = usageCounts?.[template.tipo?.toLowerCase()] || { count: 0 };
+      if (template.is_default) {
+        throw new Error('Não é possível excluir um formulário padrão. Remova o padrão primeiro.');
+      }
+      if (usage.count > 0) {
+        throw new Error('Este formulário está em uso. Arquive-o em vez de excluir.');
+      }
+      const { data: qs } = await supabase.from('form_template_questions' as any).select('id').eq('template_id', template.id);
       if (qs && qs.length > 0) {
         await supabase.from('form_template_options' as any).delete().in('question_id', (qs as any[]).map(q => q.id));
       }
-      await supabase.from('form_template_questions' as any).delete().eq('template_id', id);
-      await supabase.from('form_template_sections' as any).delete().eq('template_id', id);
-      await supabase.from('form_templates' as any).delete().eq('id', id);
+      await supabase.from('form_template_questions' as any).delete().eq('template_id', template.id);
+      await supabase.from('form_template_sections' as any).delete().eq('template_id', template.id);
+      await supabase.from('form_templates' as any).delete().eq('id', template.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['form-templates'] });
       toast({ title: 'Formulário removido' });
     },
+    onError: (e: Error) => toast({ title: 'Erro', description: e.message, variant: 'destructive' }),
   });
 
   const openNew = () => { setEditingId(null); setShowEditor(true); };
@@ -681,12 +802,23 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
 
   const showInternalToolbar = !externalEmpresa && !onSelectedEmpresaChange;
 
+  const getEmpresaName = (empresaId: string | null) => {
+    if (!empresaId) return 'Global';
+    const emp = empresas?.find(e => e.id === empresaId);
+    return emp?.nome_fantasia || emp?.razao_social || '—';
+  };
+
+  const getUsageForTemplate = (t: any) => {
+    return usageCounts?.[t.tipo?.toLowerCase()] || { count: 0, lastUsed: null };
+  };
+
   return (
     <div className="space-y-6">
+      {/* Toolbar */}
       {showInternalToolbar && (
-        <div className="flex items-center gap-4">
-          <div className="flex-1 max-w-sm space-y-1">
-            <Label className="text-sm">Empresa (vazio = formulários globais)</Label>
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="flex-1 min-w-[200px] max-w-sm space-y-1">
+            <Label className="text-xs text-muted-foreground">Empresa</Label>
             <Select value={selectedEmpresa} onValueChange={setSelectedEmpresa}>
               <SelectTrigger><SelectValue placeholder="Todas / Global" /></SelectTrigger>
               <SelectContent>
@@ -699,37 +831,122 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
         </div>
       )}
 
+      {/* Filters */}
+      <div className="flex flex-wrap items-end gap-3 p-4 rounded-xl bg-muted/30 border border-border">
+        <div className="min-w-[160px] space-y-1">
+          <Label className="text-xs text-muted-foreground">Buscar</Label>
+          <Input placeholder="Nome..." value={searchName} onChange={e => setSearchName(e.target.value)} className="h-9" />
+        </div>
+        <div className="min-w-[140px] space-y-1">
+          <Label className="text-xs text-muted-foreground">Tipo</Label>
+          <Select value={filterTipo} onValueChange={setFilterTipo}>
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>{FILTER_TIPOS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="min-w-[130px] space-y-1">
+          <Label className="text-xs text-muted-foreground">Status</Label>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>{FILTER_STATUS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div className="min-w-[130px] space-y-1">
+          <Label className="text-xs text-muted-foreground">Padrão</Label>
+          <Select value={filterPadrao} onValueChange={setFilterPadrao}>
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">Todos</SelectItem>
+              <SelectItem value="padrao">Somente Padrão</SelectItem>
+              <SelectItem value="normal">Não-Padrão</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Table */}
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando...</p>
-      ) : templates && templates.length > 0 ? (
+      ) : filteredTemplates.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Tipo</TableHead>
-              <TableHead>Escopo</TableHead>
+              <TableHead>Empresa</TableHead>
               <TableHead>Versão</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Padrão</TableHead>
+              <TableHead>Uso</TableHead>
+              <TableHead>Último Uso</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {templates.map((t: any) => (
-              <TableRow key={t.id}>
-                <TableCell className="font-medium">{t.nome}</TableCell>
-                <TableCell><Badge variant="secondary">{t.tipo}</Badge></TableCell>
-                <TableCell>{t.is_global ? <Badge>Global</Badge> : <Badge variant="secondary">Empresa</Badge>}</TableCell>
-                <TableCell>v{t.versao}</TableCell>
-                <TableCell><Badge variant={t.status === 'ativo' ? 'default' : 'secondary'}>{t.status}</Badge></TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-1">
-                    <Button variant="ghost" size="sm" onClick={() => openEdit(t.id)}>Editar</Button>
-                    <Button variant="ghost" size="sm" onClick={() => duplicateTemplate.mutate(t.id)} title="Duplicar">Duplicar</Button>
-                    <Button variant="ghost" size="sm" onClick={() => deleteTemplate.mutate(t.id)} className="text-destructive">Excluir</Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {filteredTemplates.map((t: any) => {
+              const usage = getUsageForTemplate(t);
+              return (
+                <TableRow key={t.id}>
+                  <TableCell className="font-medium">{t.nome}</TableCell>
+                  <TableCell><Badge variant="secondary">{t.tipo?.toUpperCase()}</Badge></TableCell>
+                  <TableCell>
+                    {t.is_global 
+                      ? <Badge className="bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-100">🟣 Global</Badge>
+                      : <span className="text-sm">{getEmpresaName(t.empresa_id)}</span>
+                    }
+                  </TableCell>
+                  <TableCell>v{t.versao || 1}</TableCell>
+                  <TableCell>
+                    {t.status === 'ativo' && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50">Ativo</Badge>}
+                    {t.status === 'arquivado' && <Badge className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-50">🟡 Arquivado</Badge>}
+                    {t.status === 'inativo' && <Badge variant="secondary">Inativo</Badge>}
+                    {!['ativo', 'arquivado', 'inativo'].includes(t.status) && <Badge variant="secondary">{t.status}</Badge>}
+                  </TableCell>
+                  <TableCell>
+                    {t.is_default 
+                      ? <Badge className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50">🔵 Padrão</Badge>
+                      : <span className="text-xs text-muted-foreground">—</span>
+                    }
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm font-medium">{usage.count}</span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-xs text-muted-foreground">
+                      {usage.lastUsed ? new Date(usage.lastUsed).toLocaleDateString('pt-BR') : '—'}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1 flex-wrap">
+                      <Button variant="ghost" size="sm" onClick={() => openEdit(t.id)}>Editar</Button>
+                      {t.status === 'ativo' && !t.is_default && (
+                        <Button variant="ghost" size="sm" onClick={() => setAsDefault.mutate(t)}
+                          className="text-blue-600 hover:text-blue-700">
+                          Def. Padrão
+                        </Button>
+                      )}
+                      {t.is_default && (
+                        <Button variant="ghost" size="sm" onClick={() => removeDefault.mutate(t.id)}
+                          className="text-amber-600 hover:text-amber-700">
+                          Remover Padrão
+                        </Button>
+                      )}
+                      <Button variant="ghost" size="sm" onClick={() => duplicateTemplate.mutate(t.id)}>Duplicar</Button>
+                      {t.status === 'ativo' && (
+                        <Button variant="ghost" size="sm" onClick={() => archiveTemplate.mutate(t.id)}
+                          className="text-amber-600">
+                          Arquivar
+                        </Button>
+                      )}
+                      <Button variant="ghost" size="sm" onClick={() => deleteTemplate.mutate(t)}
+                        className="text-destructive">
+                        Excluir
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       ) : (
