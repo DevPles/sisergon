@@ -798,7 +798,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
               <>
                 <Separator />
                 <div className="space-y-3">
-                  <Label className="text-sm font-semibold flex items-center gap-2"><CreditCard className="h-4 w-4" /> Dados do Cartão (Recorrência)</Label>
+                  <Label className="text-sm font-semibold">Dados do Cartão (Recorrência)</Label>
                   <p className="text-xs text-muted-foreground">Estes dados serão enviados ao Mercado Pago para cobrança automática mensal.</p>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
