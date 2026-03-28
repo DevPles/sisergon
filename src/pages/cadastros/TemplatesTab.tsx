@@ -71,7 +71,7 @@ interface TemplateEditorProps {
 }
 
 const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClose, onSaved }: TemplateEditorProps) => {
-  const { user } = useAuth();
+  const { user, isAdmin, isConsultor } = useAuth();
   const { toast } = useToast();
 
   const [form, setForm] = useState({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
@@ -83,8 +83,15 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
   const [loaded, setLoaded] = useState(!editId);
 
   const { data: empresasModal } = useQuery({
-    queryKey: ['empresas-modal-templates'],
+    queryKey: ['empresas-modal-templates', user?.id, isConsultor],
     queryFn: async () => {
+      if (isConsultor && !isAdmin && user?.id) {
+        const { data: links } = await supabase.from('consultor_empresas').select('empresa_id').eq('user_id', user.id).eq('ativo', true);
+        const ids = (links || []).map(l => l.empresa_id);
+        if (ids.length === 0) return [];
+        const { data } = await supabase.from('empresas').select('id, razao_social').in('id', ids).eq('ativa', true).order('razao_social');
+        return data ?? [];
+      }
       const { data } = await supabase.from('empresas').select('id, razao_social').eq('ativa', true).order('razao_social');
       return data ?? [];
     },
@@ -379,7 +386,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
               <Select value={selectedEmpresaId} onValueChange={setSelectedEmpresaId}>
                 <SelectTrigger><SelectValue placeholder="Selecione a empresa" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__global__">Global (Padrão do Sistema)</SelectItem>
+                  {isAdmin && <SelectItem value="__global__">Global (Padrão do Sistema)</SelectItem>}
                   {empresasModal?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -563,7 +570,7 @@ interface TemplatesTabProps {
 }
 
 const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChange, externalNewTrigger }: TemplatesTabProps = {}) => {
-  const { user } = useAuth();
+  const { user, isAdmin, isConsultor } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [internalEmpresa, setInternalEmpresa] = useState('');
@@ -573,8 +580,15 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const { data: empresas } = useQuery({
-    queryKey: ['empresas-templates'],
+    queryKey: ['empresas-templates', user?.id, isConsultor],
     queryFn: async () => {
+      if (isConsultor && !isAdmin && user?.id) {
+        const { data: links } = await supabase.from('consultor_empresas').select('empresa_id').eq('user_id', user.id).eq('ativo', true);
+        const ids = (links || []).map(l => l.empresa_id);
+        if (ids.length === 0) return [];
+        const { data } = await supabase.from('empresas').select('id, razao_social, nome_fantasia').in('id', ids).eq('ativa', true).order('razao_social');
+        return data ?? [];
+      }
       const { data } = await supabase.from('empresas').select('id, razao_social, nome_fantasia').eq('ativa', true).order('razao_social');
       return data ?? [];
     },
