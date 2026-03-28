@@ -87,12 +87,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isColaborador = hasRole('colaborador');
   const primaryRole = ROLE_PRIORITY.find(r => roles.includes(r)) || null;
 
+  const refreshProfile = async () => {
+    if (user?.id) await fetchUserData(user.id);
+  };
+
   return (
     <AuthContext.Provider value={{
       session, user, profile, roles, loading,
       signIn, signOut, hasRole, hasAnyRole,
       isAdmin, isConsultor, isGestor, isEmpresaAdmin, isColaborador,
-      primaryRole,
+      primaryRole, refreshProfile,
     }}>
       {children}
     </AuthContext.Provider>
