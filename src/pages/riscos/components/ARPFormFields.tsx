@@ -83,6 +83,16 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
     enabled: !!empresaId,
   });
 
+  const { data: colaboradores } = useQuery({
+    queryKey: ['colaboradores-select', empresaId],
+    queryFn: async () => {
+      if (!empresaId) return [];
+      const { data } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', empresaId).eq('status', 'ativo').order('nome_completo');
+      return data || [];
+    },
+    enabled: !!empresaId,
+  });
+
   useEffect(() => {
     if (!isEdit || !assessmentId) return;
     const load = async () => {
