@@ -101,6 +101,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         setTitle(data.title || '');
         setEmpresaId(data.empresa_id);
         setSetorId(data.setor_id || '');
+        setColaboradorId(data.colaborador_id || '');
         setDescription(data.description || '');
       }
       const { data: items } = await supabase.from('assessment_items').select('*').eq('assessment_id', assessmentId);
