@@ -139,6 +139,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         title: title || 'ARP sem título',
         empresa_id: empresaId,
         setor_id: setorId || null,
+        colaborador_id: colaboradorId || null,
         description,
         status,
         score_total: totalScore,
