@@ -906,7 +906,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
                   <TableCell><Badge variant="secondary">{t.tipo?.toUpperCase()}</Badge></TableCell>
                   <TableCell>
                     {t.is_global 
-                      ? <Badge className="bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-100">🟣 Global</Badge>
+                      ? <Badge variant="secondary">Global</Badge>
                       : <span className="text-sm">{getEmpresaName(t.empresa_id)}</span>
                     }
                   </TableCell>
