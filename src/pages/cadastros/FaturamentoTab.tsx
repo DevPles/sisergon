@@ -125,7 +125,8 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
     const plano = planosCadastrados?.find((p: any) => p.id === planoId);
     if (!plano) return;
     const recursos = plano.recursos as Record<string, any> | null;
-    setForm({
+    setForm(prev => ({
+      ...prev,
       tipo_plano: recursos?.tipo_plano || 'personalizado',
       periodicidade: recursos?.periodicidade || 'mensal',
       valor_mensal: String(plano.valor_mensal ?? 0),
@@ -133,8 +134,7 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
       limite_usuarios: String(plano.limite_usuarios ?? ''),
       limite_empresas_vinculadas: String(recursos?.limite_empresas_vinculadas ?? ''),
       modulos_ativos: recursos?.modulos_ativos || [],
-      status: form.status,
-    });
+    }));
   };
 
   if (isLoading) return <p className="text-muted-foreground text-sm py-4">Carregando...</p>;
