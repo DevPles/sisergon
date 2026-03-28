@@ -386,7 +386,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
               <Select value={selectedEmpresaId} onValueChange={setSelectedEmpresaId}>
                 <SelectTrigger><SelectValue placeholder="Selecione a empresa" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__global__">Global (Padrão do Sistema)</SelectItem>
+                  {isAdmin && <SelectItem value="__global__">Global (Padrão do Sistema)</SelectItem>}
                   {empresasModal?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
                 </SelectContent>
               </Select>
