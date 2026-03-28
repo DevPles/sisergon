@@ -21,7 +21,7 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const MeuPerfil = () => {
-  const { user, profile, roles, primaryRole } = useAuth();
+  const { user, profile, roles, primaryRole, refreshProfile } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
