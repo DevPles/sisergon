@@ -811,6 +811,12 @@ export type Database = {
           descricao: string | null
           empresa_id: string
           id: string
+          metodo_pagamento: string | null
+          mp_payment_id: string | null
+          mp_payment_link: string | null
+          mp_preference_id: string | null
+          mp_status: string | null
+          numero_fatura: string | null
           status: string | null
           updated_at: string
           valor: number
@@ -822,6 +828,12 @@ export type Database = {
           descricao?: string | null
           empresa_id: string
           id?: string
+          metodo_pagamento?: string | null
+          mp_payment_id?: string | null
+          mp_payment_link?: string | null
+          mp_preference_id?: string | null
+          mp_status?: string | null
+          numero_fatura?: string | null
           status?: string | null
           updated_at?: string
           valor: number
@@ -833,6 +845,12 @@ export type Database = {
           descricao?: string | null
           empresa_id?: string
           id?: string
+          metodo_pagamento?: string | null
+          mp_payment_id?: string | null
+          mp_payment_link?: string | null
+          mp_preference_id?: string | null
+          mp_status?: string | null
+          numero_fatura?: string | null
           status?: string | null
           updated_at?: string
           valor?: number
@@ -948,6 +966,12 @@ export type Database = {
           descricao: string
           empresa_id: string
           id: string
+          metodo_pagamento: string | null
+          mp_payment_id: string | null
+          mp_payment_link: string | null
+          mp_preference_id: string | null
+          mp_status: string | null
+          numero_fatura: string | null
           observacoes: string | null
           status: string | null
           tipo: string | null
@@ -962,6 +986,12 @@ export type Database = {
           descricao: string
           empresa_id: string
           id?: string
+          metodo_pagamento?: string | null
+          mp_payment_id?: string | null
+          mp_payment_link?: string | null
+          mp_preference_id?: string | null
+          mp_status?: string | null
+          numero_fatura?: string | null
           observacoes?: string | null
           status?: string | null
           tipo?: string | null
@@ -976,6 +1006,12 @@ export type Database = {
           descricao?: string
           empresa_id?: string
           id?: string
+          metodo_pagamento?: string | null
+          mp_payment_id?: string | null
+          mp_payment_link?: string | null
+          mp_preference_id?: string | null
+          mp_status?: string | null
+          numero_fatura?: string | null
           observacoes?: string | null
           status?: string | null
           tipo?: string | null
