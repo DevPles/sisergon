@@ -49,6 +49,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   const [title, setTitle] = useState('');
   const [empresaId, setEmpresaId] = useState('');
   const [setorId, setSetorId] = useState('');
+  const [colaboradorId, setColaboradorId] = useState('');
   const [description, setDescription] = useState('');
   const [values, setValues] = useState<Record<number, number>>({});
   const [comments, setComments] = useState<Record<number, string>>({});
@@ -82,6 +83,16 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
     enabled: !!empresaId,
   });
 
+  const { data: colaboradores } = useQuery({
+    queryKey: ['colaboradores-select', empresaId],
+    queryFn: async () => {
+      if (!empresaId) return [];
+      const { data } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', empresaId).eq('status', 'ativo').order('nome_completo');
+      return data || [];
+    },
+    enabled: !!empresaId,
+  });
+
   useEffect(() => {
     if (!isEdit || !assessmentId) return;
     const load = async () => {
@@ -90,6 +101,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         setTitle(data.title || '');
         setEmpresaId(data.empresa_id);
         setSetorId(data.setor_id || '');
+        setColaboradorId(data.colaborador_id || '');
         setDescription(data.description || '');
       }
       const { data: items } = await supabase.from('assessment_items').select('*').eq('assessment_id', assessmentId);
@@ -127,6 +139,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         title: title || 'ARP sem título',
         empresa_id: empresaId,
         setor_id: setorId || null,
+        colaborador_id: colaboradorId || null,
         description,
         status,
         score_total: totalScore,
@@ -254,6 +267,13 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
               <Select value={setorId} onValueChange={setSetorId}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent>{setores?.map((s) => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Colaborador</Label>
+              <Select value={colaboradorId} onValueChange={setColaboradorId}>
+                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <SelectContent>{colaboradores?.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
