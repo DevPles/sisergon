@@ -197,11 +197,11 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
     setSaving(true);
     try {
       let templateId = editId;
-      const isGlobal = !empresaId || empresaId === '__global__';
+      const isGlobal = !selectedEmpresaId || selectedEmpresaId === '__global__';
       const payload: any = {
         nome: form.nome, tipo: form.tipo, descricao: form.descricao || null,
         status: form.status, modulo_destino: form.tipo,
-        empresa_id: isGlobal ? null : empresaId,
+        empresa_id: isGlobal ? null : selectedEmpresaId,
         is_global: isGlobal,
       };
 
