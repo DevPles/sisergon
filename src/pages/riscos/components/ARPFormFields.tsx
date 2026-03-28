@@ -15,6 +15,8 @@ import { generateArpPdf } from '@/utils/arpPdfReport';
 import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding';
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const ARP_QUESTIONS = [
   'Baixa clareza de papel/função',
@@ -34,6 +36,14 @@ const ARP_QUESTIONS = [
 ];
 
 const SCORE_LABELS = ['0 — Adequado', '1 — Leve', '2 — Moderado', '3 — Alto'];
+const QUESTIONS_PER_PAGE = 3;
+
+const fadeIn = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -12 },
+  transition: { duration: 0.3 },
+};
 
 interface ARPFormFieldsProps {
   assessmentId?: string;
@@ -54,6 +64,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   const [values, setValues] = useState<Record<number, number>>({});
   const [comments, setComments] = useState<Record<number, string>>({});
   const [saving, setSaving] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  // step 0 = Identification, step 1..N = question pages, step N+1 = review/actions
 
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'psicossocial');
   const { questions: dynamicQuestions } = useTemplateQuestions(dynamicTemplate?.id);
@@ -64,6 +76,9 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
     }
     return ARP_QUESTIONS;
   }, [dynamicQuestions]);
+
+  const totalPages = Math.ceil(activeQuestions.length / QUESTIONS_PER_PAGE);
+  const totalSteps = 1 + totalPages + 1; // identification + question pages + review
 
   const { data: empresas } = useQuery({
     queryKey: ['empresas-select'],
@@ -128,6 +143,28 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
     const idx = Number(i);
     return (idx === 9 || idx === 10) && v >= 2;
   });
+
+  // Check if current question page is fully answered
+  const isCurrentPageComplete = useMemo(() => {
+    if (currentStep === 0) return !!empresaId;
+    if (currentStep > totalPages) return true;
+    const pageIdx = currentStep - 1;
+    const start = pageIdx * QUESTIONS_PER_PAGE;
+    const end = Math.min(start + QUESTIONS_PER_PAGE, activeQuestions.length);
+    for (let i = start; i < end; i++) {
+      if (values[i] === undefined) return false;
+    }
+    return true;
+  }, [currentStep, empresaId, values, activeQuestions, totalPages]);
+
+  // Auto-advance when last question of page is answered
+  useEffect(() => {
+    if (currentStep === 0 || currentStep > totalPages) return;
+    if (isCurrentPageComplete && currentStep < totalSteps - 1) {
+      const timer = setTimeout(() => setCurrentStep((s) => s + 1), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [isCurrentPageComplete, currentStep, totalPages, totalSteps]);
 
   const handleSave = async (finalize = false) => {
     if (!empresaId) { toast({ title: 'Selecione uma empresa', variant: 'destructive' }); return; }
@@ -230,6 +267,15 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
     }
   };
 
+  const getStepLabel = () => {
+    if (currentStep === 0) return 'Identificação';
+    if (currentStep <= totalPages) return `Fatores Psicossociais (${currentStep}/${totalPages})`;
+    return 'Revisão e Ações';
+  };
+
+  const answeredCount = Object.keys(values).length;
+  const progressPercent = Math.round((currentStep / (totalSteps - 1)) * 100);
+
   return (
     <ScrollArea className="max-h-[75vh] pr-4">
       {/* Score */}
@@ -246,81 +292,162 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         </CardContent>
       </Card>
 
-      {/* Identification */}
-      <Card className="mb-4">
-        <CardHeader className="pb-3"><CardTitle className="text-base">Identificação</CardTitle></CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label className="text-xs">Título</Label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: ARP Setor Administrativo" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Empresa *</Label>
-              <Select value={empresaId} onValueChange={setEmpresaId}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>{empresas?.map((e) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Setor</Label>
-              <Select value={setorId} onValueChange={setSetorId}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>{setores?.map((s) => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Colaborador</Label>
-              <Select value={colaboradorId} onValueChange={setColaboradorId}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>{colaboradores?.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Observações</Label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Dynamic template indicator */}
-      {dynamicTemplate && dynamicQuestions.length > 0 && (
-        <div className="mb-3 p-2 rounded-lg border border-primary/20 bg-primary/5">
-          <p className="text-xs text-muted-foreground">
-            📋 Formulário: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
-          </p>
+      {/* Progress bar */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-1.5">
+          <p className="text-xs font-medium text-muted-foreground">{getStepLabel()}</p>
+          <p className="text-xs text-muted-foreground">{answeredCount}/{activeQuestions.length} respondidas</p>
         </div>
-      )}
+        <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+          <motion.div
+            className="h-full rounded-full bg-primary"
+            initial={{ width: 0 }}
+            animate={{ width: `${progressPercent}%` }}
+            transition={{ duration: 0.4 }}
+          />
+        </div>
+      </div>
 
-      {/* Questions */}
-      <Card className="mb-4">
-        <CardHeader className="pb-3"><CardTitle className="text-base">Fatores Psicossociais (score 0–3)</CardTitle></CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {activeQuestions.map((q: string, i: number) => (
-              <div key={i} className="border-b pb-3 last:border-b-0 last:pb-0">
-                <p className="text-sm font-medium mb-2">{i + 1}) {q}</p>
-                <div className="flex flex-wrap gap-1.5 mb-1.5">
-                  {SCORE_LABELS.map((label, val) => (
-                    <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
-                      onClick={() => setValues((prev) => ({ ...prev, [i]: val }))}>{label}</Button>
+      <AnimatePresence mode="wait">
+        {/* Step 0: Identification */}
+        {currentStep === 0 && (
+          <motion.div key="identification" {...fadeIn}>
+            <Card className="mb-4">
+              <CardHeader className="pb-3"><CardTitle className="text-base">Identificação</CardTitle></CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Título</Label>
+                    <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: ARP Setor Administrativo" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Empresa *</Label>
+                    <Select value={empresaId} onValueChange={setEmpresaId}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>{empresas?.map((e) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Setor</Label>
+                    <Select value={setorId} onValueChange={setSetorId}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>{setores?.map((s) => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Colaborador</Label>
+                    <Select value={colaboradorId} onValueChange={setColaboradorId}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>{colaboradores?.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1 md:col-span-2">
+                    <Label className="text-xs">Observações</Label>
+                    <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Dynamic template indicator */}
+            {dynamicTemplate && dynamicQuestions.length > 0 && (
+              <div className="mb-3 p-2 rounded-lg border border-primary/20 bg-primary/5">
+                <p className="text-xs text-muted-foreground">
+                  📋 Formulário: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
+                </p>
+              </div>
+            )}
+
+            <div className="flex justify-end pb-4">
+              <Button onClick={() => setCurrentStep(1)} disabled={!empresaId}>
+                Próximo <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Steps 1..N: Question pages */}
+        {currentStep >= 1 && currentStep <= totalPages && (
+          <motion.div key={`questions-page-${currentStep}`} {...fadeIn}>
+            <Card className="mb-4">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">
+                  Fatores Psicossociais — Página {currentStep} de {totalPages}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-5">
+                  {(() => {
+                    const pageIdx = currentStep - 1;
+                    const start = pageIdx * QUESTIONS_PER_PAGE;
+                    const end = Math.min(start + QUESTIONS_PER_PAGE, activeQuestions.length);
+                    return activeQuestions.slice(start, end).map((q: string, idx: number) => {
+                      const i = start + idx;
+                      return (
+                        <div key={i} className="border-b pb-4 last:border-b-0 last:pb-0">
+                          <p className="text-sm font-medium mb-3">{i + 1}) {q}</p>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {SCORE_LABELS.map((label, val) => (
+                              <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
+                                className="min-w-[110px]"
+                                onClick={() => setValues((prev) => ({ ...prev, [i]: val }))}>{label}</Button>
+                            ))}
+                          </div>
+                          <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={(e) => setComments((prev) => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-between pb-4">
+              <Button variant="outline" onClick={() => setCurrentStep((s) => s - 1)}>
+                <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+              </Button>
+              <Button onClick={() => setCurrentStep((s) => s + 1)} disabled={!isCurrentPageComplete}>
+                Próximo <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Last step: Review & Actions */}
+        {currentStep > totalPages && (
+          <motion.div key="review" {...fadeIn}>
+            <Card className="mb-4">
+              <CardHeader className="pb-3"><CardTitle className="text-base">Revisão</CardTitle></CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+                  {activeQuestions.map((q: string, i: number) => (
+                    <div key={i} className="flex items-center gap-2 p-1.5 rounded bg-muted/50">
+                      <span className="text-xs text-muted-foreground w-5">{i + 1})</span>
+                      <Badge variant={
+                        (values[i] ?? 0) === 0 ? 'secondary' :
+                        (values[i] ?? 0) === 1 ? 'secondary' :
+                        (values[i] ?? 0) === 2 ? 'default' : 'destructive'
+                      } className="text-xs">
+                        {values[i] ?? 0}
+                      </Badge>
+                    </div>
                   ))}
                 </div>
-                <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={(e) => setComments((prev) => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-3 pb-4">
-        {onCancel && <Button variant="outline" onClick={onCancel}>Cancelar</Button>}
-        <Button variant="secondary" onClick={() => handleSave(false)} disabled={saving}>Salvar Rascunho</Button>
-        <Button onClick={() => handleSave(true)} disabled={saving}>Finalizar ARP</Button>
-        {isEdit && <Button variant="outline" onClick={handleGeneratePdf}>Gerar Laudo PDF</Button>}
-      </div>
+            <div className="flex flex-wrap gap-3 pb-4">
+              <Button variant="outline" onClick={() => setCurrentStep((s) => s - 1)}>
+                <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+              </Button>
+              {onCancel && <Button variant="outline" onClick={onCancel}>Cancelar</Button>}
+              <Button variant="secondary" onClick={() => handleSave(false)} disabled={saving}>Salvar Rascunho</Button>
+              <Button onClick={() => handleSave(true)} disabled={saving}>Finalizar ARP</Button>
+              {isEdit && <Button variant="outline" onClick={handleGeneratePdf}>Gerar Laudo PDF</Button>}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </ScrollArea>
   );
 };
