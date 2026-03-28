@@ -12,8 +12,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { getDefaultStagesForType } from '@/utils/defaultTemplates';
+import { MoreHorizontal } from 'lucide-react';
 
 const TIPOS_TEMPLATE = [
   { value: 'aep', label: 'AEP' },
