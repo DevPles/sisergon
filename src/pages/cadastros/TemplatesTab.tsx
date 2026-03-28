@@ -601,6 +601,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
   const [filterStatus, setFilterStatus] = useState('__all__');
   const [filterPadrao, setFilterPadrao] = useState('__all__');
   const [searchName, setSearchName] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const { data: empresas } = useQuery({
     queryKey: ['empresas-templates', user?.id, isConsultor],
