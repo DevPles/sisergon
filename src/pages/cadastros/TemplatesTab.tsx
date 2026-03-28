@@ -569,6 +569,7 @@ interface TemplatesTabProps {
   selectedEmpresa?: string;
   onSelectedEmpresaChange?: (v: string) => void;
   externalNewTrigger?: number;
+  externalShowFilters?: boolean;
 }
 
 const FILTER_TIPOS = [

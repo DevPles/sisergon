@@ -470,6 +470,7 @@ const CadastrosPage = () => {
   const [faturamentoEmpresa, setFaturamentoEmpresa] = useState('');
   const [templateEmpresa, setTemplateEmpresa] = useState('');
   const [templateNewTrigger, setTemplateNewTrigger] = useState(0);
+  const [templateShowFilters, setTemplateShowFilters] = useState(false);
   const [colabSearch, setColabSearch] = useState('');
   const [showEmpresaForm, setShowEmpresaForm] = useState(false);
   const [editingEmpresaId, setEditingEmpresaId] = useState<string | null>(null);
