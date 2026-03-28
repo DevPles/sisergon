@@ -145,7 +145,10 @@ const AETForm = () => {
   const [sections, setSections] = useState<Record<string, string>>({});
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
-  const [activeSection, setActiveSection] = useState(AET_SECTIONS[0].key);
+  const [activeStep, setActiveStep] = useState(0);
+  // Total steps = AET_SECTIONS.length + 1 (checklist)
+  const allSteps = [...AET_SECTIONS.map(s => ({ type: 'section' as const, key: s.key, label: s.label })), { type: 'checklist' as const, key: 'checklist', label: 'Checklist NR-17' }];
+  const activeSection = allSteps[activeStep]?.key || AET_SECTIONS[0].key;
 
   // Dynamic template for AET
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'aet');
