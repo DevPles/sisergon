@@ -601,6 +601,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
   const [filterStatus, setFilterStatus] = useState('__all__');
   const [filterPadrao, setFilterPadrao] = useState('__all__');
   const [searchName, setSearchName] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const { data: empresas } = useQuery({
     queryKey: ['empresas-templates', user?.id, isConsultor],
@@ -831,38 +832,54 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
         </div>
       )}
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-end gap-3 p-4 rounded-xl bg-muted/30 border border-border">
-        <div className="min-w-[160px] space-y-1">
-          <Label className="text-xs text-muted-foreground">Buscar</Label>
-          <Input placeholder="Nome..." value={searchName} onChange={e => setSearchName(e.target.value)} className="h-9" />
-        </div>
-        <div className="min-w-[140px] space-y-1">
-          <Label className="text-xs text-muted-foreground">Tipo</Label>
-          <Select value={filterTipo} onValueChange={setFilterTipo}>
-            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-            <SelectContent>{FILTER_TIPOS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-        <div className="min-w-[130px] space-y-1">
-          <Label className="text-xs text-muted-foreground">Status</Label>
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-            <SelectContent>{FILTER_STATUS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
-          </Select>
-        </div>
-        <div className="min-w-[130px] space-y-1">
-          <Label className="text-xs text-muted-foreground">Padrão</Label>
-          <Select value={filterPadrao} onValueChange={setFilterPadrao}>
-            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">Todos</SelectItem>
-              <SelectItem value="padrao">Somente Padrão</SelectItem>
-              <SelectItem value="normal">Não-Padrão</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Filters toggle */}
+      <div className="flex items-center gap-2">
+        <Button variant="outline" size="sm" onClick={() => setShowFilters(prev => !prev)} className="gap-1.5">
+          <span className="text-xs">Filtros</span>
+          {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
+            <Badge className="h-5 w-5 p-0 flex items-center justify-center text-[10px]">!</Badge>
+          )}
+        </Button>
+        {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
+          <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => { setFilterTipo('__all__'); setFilterStatus('__all__'); setFilterPadrao('__all__'); setSearchName(''); }}>
+            Limpar filtros
+          </Button>
+        )}
       </div>
+
+      {showFilters && (
+        <div className="flex flex-wrap items-end gap-3 p-3 rounded-xl bg-muted/30 border border-border animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="min-w-[160px] space-y-1">
+            <Label className="text-xs text-muted-foreground">Buscar</Label>
+            <Input placeholder="Nome..." value={searchName} onChange={e => setSearchName(e.target.value)} className="h-8 text-sm" />
+          </div>
+          <div className="min-w-[120px] space-y-1">
+            <Label className="text-xs text-muted-foreground">Tipo</Label>
+            <Select value={filterTipo} onValueChange={setFilterTipo}>
+              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+              <SelectContent>{FILTER_TIPOS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="min-w-[120px] space-y-1">
+            <Label className="text-xs text-muted-foreground">Status</Label>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+              <SelectContent>{FILTER_STATUS.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="min-w-[120px] space-y-1">
+            <Label className="text-xs text-muted-foreground">Padrão</Label>
+            <Select value={filterPadrao} onValueChange={setFilterPadrao}>
+              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">Todos</SelectItem>
+                <SelectItem value="padrao">Somente Padrão</SelectItem>
+                <SelectItem value="normal">Não-Padrão</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       {isLoading ? (
