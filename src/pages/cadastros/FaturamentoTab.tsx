@@ -34,6 +34,9 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
     limite_empresas_vinculadas: '',
     modulos_ativos: [] as string[],
     status: 'ativo',
+    pagamento_recorrente: false,
+    metodo_pagamento: 'boleto',
+    dia_cobranca: '1',
   });
 
   // Carregar planos cadastrados em Configurações
