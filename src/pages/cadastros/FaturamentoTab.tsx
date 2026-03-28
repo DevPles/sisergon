@@ -401,6 +401,11 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
       toast({ title: 'Preencha valor e descrição', variant: 'destructive' });
       return;
     }
+    if (form.tipo_cobranca === 'recorrente' && form.forma_pagamento === 'cartao' && (!form.card_holder_name || !form.card_holder_cpf)) {
+      toast({ title: 'Preencha os dados do titular do cartão', variant: 'destructive' });
+      return;
+    }
+
     setCreatingMP(true);
     try {
       const { data: session } = await supabase.auth.getSession();
@@ -419,6 +424,10 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
             descricao: form.descricao || `Cobrança - ${form.observacoes || 'Mensalidade'}`,
             data_vencimento: form.data_vencimento || undefined,
             email_pagador: form.email_pagador || empresa?.responsavel_email || undefined,
+            tipo_cobranca: form.tipo_cobranca,
+            forma_pagamento: form.forma_pagamento,
+            card_holder_name: form.card_holder_name || undefined,
+            card_holder_cpf: form.card_holder_cpf || undefined,
           }),
         }
       );
@@ -427,7 +436,10 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
         throw new Error(err.error || 'Erro ao criar cobrança');
       }
       const data = await res.json();
-      toast({ title: 'Cobrança criada no Mercado Pago!', description: 'Link de pagamento gerado.' });
+      toast({
+        title: form.tipo_cobranca === 'recorrente' ? 'Cobrança recorrente criada!' : 'Cobrança criada no Mercado Pago!',
+        description: 'Link de pagamento gerado.',
+      });
       if (data.payment_link) {
         await navigator.clipboard.writeText(data.payment_link);
         toast({ title: 'Link copiado para a área de transferência!' });
@@ -435,7 +447,17 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
       queryClient.invalidateQueries({ queryKey: ['empresa-faturas-mp', empresaId] });
       queryClient.invalidateQueries({ queryKey: ['empresa-pagamentos', empresaId] });
       setShowForm(false);
-      setForm({ valor: '', data_vencimento: '', forma_pagamento: '', observacoes: '', descricao: '', email_pagador: '' });
+      setForm({
+        valor: '',
+        data_vencimento: '',
+        forma_pagamento: '',
+        observacoes: '',
+        descricao: '',
+        email_pagador: '',
+        tipo_cobranca: 'pontual',
+        card_holder_name: '',
+        card_holder_cpf: '',
+      });
     } catch (err: any) {
       toast({ title: 'Erro Mercado Pago', description: err.message, variant: 'destructive' });
     } finally {
