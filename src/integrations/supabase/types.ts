@@ -746,6 +746,71 @@ export type Database = {
           },
         ]
       }
+      empresa_assinaturas: {
+        Row: {
+          created_at: string
+          dia_cobranca: number | null
+          empresa_id: string
+          id: string
+          limite_empresas_vinculadas: number | null
+          limite_usuarios: number | null
+          metodo_pagamento: string | null
+          modulos_ativos: string[] | null
+          mp_subscription_id: string | null
+          pagamento_recorrente: boolean | null
+          periodicidade: string | null
+          status: string | null
+          tipo_plano: string
+          updated_at: string
+          valor_implantacao: number | null
+          valor_mensal: number | null
+        }
+        Insert: {
+          created_at?: string
+          dia_cobranca?: number | null
+          empresa_id: string
+          id?: string
+          limite_empresas_vinculadas?: number | null
+          limite_usuarios?: number | null
+          metodo_pagamento?: string | null
+          modulos_ativos?: string[] | null
+          mp_subscription_id?: string | null
+          pagamento_recorrente?: boolean | null
+          periodicidade?: string | null
+          status?: string | null
+          tipo_plano?: string
+          updated_at?: string
+          valor_implantacao?: number | null
+          valor_mensal?: number | null
+        }
+        Update: {
+          created_at?: string
+          dia_cobranca?: number | null
+          empresa_id?: string
+          id?: string
+          limite_empresas_vinculadas?: number | null
+          limite_usuarios?: number | null
+          metodo_pagamento?: string | null
+          modulos_ativos?: string[] | null
+          mp_subscription_id?: string | null
+          pagamento_recorrente?: boolean | null
+          periodicidade?: string | null
+          status?: string | null
+          tipo_plano?: string
+          updated_at?: string
+          valor_implantacao?: number | null
+          valor_mensal?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "empresa_assinaturas_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       empresa_contratos: {
         Row: {
           created_at: string
