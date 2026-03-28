@@ -710,10 +710,10 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
       const o = orig as any;
       const newVersion = (o.versao || 1) + 1;
       const { data: newT, error } = await supabase.from('form_templates' as any).insert({
-        nome: `${o.nome} (v${newVersion})`, tipo: o.tipo, descricao: o.descricao, status: 'ativo',
-        modulo_destino: o.modulo_destino, versao: newVersion, is_default: false,
+        nome: `${o.nome} (v${newVersion})`, tipo: o.tipo, status: 'ativo',
+        versao: newVersion, is_default: false,
         empresa_id: selectedEmpresa && selectedEmpresa !== '__global__' ? selectedEmpresa : o.empresa_id,
-        is_global: false, parent_template_id: templateId, created_by: user?.id,
+        is_global: false, created_by: user?.id,
       } as any).select('id').single();
       if (error) throw error;
 
