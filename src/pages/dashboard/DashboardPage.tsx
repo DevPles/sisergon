@@ -36,6 +36,7 @@ const STATUS_MAP: Record<string, string> = {
 const fmtDate = (d: string | null) => d ? format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR }) : '—';
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('visao-geral');
   const [selectedEmpresa, setSelectedEmpresa] = useState<string>('all');
   const [showReportModal, setShowReportModal] = useState(false);
