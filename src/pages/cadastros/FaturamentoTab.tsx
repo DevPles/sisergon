@@ -34,6 +34,9 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
     limite_empresas_vinculadas: '',
     modulos_ativos: [] as string[],
     status: 'ativo',
+    pagamento_recorrente: false,
+    metodo_pagamento: 'boleto',
+    dia_cobranca: '1',
   });
 
   // Carregar planos cadastrados em Configurações
@@ -71,6 +74,9 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
         limite_empresas_vinculadas: form.limite_empresas_vinculadas ? parseInt(form.limite_empresas_vinculadas) : null,
         modulos_ativos: form.modulos_ativos,
         status: form.status,
+        pagamento_recorrente: form.pagamento_recorrente,
+        metodo_pagamento: form.metodo_pagamento,
+        dia_cobranca: form.dia_cobranca ? parseInt(form.dia_cobranca) : 1,
       };
       if (assinatura?.id) {
         const { error } = await supabase.from('empresa_assinaturas' as any).update(payload as any).eq('id', assinatura.id);
@@ -99,6 +105,9 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
         limite_empresas_vinculadas: assinatura.limite_empresas_vinculadas?.toString() || '',
         modulos_ativos: assinatura.modulos_ativos || [],
         status: assinatura.status || 'ativo',
+        pagamento_recorrente: assinatura.pagamento_recorrente || false,
+        metodo_pagamento: assinatura.metodo_pagamento || 'boleto',
+        dia_cobranca: assinatura.dia_cobranca?.toString() || '1',
       });
     }
     setShowForm(true);
@@ -119,7 +128,8 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
     const plano = planosCadastrados?.find((p: any) => p.id === planoId);
     if (!plano) return;
     const recursos = plano.recursos as Record<string, any> | null;
-    setForm({
+    setForm(prev => ({
+      ...prev,
       tipo_plano: recursos?.tipo_plano || 'personalizado',
       periodicidade: recursos?.periodicidade || 'mensal',
       valor_mensal: String(plano.valor_mensal ?? 0),
@@ -127,8 +137,7 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
       limite_usuarios: String(plano.limite_usuarios ?? ''),
       limite_empresas_vinculadas: String(recursos?.limite_empresas_vinculadas ?? ''),
       modulos_ativos: recursos?.modulos_ativos || [],
-      status: form.status,
-    });
+    }));
   };
 
   if (isLoading) return <p className="text-muted-foreground text-sm py-4">Carregando...</p>;
@@ -161,6 +170,12 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
             <p className="text-xs text-muted-foreground">Status</p>
             <Badge variant={assinatura.status === 'ativo' ? 'default' : assinatura.status === 'suspenso' ? 'secondary' : 'destructive'}>
               {assinatura.status}
+            </Badge>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Pagamento</p>
+            <Badge variant={assinatura.pagamento_recorrente ? 'default' : 'secondary'}>
+              {assinatura.pagamento_recorrente ? `Recorrente (dia ${assinatura.dia_cobranca || 1})` : 'Pontual'}
             </Badge>
           </div>
           <div className="col-span-2 md:col-span-4">
@@ -261,6 +276,33 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
                   </label>
                 ))}
               </div>
+            </div>
+            <Separator />
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold">Forma de Pagamento</Label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <Checkbox checked={form.pagamento_recorrente} onCheckedChange={(v) => setForm(p => ({ ...p, pagamento_recorrente: !!v }))} />
+                Pagamento recorrente (cobrança automática no cartão todo mês)
+              </label>
+              {form.pagamento_recorrente && (
+                <div className="grid grid-cols-2 gap-4 pl-6">
+                  <div className="space-y-2">
+                    <Label>Método</Label>
+                    <Select value={form.metodo_pagamento} onValueChange={v => setForm(p => ({ ...p, metodo_pagamento: v }))}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cartao">Cartão de Crédito</SelectItem>
+                        <SelectItem value="boleto">Boleto</SelectItem>
+                        <SelectItem value="pix">PIX</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Dia da cobrança</Label>
+                    <Input type="number" min="1" max="28" value={form.dia_cobranca} onChange={e => setForm(p => ({ ...p, dia_cobranca: e.target.value }))} />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setShowForm(false)}
