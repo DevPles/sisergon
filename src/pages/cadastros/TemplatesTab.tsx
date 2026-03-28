@@ -921,7 +921,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
                   </TableCell>
                   <TableCell>
                     {t.is_default 
-                      ? <Badge className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50">🔵 Padrão</Badge>
+                      ? <Badge className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50">Padrão</Badge>
                       : <span className="text-xs text-muted-foreground">—</span>
                     }
                   </TableCell>
