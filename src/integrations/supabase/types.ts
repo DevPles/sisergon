@@ -992,6 +992,154 @@ export type Database = {
           },
         ]
       }
+      form_template_options: {
+        Row: {
+          created_at: string
+          id: string
+          ordem: number
+          perfil: string | null
+          peso: number | null
+          question_id: string
+          texto: string
+          updated_at: string
+          valor: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ordem?: number
+          perfil?: string | null
+          peso?: number | null
+          question_id: string
+          texto: string
+          updated_at?: string
+          valor?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ordem?: number
+          perfil?: string | null
+          peso?: number | null
+          question_id?: string
+          texto?: string
+          updated_at?: string
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_template_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "form_template_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_template_questions: {
+        Row: {
+          ativa: boolean
+          created_at: string
+          eliminatoria: boolean
+          id: string
+          obrigatoria: boolean
+          observacao: string | null
+          ordem: number
+          permite_comentario: boolean
+          peso: number | null
+          section_id: string | null
+          template_id: string
+          texto: string
+          tipo_resposta: string
+          updated_at: string
+        }
+        Insert: {
+          ativa?: boolean
+          created_at?: string
+          eliminatoria?: boolean
+          id?: string
+          obrigatoria?: boolean
+          observacao?: string | null
+          ordem?: number
+          permite_comentario?: boolean
+          peso?: number | null
+          section_id?: string | null
+          template_id: string
+          texto: string
+          tipo_resposta?: string
+          updated_at?: string
+        }
+        Update: {
+          ativa?: boolean
+          created_at?: string
+          eliminatoria?: boolean
+          id?: string
+          obrigatoria?: boolean
+          observacao?: string | null
+          ordem?: number
+          permite_comentario?: boolean
+          peso?: number | null
+          section_id?: string | null
+          template_id?: string
+          texto?: string
+          tipo_resposta?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_template_questions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "form_template_sections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_template_questions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "form_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_template_sections: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          id: string
+          nome: string
+          ordem: number
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          ordem?: number
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          ordem?: number
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_template_sections_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "form_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       form_templates: {
         Row: {
           ativo: boolean | null
@@ -1522,6 +1670,82 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_options: {
+        Row: {
+          created_at: string
+          id: string
+          ordem: number
+          perfil: string | null
+          question_id: string
+          texto: string
+          updated_at: string
+          valor: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ordem?: number
+          perfil?: string | null
+          question_id: string
+          texto: string
+          updated_at?: string
+          valor?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ordem?: number
+          perfil?: string | null
+          question_id?: string
+          texto?: string
+          updated_at?: string
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "test_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_questions: {
+        Row: {
+          created_at: string
+          id: string
+          ordem: number
+          test_id: string
+          texto: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ordem?: number
+          test_id: string
+          texto: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ordem?: number
+          test_id?: string
+          texto?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_questions_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "test_templates"
             referencedColumns: ["id"]
           },
         ]
