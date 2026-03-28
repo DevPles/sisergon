@@ -65,6 +65,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   const [comments, setComments] = useState<Record<number, string>>({});
   const [saving, setSaving] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [autoAdvanceBlocked, setAutoAdvanceBlocked] = useState(false);
   // step 0 = Identification, step 1..N = question pages, step N+1 = review/actions
 
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'psicossocial');
@@ -157,14 +158,26 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
     return true;
   }, [currentStep, empresaId, values, activeQuestions, totalPages]);
 
-  // Auto-advance when last question of page is answered
+  // Auto-advance when last question of page is answered (blocked after navigating back)
   useEffect(() => {
+    if (autoAdvanceBlocked) return;
     if (currentStep === 0 || currentStep > totalPages) return;
     if (isCurrentPageComplete && currentStep < totalSteps - 1) {
       const timer = setTimeout(() => setCurrentStep((s) => s + 1), 400);
       return () => clearTimeout(timer);
     }
-  }, [isCurrentPageComplete, currentStep, totalPages, totalSteps]);
+  }, [isCurrentPageComplete, currentStep, totalPages, totalSteps, autoAdvanceBlocked]);
+
+  // When user changes a value, unblock auto-advance
+  const handleValueChange = (questionIdx: number, val: number) => {
+    setAutoAdvanceBlocked(false);
+    setValues((prev) => ({ ...prev, [questionIdx]: val }));
+  };
+
+  const goBack = () => {
+    setAutoAdvanceBlocked(true);
+    setCurrentStep((s) => s - 1);
+  };
 
   const handleSave = async (finalize = false) => {
     if (!empresaId) { toast({ title: 'Selecione uma empresa', variant: 'destructive' }); return; }
@@ -390,7 +403,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                             {SCORE_LABELS.map((label, val) => (
                               <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
                                 className="min-w-[110px]"
-                                onClick={() => setValues((prev) => ({ ...prev, [i]: val }))}>{label}</Button>
+                                onClick={() => handleValueChange(i, val)}>{label}</Button>
                             ))}
                           </div>
                           <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={(e) => setComments((prev) => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
@@ -403,7 +416,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             </Card>
 
             <div className="flex justify-between pb-4">
-              <Button variant="outline" onClick={() => setCurrentStep((s) => s - 1)}>
+              <Button variant="outline" onClick={goBack}>
                 <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
               </Button>
               <Button onClick={() => setCurrentStep((s) => s + 1)} disabled={!isCurrentPageComplete}>
@@ -437,7 +450,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             </Card>
 
             <div className="flex flex-wrap gap-3 pb-4">
-              <Button variant="outline" onClick={() => setCurrentStep((s) => s - 1)}>
+              <Button variant="outline" onClick={goBack}>
                 <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
               </Button>
               {onCancel && <Button variant="outline" onClick={onCancel}>Cancelar</Button>}
