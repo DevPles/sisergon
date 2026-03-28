@@ -59,9 +59,8 @@ function header(doc: jsPDF, brand: string | null, company: string | null) {
   doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.muted);
   doc.text('ERGON — Sistema de Gestao Ergonomica', pw - M, 10, { align: 'right' });
   doc.text(`Emitido: ${new Date().toLocaleDateString('pt-BR')}`, pw - M, 14, { align: 'right' });
-  doc.setDrawColor(...C.navy); doc.setLineWidth(0.4); doc.line(M, 24, pw - M, 24);
   doc.setTextColor(...C.text);
-  return 28;
+  return 24;
 }
 
 function footer(doc: jsPDF, pg: number, total: number) {
