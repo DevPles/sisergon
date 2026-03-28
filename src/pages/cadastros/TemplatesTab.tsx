@@ -260,7 +260,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
         }
 
         // Save DISC test
-        const realEmpresaId = isGlobal ? null : empresaId;
+        const realEmpresaId = isGlobal ? null : selectedEmpresaId;
         if (realEmpresaId && behavioralEnabled) {
           // Delete existing DISC for this empresa
           const { data: existingDisc } = await supabase.from('test_templates' as any).select('id')
