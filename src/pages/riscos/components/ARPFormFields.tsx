@@ -49,6 +49,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   const [title, setTitle] = useState('');
   const [empresaId, setEmpresaId] = useState('');
   const [setorId, setSetorId] = useState('');
+  const [colaboradorId, setColaboradorId] = useState('');
   const [description, setDescription] = useState('');
   const [values, setValues] = useState<Record<number, number>>({});
   const [comments, setComments] = useState<Record<number, string>>({});
