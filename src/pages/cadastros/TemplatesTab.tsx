@@ -817,7 +817,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
     <div className="space-y-6">
       {/* Toolbar */}
       {showInternalToolbar && (
-        <div className="flex flex-wrap items-end gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex-1 min-w-[200px] max-w-sm space-y-1">
             <Label className="text-xs text-muted-foreground">Empresa</Label>
             <Select value={selectedEmpresa} onValueChange={setSelectedEmpresa}>
@@ -828,24 +828,22 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
               </SelectContent>
             </Select>
           </div>
-          <Button onClick={openNew} className="self-end">Novo Formulário</Button>
+          <div className="flex items-center gap-2 self-end">
+            <Button variant="outline" size="sm" onClick={() => setShowFilters(prev => !prev)} className="gap-1.5">
+              <span className="text-xs">Filtros</span>
+              {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
+                <Badge className="h-5 w-5 p-0 flex items-center justify-center text-[10px]">!</Badge>
+              )}
+            </Button>
+            {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
+              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => { setFilterTipo('__all__'); setFilterStatus('__all__'); setFilterPadrao('__all__'); setSearchName(''); }}>
+                Limpar
+              </Button>
+            )}
+          </div>
+          <Button onClick={openNew} className="self-end ml-auto">Novo Formulário</Button>
         </div>
       )}
-
-      {/* Filters toggle */}
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" onClick={() => setShowFilters(prev => !prev)} className="gap-1.5">
-          <span className="text-xs">Filtros</span>
-          {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
-            <Badge className="h-5 w-5 p-0 flex items-center justify-center text-[10px]">!</Badge>
-          )}
-        </Button>
-        {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
-          <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => { setFilterTipo('__all__'); setFilterStatus('__all__'); setFilterPadrao('__all__'); setSearchName(''); }}>
-            Limpar filtros
-          </Button>
-        )}
-      </div>
 
       {showFilters && (
         <div className="flex flex-wrap items-end gap-3 p-3 rounded-xl bg-muted/30 border border-border animate-in fade-in slide-in-from-top-2 duration-200">
@@ -908,14 +906,14 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
                   <TableCell><Badge variant="secondary">{t.tipo?.toUpperCase()}</Badge></TableCell>
                   <TableCell>
                     {t.is_global 
-                      ? <Badge className="bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-100">🟣 Global</Badge>
+                      ? <Badge variant="secondary">Global</Badge>
                       : <span className="text-sm">{getEmpresaName(t.empresa_id)}</span>
                     }
                   </TableCell>
                   <TableCell>v{t.versao || 1}</TableCell>
                   <TableCell>
                     {t.status === 'ativo' && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50">Ativo</Badge>}
-                    {t.status === 'arquivado' && <Badge className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-50">🟡 Arquivado</Badge>}
+                    {t.status === 'arquivado' && <Badge variant="outline" className="text-muted-foreground">Arquivado</Badge>}
                     {t.status === 'inativo' && <Badge variant="secondary">Inativo</Badge>}
                     {!['ativo', 'arquivado', 'inativo'].includes(t.status) && <Badge variant="secondary">{t.status}</Badge>}
                   </TableCell>
@@ -934,29 +932,25 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-1 flex-wrap">
-                      <Button variant="ghost" size="sm" onClick={() => openEdit(t.id)}>Editar</Button>
+                    <div className="flex justify-end gap-1.5 flex-wrap">
+                      <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => openEdit(t.id)}>Editar</Button>
                       {t.status === 'ativo' && !t.is_default && (
-                        <Button variant="ghost" size="sm" onClick={() => setAsDefault.mutate(t)}
-                          className="text-blue-600 hover:text-blue-700">
+                        <Button variant="outline" size="sm" className="h-7 text-xs border-accent text-accent hover:bg-accent/10" onClick={() => setAsDefault.mutate(t)}>
                           Def. Padrão
                         </Button>
                       )}
                       {t.is_default && (
-                        <Button variant="ghost" size="sm" onClick={() => removeDefault.mutate(t.id)}
-                          className="text-amber-600 hover:text-amber-700">
+                        <Button variant="outline" size="sm" className="h-7 text-xs border-warning text-warning hover:bg-warning/10" onClick={() => removeDefault.mutate(t.id)}>
                           Remover Padrão
                         </Button>
                       )}
-                      <Button variant="ghost" size="sm" onClick={() => duplicateTemplate.mutate(t.id)}>Duplicar</Button>
+                      <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => duplicateTemplate.mutate(t.id)}>Duplicar</Button>
                       {t.status === 'ativo' && (
-                        <Button variant="ghost" size="sm" onClick={() => archiveTemplate.mutate(t.id)}
-                          className="text-amber-600">
+                        <Button variant="outline" size="sm" className="h-7 text-xs border-warning text-warning hover:bg-warning/10" onClick={() => archiveTemplate.mutate(t.id)}>
                           Arquivar
                         </Button>
                       )}
-                      <Button variant="ghost" size="sm" onClick={() => deleteTemplate.mutate(t)}
-                        className="text-destructive">
+                      <Button variant="outline" size="sm" className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/10" onClick={() => deleteTemplate.mutate(t)}>
                         Excluir
                       </Button>
                     </div>
