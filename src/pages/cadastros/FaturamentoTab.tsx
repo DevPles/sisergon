@@ -74,6 +74,9 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
         limite_empresas_vinculadas: form.limite_empresas_vinculadas ? parseInt(form.limite_empresas_vinculadas) : null,
         modulos_ativos: form.modulos_ativos,
         status: form.status,
+        pagamento_recorrente: form.pagamento_recorrente,
+        metodo_pagamento: form.metodo_pagamento,
+        dia_cobranca: form.dia_cobranca ? parseInt(form.dia_cobranca) : 1,
       };
       if (assinatura?.id) {
         const { error } = await supabase.from('empresa_assinaturas' as any).update(payload as any).eq('id', assinatura.id);
