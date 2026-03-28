@@ -336,6 +336,9 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
     descricao: '',
     email_pagador: '',
     tipo_cobranca: 'pontual' as 'pontual' | 'recorrente',
+    card_number: '',
+    card_expiry: '',
+    card_cvv: '',
     card_holder_name: '',
     card_holder_cpf: '',
   });
