@@ -613,15 +613,27 @@ const AEPForm = () => {
                         <p className="text-sm font-medium text-foreground mb-2">
                           {i + 1}) {q}
                         </p>
-                        <div className="flex flex-wrap gap-1 mb-1">
+                        <div className="flex flex-wrap gap-2 mb-1">
                           {SCORE_LABELS.map((label, val) => (
                             <Button
                               key={val}
                               type="button"
                               variant={values[key] === val ? 'default' : 'outline'}
                               size="sm"
-                              className="text-xs h-7 px-2"
-                              onClick={() => setValues((prev) => ({ ...prev, [key]: val }))}
+                              className="text-xs h-8 px-3"
+                              onClick={() => {
+                                const newValues = { ...values, [key]: val };
+                                setValues(newValues);
+                                // Auto-advance when last question of block is answered
+                                const block = activeBlocks[activeStep];
+                                const allAnswered = block.questions.every((_, qi) => {
+                                  const qKey = `${block.domain}-${qi}`;
+                                  return qKey === key ? true : newValues[qKey] !== undefined;
+                                });
+                                if (allAnswered && activeStep < activeBlocks.length - 1) {
+                                  setTimeout(() => setActiveStep((s) => s + 1), 350);
+                                }
+                              }}
                             >
                               {label}
                             </Button>
