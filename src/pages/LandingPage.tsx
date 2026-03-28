@@ -314,7 +314,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto px-7 pb-6">
             {/* STEP 1 */}
             {step === 1 && (
               <div className="space-y-6">
