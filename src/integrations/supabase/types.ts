@@ -77,141 +77,6 @@ export type Database = {
           },
         ]
       }
-      assessment_instance_answers: {
-        Row: {
-          comentario: string | null
-          created_at: string
-          id: string
-          instance_id: string
-          option_id: string | null
-          question_id: string
-          valor_numerico: number | null
-          valor_texto: string | null
-        }
-        Insert: {
-          comentario?: string | null
-          created_at?: string
-          id?: string
-          instance_id: string
-          option_id?: string | null
-          question_id: string
-          valor_numerico?: number | null
-          valor_texto?: string | null
-        }
-        Update: {
-          comentario?: string | null
-          created_at?: string
-          id?: string
-          instance_id?: string
-          option_id?: string | null
-          question_id?: string
-          valor_numerico?: number | null
-          valor_texto?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "assessment_instance_answers_instance_id_fkey"
-            columns: ["instance_id"]
-            isOneToOne: false
-            referencedRelation: "assessment_instances"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assessment_instance_answers_option_id_fkey"
-            columns: ["option_id"]
-            isOneToOne: false
-            referencedRelation: "form_template_options"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assessment_instance_answers_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "form_template_questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      assessment_instances: {
-        Row: {
-          applied_by: string | null
-          colaborador_id: string | null
-          completed_at: string | null
-          created_at: string
-          empresa_id: string
-          id: string
-          resultado: Json | null
-          score_total: number | null
-          started_at: string | null
-          status: string
-          template_id: string
-          template_version_id: string | null
-          titulo: string | null
-          updated_at: string
-        }
-        Insert: {
-          applied_by?: string | null
-          colaborador_id?: string | null
-          completed_at?: string | null
-          created_at?: string
-          empresa_id: string
-          id?: string
-          resultado?: Json | null
-          score_total?: number | null
-          started_at?: string | null
-          status?: string
-          template_id: string
-          template_version_id?: string | null
-          titulo?: string | null
-          updated_at?: string
-        }
-        Update: {
-          applied_by?: string | null
-          colaborador_id?: string | null
-          completed_at?: string | null
-          created_at?: string
-          empresa_id?: string
-          id?: string
-          resultado?: Json | null
-          score_total?: number | null
-          started_at?: string | null
-          status?: string
-          template_id?: string
-          template_version_id?: string | null
-          titulo?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "assessment_instances_colaborador_id_fkey"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assessment_instances_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assessment_instances_template_id_fkey"
-            columns: ["template_id"]
-            isOneToOne: false
-            referencedRelation: "form_templates"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assessment_instances_template_version_id_fkey"
-            columns: ["template_version_id"]
-            isOneToOne: false
-            referencedRelation: "template_versions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       assessment_items: {
         Row: {
           assessment_id: string
@@ -357,43 +222,58 @@ export type Database = {
       }
       atestados: {
         Row: {
+          arquivo_url: string | null
           cid: string | null
           colaborador_id: string
           created_at: string
           created_by: string | null
+          crm: string | null
           data_fim: string | null
-          data_inicio: string | null
+          data_inicio: string
           dias: number | null
           empresa_id: string
           id: string
+          medico: string | null
           observacoes: string | null
-          tipo: string | null
+          status: string | null
+          tipo: string
+          updated_at: string
         }
         Insert: {
+          arquivo_url?: string | null
           cid?: string | null
           colaborador_id: string
           created_at?: string
           created_by?: string | null
+          crm?: string | null
           data_fim?: string | null
-          data_inicio?: string | null
+          data_inicio: string
           dias?: number | null
           empresa_id: string
           id?: string
+          medico?: string | null
           observacoes?: string | null
-          tipo?: string | null
+          status?: string | null
+          tipo?: string
+          updated_at?: string
         }
         Update: {
+          arquivo_url?: string | null
           cid?: string | null
           colaborador_id?: string
           created_at?: string
           created_by?: string | null
+          crm?: string | null
           data_fim?: string | null
-          data_inicio?: string | null
+          data_inicio?: string
           dias?: number | null
           empresa_id?: string
           id?: string
+          medico?: string | null
           observacoes?: string | null
-          tipo?: string | null
+          status?: string | null
+          tipo?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -629,6 +509,50 @@ export type Database = {
           },
         ]
       }
+      company_templates: {
+        Row: {
+          ativo: boolean | null
+          conteudo: Json | null
+          created_at: string
+          created_by: string | null
+          empresa_id: string
+          id: string
+          nome: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          conteudo?: Json | null
+          created_at?: string
+          created_by?: string | null
+          empresa_id: string
+          id?: string
+          nome: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean | null
+          conteudo?: Json | null
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string
+          id?: string
+          nome?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_templates_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultor_empresas: {
         Row: {
           ativo: boolean | null
@@ -714,43 +638,49 @@ export type Database = {
       }
       documentos: {
         Row: {
+          arquivo_nome: string | null
           arquivo_url: string | null
           created_at: string
           created_by: string | null
-          data_emissao: string | null
+          descricao: string | null
           empresa_id: string
           id: string
-          proximo_vencimento: string | null
           status: string | null
-          tipo_documento: string
+          tags: string[] | null
+          tamanho: number | null
+          tipo: string
           titulo: string
           updated_at: string
           validade: string | null
         }
         Insert: {
+          arquivo_nome?: string | null
           arquivo_url?: string | null
           created_at?: string
           created_by?: string | null
-          data_emissao?: string | null
+          descricao?: string | null
           empresa_id: string
           id?: string
-          proximo_vencimento?: string | null
           status?: string | null
-          tipo_documento: string
+          tags?: string[] | null
+          tamanho?: number | null
+          tipo: string
           titulo: string
           updated_at?: string
           validade?: string | null
         }
         Update: {
+          arquivo_nome?: string | null
           arquivo_url?: string | null
           created_at?: string
           created_by?: string | null
-          data_emissao?: string | null
+          descricao?: string | null
           empresa_id?: string
           id?: string
-          proximo_vencimento?: string | null
           status?: string | null
-          tipo_documento?: string
+          tags?: string[] | null
+          tamanho?: number | null
+          tipo?: string
           titulo?: string
           updated_at?: string
           validade?: string | null
@@ -767,43 +697,37 @@ export type Database = {
       }
       employee_test_results: {
         Row: {
-          applied_at: string | null
-          applied_by: string | null
-          colaborador_id: string
+          colaborador_id: string | null
           created_at: string
+          created_by: string | null
+          data_teste: string | null
           empresa_id: string
           id: string
-          perfil_predominante: string | null
-          respostas: Json | null
-          scores: Json | null
-          status: string
-          test_id: string
+          observacoes: string | null
+          resultado: string | null
+          tipo: string
         }
         Insert: {
-          applied_at?: string | null
-          applied_by?: string | null
-          colaborador_id: string
+          colaborador_id?: string | null
           created_at?: string
+          created_by?: string | null
+          data_teste?: string | null
           empresa_id: string
           id?: string
-          perfil_predominante?: string | null
-          respostas?: Json | null
-          scores?: Json | null
-          status?: string
-          test_id: string
+          observacoes?: string | null
+          resultado?: string | null
+          tipo: string
         }
         Update: {
-          applied_at?: string | null
-          applied_by?: string | null
-          colaborador_id?: string
+          colaborador_id?: string | null
           created_at?: string
+          created_by?: string | null
+          data_teste?: string | null
           empresa_id?: string
           id?: string
-          perfil_predominante?: string | null
-          respostas?: Json | null
-          scores?: Json | null
-          status?: string
-          test_id?: string
+          observacoes?: string | null
+          resultado?: string | null
+          tipo?: string
         }
         Relationships: [
           {
@@ -820,107 +744,47 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "employee_test_results_test_id_fkey"
-            columns: ["test_id"]
-            isOneToOne: false
-            referencedRelation: "test_templates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      empresa_assinaturas: {
-        Row: {
-          created_at: string
-          empresa_id: string
-          id: string
-          limite_empresas_vinculadas: number | null
-          limite_usuarios: number | null
-          modulos_ativos: Json | null
-          periodicidade: string | null
-          status: string
-          tipo_plano: string
-          updated_at: string
-          valor_implantacao: number | null
-          valor_mensal: number | null
-        }
-        Insert: {
-          created_at?: string
-          empresa_id: string
-          id?: string
-          limite_empresas_vinculadas?: number | null
-          limite_usuarios?: number | null
-          modulos_ativos?: Json | null
-          periodicidade?: string | null
-          status?: string
-          tipo_plano?: string
-          updated_at?: string
-          valor_implantacao?: number | null
-          valor_mensal?: number | null
-        }
-        Update: {
-          created_at?: string
-          empresa_id?: string
-          id?: string
-          limite_empresas_vinculadas?: number | null
-          limite_usuarios?: number | null
-          modulos_ativos?: Json | null
-          periodicidade?: string | null
-          status?: string
-          tipo_plano?: string
-          updated_at?: string
-          valor_implantacao?: number | null
-          valor_mensal?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "empresa_assinaturas_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       empresa_contratos: {
         Row: {
-          arquivo_url: string | null
           created_at: string
-          created_by: string | null
-          data_assinatura: string | null
+          data_fim: string | null
+          data_inicio: string | null
           empresa_id: string
           id: string
-          nome: string
-          status: string
-          tipo: string | null
+          nome: string | null
+          plano_id: string | null
+          status: string | null
           updated_at: string
           validade: string | null
+          valor: number | null
         }
         Insert: {
-          arquivo_url?: string | null
           created_at?: string
-          created_by?: string | null
-          data_assinatura?: string | null
+          data_fim?: string | null
+          data_inicio?: string | null
           empresa_id: string
           id?: string
-          nome: string
-          status?: string
-          tipo?: string | null
+          nome?: string | null
+          plano_id?: string | null
+          status?: string | null
           updated_at?: string
           validade?: string | null
+          valor?: number | null
         }
         Update: {
-          arquivo_url?: string | null
           created_at?: string
-          created_by?: string | null
-          data_assinatura?: string | null
+          data_fim?: string | null
+          data_inicio?: string | null
           empresa_id?: string
           id?: string
-          nome?: string
-          status?: string
-          tipo?: string | null
+          nome?: string | null
+          plano_id?: string | null
+          status?: string | null
           updated_at?: string
           validade?: string | null
+          valor?: number | null
         }
         Relationships: [
           {
@@ -930,43 +794,47 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "empresa_contratos_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "planos"
+            referencedColumns: ["id"]
+          },
         ]
       }
       empresa_pagamentos: {
         Row: {
           created_at: string
-          created_by: string | null
           data_pagamento: string | null
           data_vencimento: string | null
+          descricao: string | null
           empresa_id: string
-          forma_pagamento: string | null
           id: string
-          observacoes: string | null
-          status: string
+          status: string | null
+          updated_at: string
           valor: number
         }
         Insert: {
           created_at?: string
-          created_by?: string | null
           data_pagamento?: string | null
           data_vencimento?: string | null
+          descricao?: string | null
           empresa_id: string
-          forma_pagamento?: string | null
           id?: string
-          observacoes?: string | null
-          status?: string
-          valor?: number
+          status?: string | null
+          updated_at?: string
+          valor: number
         }
         Update: {
           created_at?: string
-          created_by?: string | null
           data_pagamento?: string | null
           data_vencimento?: string | null
+          descricao?: string | null
           empresa_id?: string
-          forma_pagamento?: string | null
           id?: string
-          observacoes?: string | null
-          status?: string
+          status?: string | null
+          updated_at?: string
           valor?: number
         }
         Relationships: [
@@ -986,8 +854,6 @@ export type Database = {
           cnpj: string | null
           created_at: string
           created_by: string | null
-          data_inicio_contrato: string | null
-          email: string | null
           endereco_bairro: string | null
           endereco_cep: string | null
           endereco_cidade: string | null
@@ -1006,7 +872,6 @@ export type Database = {
           responsavel_nome: string | null
           responsavel_telefone: string | null
           status_financeiro: string | null
-          telefone: string | null
           updated_at: string
           valor_em_aberto: number | null
         }
@@ -1016,8 +881,6 @@ export type Database = {
           cnpj?: string | null
           created_at?: string
           created_by?: string | null
-          data_inicio_contrato?: string | null
-          email?: string | null
           endereco_bairro?: string | null
           endereco_cep?: string | null
           endereco_cidade?: string | null
@@ -1036,7 +899,6 @@ export type Database = {
           responsavel_nome?: string | null
           responsavel_telefone?: string | null
           status_financeiro?: string | null
-          telefone?: string | null
           updated_at?: string
           valor_em_aberto?: number | null
         }
@@ -1046,8 +908,6 @@ export type Database = {
           cnpj?: string | null
           created_at?: string
           created_by?: string | null
-          data_inicio_contrato?: string | null
-          email?: string | null
           endereco_bairro?: string | null
           endereco_cep?: string | null
           endereco_cidade?: string | null
@@ -1066,7 +926,6 @@ export type Database = {
           responsavel_nome?: string | null
           responsavel_telefone?: string | null
           status_financeiro?: string | null
-          telefone?: string | null
           updated_at?: string
           valor_em_aberto?: number | null
         }
@@ -1080,193 +939,101 @@ export type Database = {
           },
         ]
       }
-      form_template_options: {
+      faturamento: {
         Row: {
           created_at: string
+          created_by: string | null
+          data_pagamento: string | null
+          data_vencimento: string | null
+          descricao: string
+          empresa_id: string
           id: string
-          ordem: number
-          perfil: string | null
-          peso: number | null
-          question_id: string
-          texto: string
-          valor: number | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          ordem?: number
-          perfil?: string | null
-          peso?: number | null
-          question_id: string
-          texto: string
-          valor?: number | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          ordem?: number
-          perfil?: string | null
-          peso?: number | null
-          question_id?: string
-          texto?: string
-          valor?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "form_template_options_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "form_template_questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      form_template_questions: {
-        Row: {
-          ativa: boolean | null
-          created_at: string
-          eliminatoria: boolean | null
-          id: string
-          obrigatoria: boolean | null
-          observacao: string | null
-          ordem: number
-          permite_comentario: boolean | null
-          peso: number | null
-          section_id: string | null
-          template_id: string
-          texto: string
-          tipo_resposta: string
+          observacoes: string | null
+          status: string | null
+          tipo: string | null
           updated_at: string
-        }
-        Insert: {
-          ativa?: boolean | null
-          created_at?: string
-          eliminatoria?: boolean | null
-          id?: string
-          obrigatoria?: boolean | null
-          observacao?: string | null
-          ordem?: number
-          permite_comentario?: boolean | null
-          peso?: number | null
-          section_id?: string | null
-          template_id: string
-          texto: string
-          tipo_resposta?: string
-          updated_at?: string
-        }
-        Update: {
-          ativa?: boolean | null
-          created_at?: string
-          eliminatoria?: boolean | null
-          id?: string
-          obrigatoria?: boolean | null
-          observacao?: string | null
-          ordem?: number
-          permite_comentario?: boolean | null
-          peso?: number | null
-          section_id?: string | null
-          template_id?: string
-          texto?: string
-          tipo_resposta?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "form_template_questions_section_id_fkey"
-            columns: ["section_id"]
-            isOneToOne: false
-            referencedRelation: "form_template_sections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "form_template_questions_template_id_fkey"
-            columns: ["template_id"]
-            isOneToOne: false
-            referencedRelation: "form_templates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      form_template_sections: {
-        Row: {
-          created_at: string
-          descricao: string | null
-          id: string
-          nome: string
-          ordem: number
-          template_id: string
+          valor: number
         }
         Insert: {
           created_at?: string
-          descricao?: string | null
+          created_by?: string | null
+          data_pagamento?: string | null
+          data_vencimento?: string | null
+          descricao: string
+          empresa_id: string
           id?: string
-          nome: string
-          ordem?: number
-          template_id: string
+          observacoes?: string | null
+          status?: string | null
+          tipo?: string | null
+          updated_at?: string
+          valor: number
         }
         Update: {
           created_at?: string
-          descricao?: string | null
+          created_by?: string | null
+          data_pagamento?: string | null
+          data_vencimento?: string | null
+          descricao?: string
+          empresa_id?: string
           id?: string
-          nome?: string
-          ordem?: number
-          template_id?: string
+          observacoes?: string | null
+          status?: string | null
+          tipo?: string | null
+          updated_at?: string
+          valor?: number
         }
         Relationships: [
           {
-            foreignKeyName: "form_template_sections_template_id_fkey"
-            columns: ["template_id"]
+            foreignKeyName: "faturamento_empresa_id_fkey"
+            columns: ["empresa_id"]
             isOneToOne: false
-            referencedRelation: "form_templates"
+            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
         ]
       }
       form_templates: {
         Row: {
+          ativo: boolean | null
+          conteudo: Json | null
           created_at: string
           created_by: string | null
-          descricao: string | null
           empresa_id: string | null
           id: string
           is_global: boolean | null
-          modulo_destino: string | null
           nome: string
-          parent_template_id: string | null
-          status: string
+          status: string | null
           tipo: string
           updated_at: string
-          versao: number
+          versao: number | null
         }
         Insert: {
+          ativo?: boolean | null
+          conteudo?: Json | null
           created_at?: string
           created_by?: string | null
-          descricao?: string | null
           empresa_id?: string | null
           id?: string
           is_global?: boolean | null
-          modulo_destino?: string | null
           nome: string
-          parent_template_id?: string | null
-          status?: string
+          status?: string | null
           tipo: string
           updated_at?: string
-          versao?: number
+          versao?: number | null
         }
         Update: {
+          ativo?: boolean | null
+          conteudo?: Json | null
           created_at?: string
           created_by?: string | null
-          descricao?: string | null
           empresa_id?: string | null
           id?: string
           is_global?: boolean | null
-          modulo_destino?: string | null
           nome?: string
-          parent_template_id?: string | null
-          status?: string
+          status?: string | null
           tipo?: string
           updated_at?: string
-          versao?: number
+          versao?: number | null
         }
         Relationships: [
           {
@@ -1276,11 +1043,66 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      laudos: {
+        Row: {
+          arquivo_url: string | null
+          conteudo: Json | null
+          created_at: string
+          created_by: string | null
+          data_emissao: string | null
+          data_validade: string | null
+          descricao: string | null
+          empresa_id: string
+          id: string
+          registro_profissional: string | null
+          responsavel_tecnico: string | null
+          status: string | null
+          tipo: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          arquivo_url?: string | null
+          conteudo?: Json | null
+          created_at?: string
+          created_by?: string | null
+          data_emissao?: string | null
+          data_validade?: string | null
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          registro_profissional?: string | null
+          responsavel_tecnico?: string | null
+          status?: string | null
+          tipo: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          arquivo_url?: string | null
+          conteudo?: Json | null
+          created_at?: string
+          created_by?: string | null
+          data_emissao?: string | null
+          data_validade?: string | null
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          registro_profissional?: string | null
+          responsavel_tecnico?: string | null
+          status?: string | null
+          tipo?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "form_templates_parent_template_id_fkey"
-            columns: ["parent_template_id"]
+            foreignKeyName: "laudos_empresa_id_fkey"
+            columns: ["empresa_id"]
             isOneToOne: false
-            referencedRelation: "form_templates"
+            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
         ]
@@ -1542,6 +1364,79 @@ export type Database = {
         }
         Relationships: []
       }
+      riscos_psicossociais: {
+        Row: {
+          colaborador_id: string | null
+          created_at: string
+          created_by: string | null
+          descricao: string | null
+          empresa_id: string
+          id: string
+          medidas_controle: string | null
+          nivel_risco: string | null
+          prazo: string | null
+          responsavel: string | null
+          setor_id: string | null
+          status: string | null
+          tipo_risco: string
+          updated_at: string
+        }
+        Insert: {
+          colaborador_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          medidas_controle?: string | null
+          nivel_risco?: string | null
+          prazo?: string | null
+          responsavel?: string | null
+          setor_id?: string | null
+          status?: string | null
+          tipo_risco: string
+          updated_at?: string
+        }
+        Update: {
+          colaborador_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          medidas_controle?: string | null
+          nivel_risco?: string | null
+          prazo?: string | null
+          responsavel?: string | null
+          setor_id?: string | null
+          status?: string | null
+          tipo_risco?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "riscos_psicossociais_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "riscos_psicossociais_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "riscos_psicossociais_setor_id_fkey"
+            columns: ["setor_id"]
+            isOneToOne: false
+            referencedRelation: "setores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       risk_events: {
         Row: {
           created_at: string
@@ -1615,156 +1510,48 @@ export type Database = {
           },
         ]
       }
-      template_versions: {
-        Row: {
-          created_at: string
-          id: string
-          snapshot: Json
-          template_id: string
-          versao: number
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          snapshot: Json
-          template_id: string
-          versao: number
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          snapshot?: Json
-          template_id?: string
-          versao?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "template_versions_template_id_fkey"
-            columns: ["template_id"]
-            isOneToOne: false
-            referencedRelation: "form_templates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      test_options: {
-        Row: {
-          created_at: string
-          id: string
-          ordem: number
-          perfil: string | null
-          question_id: string
-          texto: string
-          valor: number | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          ordem?: number
-          perfil?: string | null
-          question_id: string
-          texto: string
-          valor?: number | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          ordem?: number
-          perfil?: string | null
-          question_id?: string
-          texto?: string
-          valor?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "test_options_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "test_questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      test_questions: {
-        Row: {
-          ativa: boolean | null
-          created_at: string
-          id: string
-          ordem: number
-          test_id: string
-          texto: string
-        }
-        Insert: {
-          ativa?: boolean | null
-          created_at?: string
-          id?: string
-          ordem?: number
-          test_id: string
-          texto: string
-        }
-        Update: {
-          ativa?: boolean | null
-          created_at?: string
-          id?: string
-          ordem?: number
-          test_id?: string
-          texto?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "test_questions_test_id_fkey"
-            columns: ["test_id"]
-            isOneToOne: false
-            referencedRelation: "test_templates"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       test_templates: {
         Row: {
-          categorias: Json | null
+          ativo: boolean | null
+          conteudo: Json | null
           created_at: string
           created_by: string | null
-          descricao: string | null
           empresa_id: string | null
           id: string
           is_global: boolean | null
-          logica_calculo: string | null
           nome: string
-          status: string
+          status: string | null
           tipo: string
           updated_at: string
-          versao: number
+          versao: number | null
         }
         Insert: {
-          categorias?: Json | null
+          ativo?: boolean | null
+          conteudo?: Json | null
           created_at?: string
           created_by?: string | null
-          descricao?: string | null
           empresa_id?: string | null
           id?: string
           is_global?: boolean | null
-          logica_calculo?: string | null
           nome: string
-          status?: string
-          tipo?: string
+          status?: string | null
+          tipo: string
           updated_at?: string
-          versao?: number
+          versao?: number | null
         }
         Update: {
-          categorias?: Json | null
+          ativo?: boolean | null
+          conteudo?: Json | null
           created_at?: string
           created_by?: string | null
-          descricao?: string | null
           empresa_id?: string | null
           id?: string
           is_global?: boolean | null
-          logica_calculo?: string | null
           nome?: string
-          status?: string
+          status?: string | null
           tipo?: string
           updated_at?: string
-          versao?: number
+          versao?: number | null
         }
         Relationships: [
           {
