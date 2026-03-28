@@ -695,6 +695,152 @@ export type Database = {
           },
         ]
       }
+      employee_test_results: {
+        Row: {
+          colaborador_id: string | null
+          created_at: string
+          created_by: string | null
+          data_teste: string | null
+          empresa_id: string
+          id: string
+          observacoes: string | null
+          resultado: string | null
+          tipo: string
+        }
+        Insert: {
+          colaborador_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          data_teste?: string | null
+          empresa_id: string
+          id?: string
+          observacoes?: string | null
+          resultado?: string | null
+          tipo: string
+        }
+        Update: {
+          colaborador_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          data_teste?: string | null
+          empresa_id?: string
+          id?: string
+          observacoes?: string | null
+          resultado?: string | null
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_test_results_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_test_results_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      empresa_contratos: {
+        Row: {
+          created_at: string
+          data_fim: string | null
+          data_inicio: string | null
+          empresa_id: string
+          id: string
+          plano_id: string | null
+          status: string | null
+          updated_at: string
+          valor: number | null
+        }
+        Insert: {
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          empresa_id: string
+          id?: string
+          plano_id?: string | null
+          status?: string | null
+          updated_at?: string
+          valor?: number | null
+        }
+        Update: {
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          empresa_id?: string
+          id?: string
+          plano_id?: string | null
+          status?: string | null
+          updated_at?: string
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "empresa_contratos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "empresa_contratos_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "planos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      empresa_pagamentos: {
+        Row: {
+          created_at: string
+          data_pagamento: string | null
+          data_vencimento: string | null
+          descricao: string | null
+          empresa_id: string
+          id: string
+          status: string | null
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento?: string | null
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          status?: string | null
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento?: string | null
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          status?: string | null
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "empresa_pagamentos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       empresas: {
         Row: {
           ativa: boolean
@@ -711,12 +857,14 @@ export type Database = {
           endereco_uf: string | null
           grau_risco: number | null
           id: string
+          logo_url: string | null
           nome_fantasia: string | null
           plano_id: string | null
           razao_social: string
           responsavel_email: string | null
           responsavel_nome: string | null
           responsavel_telefone: string | null
+          status_financeiro: string | null
           updated_at: string
         }
         Insert: {
@@ -734,12 +882,14 @@ export type Database = {
           endereco_uf?: string | null
           grau_risco?: number | null
           id?: string
+          logo_url?: string | null
           nome_fantasia?: string | null
           plano_id?: string | null
           razao_social: string
           responsavel_email?: string | null
           responsavel_nome?: string | null
           responsavel_telefone?: string | null
+          status_financeiro?: string | null
           updated_at?: string
         }
         Update: {
@@ -757,12 +907,14 @@ export type Database = {
           endereco_uf?: string | null
           grau_risco?: number | null
           id?: string
+          logo_url?: string | null
           nome_fantasia?: string | null
           plano_id?: string | null
           razao_social?: string
           responsavel_email?: string | null
           responsavel_nome?: string | null
           responsavel_telefone?: string | null
+          status_financeiro?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -821,6 +973,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "faturamento_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_templates: {
+        Row: {
+          ativo: boolean | null
+          conteudo: Json | null
+          created_at: string
+          created_by: string | null
+          empresa_id: string | null
+          id: string
+          is_global: boolean | null
+          nome: string
+          status: string | null
+          tipo: string
+          updated_at: string
+          versao: number | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          conteudo?: Json | null
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string | null
+          id?: string
+          is_global?: boolean | null
+          nome: string
+          status?: string | null
+          tipo: string
+          updated_at?: string
+          versao?: number | null
+        }
+        Update: {
+          ativo?: boolean | null
+          conteudo?: Json | null
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string | null
+          id?: string
+          is_global?: boolean | null
+          nome?: string
+          status?: string | null
+          tipo?: string
+          updated_at?: string
+          versao?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_templates_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -1286,6 +1491,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "setores_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_templates: {
+        Row: {
+          ativo: boolean | null
+          conteudo: Json | null
+          created_at: string
+          created_by: string | null
+          empresa_id: string | null
+          id: string
+          is_global: boolean | null
+          nome: string
+          status: string | null
+          tipo: string
+          updated_at: string
+          versao: number | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          conteudo?: Json | null
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string | null
+          id?: string
+          is_global?: boolean | null
+          nome: string
+          status?: string | null
+          tipo: string
+          updated_at?: string
+          versao?: number | null
+        }
+        Update: {
+          ativo?: boolean | null
+          conteudo?: Json | null
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string | null
+          id?: string
+          is_global?: boolean | null
+          nome?: string
+          status?: string | null
+          tipo?: string
+          updated_at?: string
+          versao?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_templates_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
