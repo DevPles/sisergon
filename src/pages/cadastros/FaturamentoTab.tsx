@@ -17,7 +17,6 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
 const MODULOS = ['AEP', 'AET', 'Psicossocial', 'PCMSO', 'Checklists', 'Testes', 'Documentos', 'Financeiro'];
-const MP_PUBLIC_KEY = (import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY as string | undefined) || 'APP_USR-ce10673d-2fbf-45c9-af70-724c0f36016a';
 
 /* ───── Planos e Assinaturas ───── */
 const PlanosSection = ({ empresaId }: { empresaId: string }) => {
