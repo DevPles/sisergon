@@ -399,13 +399,13 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                       {industryProfile.topRisks.map(r => (
                         <p key={r} className="text-xs text-gray-600">● {r}</p>
                       ))}
-                  </motion.div>
+                    </div>
                     <div className="mt-3 flex gap-1 flex-wrap">
                       {industryProfile.commonNRs.map(nr => (
                         <span key={nr} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">{nr}</span>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
                 )}
               </div>
             )}
