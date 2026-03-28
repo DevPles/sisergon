@@ -172,6 +172,12 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
               {assinatura.status}
             </Badge>
           </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Pagamento</p>
+            <Badge variant={assinatura.pagamento_recorrente ? 'default' : 'secondary'}>
+              {assinatura.pagamento_recorrente ? `Recorrente (dia ${assinatura.dia_cobranca || 1})` : 'Pontual'}
+            </Badge>
+          </div>
           <div className="col-span-2 md:col-span-4">
             <p className="text-xs text-muted-foreground mb-1">Módulos Ativos</p>
             <div className="flex flex-wrap gap-1">
