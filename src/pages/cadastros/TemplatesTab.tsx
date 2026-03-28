@@ -70,16 +70,26 @@ interface TemplateEditorProps {
   onSaved: () => void;
 }
 
-const TemplateEditorModal = ({ editId, empresaId, open, onClose, onSaved }: TemplateEditorProps) => {
+const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClose, onSaved }: TemplateEditorProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
 
   const [form, setForm] = useState({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
+  const [selectedEmpresaId, setSelectedEmpresaId] = useState(initialEmpresaId || '__global__');
   const [stages, setStages] = useState<StageLocal[]>([]);
   const [behavioralQuestions, setBehavioralQuestions] = useState<BehavioralQuestion[]>([]);
   const [behavioralEnabled, setBehavioralEnabled] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(!editId);
+
+  const { data: empresasModal } = useQuery({
+    queryKey: ['empresas-modal-templates'],
+    queryFn: async () => {
+      const { data } = await supabase.from('empresas').select('id, razao_social').eq('ativa', true).order('razao_social');
+      return data ?? [];
+    },
+    enabled: open,
+  });
 
   // Load existing template data
   useEffect(() => {
