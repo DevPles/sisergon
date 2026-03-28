@@ -67,10 +67,6 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
   const [contratoForm, setContratoForm] = useState({ nome: '', tipo: 'contrato_inicial', data_assinatura: '', validade: '', status: 'vigente' });
   const [file, setFile] = useState<File | null>(null);
 
-  if (!selectedEmpresa) {
-    return <p className="text-sm text-muted-foreground py-8 text-center">Selecione uma empresa para gerenciar o faturamento.</p>;
-  }
-
   // ═══ QUERIES ═══
   const { data: planosCadastrados } = useQuery({
     queryKey: ['planos-cadastrados'],
