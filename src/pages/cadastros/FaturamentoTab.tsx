@@ -390,6 +390,10 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
   const totalPendente = allPayments.filter(p => p.status === 'pendente').reduce((s, p) => s + Number(p.valor), 0);
 
   // ═══ RENDER ═══
+  if (!selectedEmpresa) {
+    return <p className="text-sm text-muted-foreground py-8 text-center">Selecione uma empresa para gerenciar o faturamento.</p>;
+  }
+
   return (
     <div className="space-y-6">
       {/* ─── KPI Cards ─── */}
