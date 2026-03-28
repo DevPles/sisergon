@@ -589,7 +589,7 @@ const FILTER_STATUS = [
   { value: 'inativo', label: 'Inativo' },
 ];
 
-const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChange, externalNewTrigger }: TemplatesTabProps = {}) => {
+const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChange, externalNewTrigger, externalShowFilters }: TemplatesTabProps = {}) => {
   const { user, isAdmin, isConsultor } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
