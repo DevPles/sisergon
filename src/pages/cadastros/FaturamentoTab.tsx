@@ -102,6 +102,9 @@ const PlanosSection = ({ empresaId }: { empresaId: string }) => {
         limite_empresas_vinculadas: assinatura.limite_empresas_vinculadas?.toString() || '',
         modulos_ativos: assinatura.modulos_ativos || [],
         status: assinatura.status || 'ativo',
+        pagamento_recorrente: assinatura.pagamento_recorrente || false,
+        metodo_pagamento: assinatura.metodo_pagamento || 'boleto',
+        dia_cobranca: assinatura.dia_cobranca?.toString() || '1',
       });
     }
     setShowForm(true);
