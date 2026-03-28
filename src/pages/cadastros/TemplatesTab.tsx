@@ -12,8 +12,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { getDefaultStagesForType } from '@/utils/defaultTemplates';
+import { MoreHorizontal } from 'lucide-react';
 
 const TIPOS_TEMPLATE = [
   { value: 'aep', label: 'AEP' },
@@ -932,28 +934,28 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-1.5 flex-wrap">
-                      <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => openEdit(t.id)}>Editar</Button>
-                      {t.status === 'ativo' && !t.is_default && (
-                        <Button variant="outline" size="sm" className="h-7 text-xs border-accent text-accent hover:bg-accent/10" onClick={() => setAsDefault.mutate(t)}>
-                          Def. Padrão
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-7 w-7 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
                         </Button>
-                      )}
-                      {t.is_default && (
-                        <Button variant="outline" size="sm" className="h-7 text-xs border-warning text-warning hover:bg-warning/10" onClick={() => removeDefault.mutate(t.id)}>
-                          Remover Padrão
-                        </Button>
-                      )}
-                      <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => duplicateTemplate.mutate(t.id)}>Duplicar</Button>
-                      {t.status === 'ativo' && (
-                        <Button variant="outline" size="sm" className="h-7 text-xs border-warning text-warning hover:bg-warning/10" onClick={() => archiveTemplate.mutate(t.id)}>
-                          Arquivar
-                        </Button>
-                      )}
-                      <Button variant="outline" size="sm" className="h-7 text-xs border-destructive text-destructive hover:bg-destructive/10" onClick={() => deleteTemplate.mutate(t)}>
-                        Excluir
-                      </Button>
-                    </div>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-44">
+                        <DropdownMenuItem onClick={() => openEdit(t.id)}>Editar</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => duplicateTemplate.mutate(t.id)}>Duplicar</DropdownMenuItem>
+                        {t.status === 'ativo' && !t.is_default && (
+                          <DropdownMenuItem onClick={() => setAsDefault.mutate(t)}>Definir Padrão</DropdownMenuItem>
+                        )}
+                        {t.is_default && (
+                          <DropdownMenuItem onClick={() => removeDefault.mutate(t.id)} className="text-warning">Remover Padrão</DropdownMenuItem>
+                        )}
+                        {t.status === 'ativo' && (
+                          <DropdownMenuItem onClick={() => archiveTemplate.mutate(t.id)} className="text-warning">Arquivar</DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => deleteTemplate.mutate(t)} className="text-destructive">Excluir</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               );
