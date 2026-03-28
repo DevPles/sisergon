@@ -570,7 +570,7 @@ interface TemplatesTabProps {
 }
 
 const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChange, externalNewTrigger }: TemplatesTabProps = {}) => {
-  const { user } = useAuth();
+  const { user, isAdmin, isConsultor } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [internalEmpresa, setInternalEmpresa] = useState('');
@@ -580,8 +580,15 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const { data: empresas } = useQuery({
-    queryKey: ['empresas-templates'],
+    queryKey: ['empresas-templates', user?.id, isConsultor],
     queryFn: async () => {
+      if (isConsultor && !isAdmin && user?.id) {
+        const { data: links } = await supabase.from('consultor_empresas').select('empresa_id').eq('user_id', user.id).eq('ativo', true);
+        const ids = (links || []).map(l => l.empresa_id);
+        if (ids.length === 0) return [];
+        const { data } = await supabase.from('empresas').select('id, razao_social, nome_fantasia').in('id', ids).eq('ativa', true).order('razao_social');
+        return data ?? [];
+      }
       const { data } = await supabase.from('empresas').select('id, razao_social, nome_fantasia').eq('ativa', true).order('razao_social');
       return data ?? [];
     },
