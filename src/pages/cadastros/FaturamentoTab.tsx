@@ -433,7 +433,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-destructive/10"><AlertTriangle className="h-5 w-5 text-destructive" /></div>
+            <div>
             <div>
               <p className="text-xs text-muted-foreground">Status</p>
               <Select value={empresa?.status_financeiro || 'adimplente'} onValueChange={v => updateStatusFinanceiro.mutate(v)}>
