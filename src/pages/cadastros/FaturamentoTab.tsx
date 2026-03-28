@@ -414,46 +414,34 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
       {/* ─── KPI Cards ─── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div>
-            <div>
-              <p className="text-xs text-muted-foreground">Recebido</p>
-              <p className="text-lg font-bold text-foreground">R$ {totalRecebido.toFixed(2)}</p>
-            </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Recebido</p>
+            <p className="text-lg font-bold text-foreground">R$ {totalRecebido.toFixed(2)}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div>
-            <div>
-              <p className="text-xs text-muted-foreground">Pendente</p>
-              <p className="text-lg font-bold text-foreground">R$ {totalPendente.toFixed(2)}</p>
-            </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Pendente</p>
+            <p className="text-lg font-bold text-foreground">R$ {totalPendente.toFixed(2)}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div>
-            <div>
-              <p className="text-xs text-muted-foreground">Status</p>
-              <Select value={empresa?.status_financeiro || 'adimplente'} onValueChange={v => updateStatusFinanceiro.mutate(v)}>
-                <SelectTrigger className="h-7 text-xs border-0 p-0 shadow-none"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="adimplente">Adimplente</SelectItem>
-                  <SelectItem value="inadimplente">Inadimplente</SelectItem>
-                  <SelectItem value="em_atraso">Em Atraso</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Status</p>
+            <Select value={empresa?.status_financeiro || 'adimplente'} onValueChange={v => updateStatusFinanceiro.mutate(v)}>
+              <SelectTrigger className="h-7 text-xs border-0 p-0 shadow-none"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="adimplente">Adimplente</SelectItem>
+                <SelectItem value="inadimplente">Inadimplente</SelectItem>
+                <SelectItem value="em_atraso">Em Atraso</SelectItem>
+              </SelectContent>
+            </Select>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div>
-            <div>
-              <p className="text-xs text-muted-foreground">Próx. Cobrança</p>
-              <p className="text-sm font-medium text-foreground">{empresa?.proxima_cobranca || '—'}</p>
-            </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Próx. Cobrança</p>
+            <p className="text-sm font-medium text-foreground">{empresa?.proxima_cobranca || '—'}</p>
           </CardContent>
         </Card>
       </div>
