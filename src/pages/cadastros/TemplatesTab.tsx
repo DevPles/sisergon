@@ -70,16 +70,26 @@ interface TemplateEditorProps {
   onSaved: () => void;
 }
 
-const TemplateEditorModal = ({ editId, empresaId, open, onClose, onSaved }: TemplateEditorProps) => {
+const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClose, onSaved }: TemplateEditorProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
 
   const [form, setForm] = useState({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
+  const [selectedEmpresaId, setSelectedEmpresaId] = useState(initialEmpresaId || '__global__');
   const [stages, setStages] = useState<StageLocal[]>([]);
   const [behavioralQuestions, setBehavioralQuestions] = useState<BehavioralQuestion[]>([]);
   const [behavioralEnabled, setBehavioralEnabled] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loaded, setLoaded] = useState(!editId);
+
+  const { data: empresasModal } = useQuery({
+    queryKey: ['empresas-modal-templates'],
+    queryFn: async () => {
+      const { data } = await supabase.from('empresas').select('id, razao_social').eq('ativa', true).order('razao_social');
+      return data ?? [];
+    },
+    enabled: open,
+  });
 
   // Load existing template data
   useEffect(() => {
@@ -144,7 +154,7 @@ const TemplateEditorModal = ({ editId, empresaId, open, onClose, onSaved }: Temp
       setStages(loadedStages);
 
       // Load DISC test
-      const realEmpresaId = (t as any)?.empresa_id || empresaId;
+      const realEmpresaId = (t as any)?.empresa_id || selectedEmpresaId;
       if (realEmpresaId && realEmpresaId !== '__global__') {
         const { data: disc } = await supabase.from('test_templates' as any).select('*')
           .eq('empresa_id', realEmpresaId).eq('tipo', 'disc').limit(1).maybeSingle();
@@ -173,6 +183,7 @@ const TemplateEditorModal = ({ editId, empresaId, open, onClose, onSaved }: Temp
   useEffect(() => {
     if (!open) {
       setForm({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
+      setSelectedEmpresaId(initialEmpresaId || '__global__');
       setStages([]);
       setBehavioralQuestions([]);
       setBehavioralEnabled(false);
@@ -186,11 +197,11 @@ const TemplateEditorModal = ({ editId, empresaId, open, onClose, onSaved }: Temp
     setSaving(true);
     try {
       let templateId = editId;
-      const isGlobal = !empresaId || empresaId === '__global__';
+      const isGlobal = !selectedEmpresaId || selectedEmpresaId === '__global__';
       const payload: any = {
         nome: form.nome, tipo: form.tipo, descricao: form.descricao || null,
         status: form.status, modulo_destino: form.tipo,
-        empresa_id: isGlobal ? null : empresaId,
+        empresa_id: isGlobal ? null : selectedEmpresaId,
         is_global: isGlobal,
       };
 
@@ -249,7 +260,7 @@ const TemplateEditorModal = ({ editId, empresaId, open, onClose, onSaved }: Temp
         }
 
         // Save DISC test
-        const realEmpresaId = isGlobal ? null : empresaId;
+        const realEmpresaId = isGlobal ? null : selectedEmpresaId;
         if (realEmpresaId && behavioralEnabled) {
           // Delete existing DISC for this empresa
           const { data: existingDisc } = await supabase.from('test_templates' as any).select('id')
@@ -362,6 +373,16 @@ const TemplateEditorModal = ({ editId, empresaId, open, onClose, onSaved }: Temp
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Empresa *</Label>
+              <Select value={selectedEmpresaId} onValueChange={setSelectedEmpresaId}>
+                <SelectTrigger><SelectValue placeholder="Selecione a empresa" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__global__">Global (Padrão do Sistema)</SelectItem>
+                  {empresasModal?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Descrição</Label>
