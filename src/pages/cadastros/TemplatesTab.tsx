@@ -849,7 +849,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
       )}
 
 
-      {showFilters && (
+      {(showFilters || externalShowFilters) && (
         <div className="flex flex-wrap items-end gap-3 p-3 rounded-xl bg-muted/30 border border-border animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="min-w-[160px] space-y-1">
             <Label className="text-xs text-muted-foreground">Buscar</Label>
