@@ -913,7 +913,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
                   <TableCell>v{t.versao || 1}</TableCell>
                   <TableCell>
                     {t.status === 'ativo' && <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50">Ativo</Badge>}
-                    {t.status === 'arquivado' && <Badge className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-50">🟡 Arquivado</Badge>}
+                    {t.status === 'arquivado' && <Badge variant="outline" className="text-muted-foreground">Arquivado</Badge>}
                     {t.status === 'inativo' && <Badge variant="secondary">Inativo</Badge>}
                     {!['ativo', 'arquivado', 'inativo'].includes(t.status) && <Badge variant="secondary">{t.status}</Badge>}
                   </TableCell>
