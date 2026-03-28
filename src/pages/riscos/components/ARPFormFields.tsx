@@ -158,14 +158,26 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
     return true;
   }, [currentStep, empresaId, values, activeQuestions, totalPages]);
 
-  // Auto-advance when last question of page is answered
+  // Auto-advance when last question of page is answered (blocked after navigating back)
   useEffect(() => {
+    if (autoAdvanceBlocked) return;
     if (currentStep === 0 || currentStep > totalPages) return;
     if (isCurrentPageComplete && currentStep < totalSteps - 1) {
       const timer = setTimeout(() => setCurrentStep((s) => s + 1), 400);
       return () => clearTimeout(timer);
     }
-  }, [isCurrentPageComplete, currentStep, totalPages, totalSteps]);
+  }, [isCurrentPageComplete, currentStep, totalPages, totalSteps, autoAdvanceBlocked]);
+
+  // When user changes a value, unblock auto-advance
+  const handleValueChange = (questionIdx: number, val: number) => {
+    setAutoAdvanceBlocked(false);
+    setValues((prev) => ({ ...prev, [questionIdx]: val }));
+  };
+
+  const goBack = () => {
+    setAutoAdvanceBlocked(true);
+    setCurrentStep((s) => s - 1);
+  };
 
   const handleSave = async (finalize = false) => {
     if (!empresaId) { toast({ title: 'Selecione uma empresa', variant: 'destructive' }); return; }
