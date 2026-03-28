@@ -450,7 +450,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             </Card>
 
             <div className="flex flex-wrap gap-3 pb-4">
-              <Button variant="outline" onClick={() => setCurrentStep((s) => s - 1)}>
+              <Button variant="outline" onClick={goBack}>
                 <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
               </Button>
               {onCancel && <Button variant="outline" onClick={onCancel}>Cancelar</Button>}
