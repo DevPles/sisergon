@@ -32,7 +32,7 @@ import PCMSOPage from "./pages/pcmso/PCMSOPage";
 import AtestadosPage from "./pages/atestados/AtestadosPage";
 import DocumentosPage from "./pages/documentos/DocumentosPage";
 import NotificacoesPage from "./pages/notificacoes/NotificacoesPage";
-import FaturamentoDashboard from "./pages/faturamento/FaturamentoDashboard";
+
 import MeuPerfil from "./pages/perfil/MeuPerfil";
 import NotFound from "./pages/NotFound";
 
@@ -154,9 +154,7 @@ const App = () => (
               <Route path="/dashboard" element={
                 <RoleGuard allowed={['admin_master', 'consultor', 'empresa_admin', 'empresa_gestor']}><DashboardPage /></RoleGuard>
               } />
-              <Route path="/faturamento" element={
-                <RoleGuard allowed={['admin_master', 'consultor']}><FaturamentoDashboard /></RoleGuard>
-              } />
+              <Route path="/faturamento" element={<Navigate to="/cadastros" replace />} />
               <Route path="/configuracoes" element={
                 <RoleGuard allowed={['admin_master']}><ConfiguracoesPage /></RoleGuard>
               } />
