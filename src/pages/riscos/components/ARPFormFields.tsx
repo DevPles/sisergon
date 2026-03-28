@@ -403,7 +403,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                             {SCORE_LABELS.map((label, val) => (
                               <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
                                 className="min-w-[110px]"
-                                onClick={() => setValues((prev) => ({ ...prev, [i]: val }))}>{label}</Button>
+                                onClick={() => handleValueChange(i, val)}>{label}</Button>
                             ))}
                           </div>
                           <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={(e) => setComments((prev) => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
