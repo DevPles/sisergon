@@ -586,7 +586,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2"><FileText className="h-4 w-4" /> Contratos</CardTitle>
+            <CardTitle className="text-base">Contratos</CardTitle>
             <Button variant="outline" size="sm" onClick={() => setShowContratoForm(true)}
               className="rounded-full shadow-[0_4px_14px_0_hsl(var(--border)/0.4)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200">
               Novo Contrato
