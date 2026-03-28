@@ -252,6 +252,31 @@ const AEPForm = () => {
     return { blockScores, totalScore, classification };
   }, [values, activeBlocks]);
 
+  // Check if a block is fully answered
+  const isBlockComplete = (blockIndex: number) => {
+    const block = activeBlocks[blockIndex];
+    if (!block) return false;
+    return block.questions.every((_, i) => values[`${block.domain}-${i}`] !== undefined);
+  };
+
+  // How many blocks are unlocked (completed blocks + 1)
+  const unlockedUpTo = useMemo(() => {
+    let last = 0;
+    for (let i = 0; i < activeBlocks.length; i++) {
+      if (isBlockComplete(i)) {
+        last = i + 1;
+      } else {
+        break;
+      }
+    }
+    return last;
+  }, [values, activeBlocks]);
+
+  const progressPercent = useMemo(() => {
+    const completed = activeBlocks.filter((_, i) => isBlockComplete(i)).length;
+    return Math.round((completed / activeBlocks.length) * 100);
+  }, [values, activeBlocks]);
+
   const handleSave = async (finalize = false) => {
     if (!empresaId) {
       toast({ title: 'Selecione uma empresa', variant: 'destructive' });
