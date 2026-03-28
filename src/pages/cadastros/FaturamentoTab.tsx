@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { CreditCard, DollarSign, AlertTriangle, CheckCircle, FileText, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 const MODULOS = ['AEP', 'AET', 'Psicossocial', 'PCMSO', 'Checklists', 'Testes', 'Documentos', 'Financeiro'];
 
@@ -414,46 +414,34 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
       {/* ─── KPI Cards ─── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-primary/10"><CheckCircle className="h-5 w-5 text-primary" /></div>
-            <div>
-              <p className="text-xs text-muted-foreground">Recebido</p>
-              <p className="text-lg font-bold text-foreground">R$ {totalRecebido.toFixed(2)}</p>
-            </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Recebido</p>
+            <p className="text-lg font-bold text-foreground">R$ {totalRecebido.toFixed(2)}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-secondary/50"><DollarSign className="h-5 w-5 text-secondary-foreground" /></div>
-            <div>
-              <p className="text-xs text-muted-foreground">Pendente</p>
-              <p className="text-lg font-bold text-foreground">R$ {totalPendente.toFixed(2)}</p>
-            </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Pendente</p>
+            <p className="text-lg font-bold text-foreground">R$ {totalPendente.toFixed(2)}</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-destructive/10"><AlertTriangle className="h-5 w-5 text-destructive" /></div>
-            <div>
-              <p className="text-xs text-muted-foreground">Status</p>
-              <Select value={empresa?.status_financeiro || 'adimplente'} onValueChange={v => updateStatusFinanceiro.mutate(v)}>
-                <SelectTrigger className="h-7 text-xs border-0 p-0 shadow-none"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="adimplente">Adimplente</SelectItem>
-                  <SelectItem value="inadimplente">Inadimplente</SelectItem>
-                  <SelectItem value="em_atraso">Em Atraso</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Status</p>
+            <Select value={empresa?.status_financeiro || 'adimplente'} onValueChange={v => updateStatusFinanceiro.mutate(v)}>
+              <SelectTrigger className="h-7 text-xs border-0 p-0 shadow-none"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="adimplente">Adimplente</SelectItem>
+                <SelectItem value="inadimplente">Inadimplente</SelectItem>
+                <SelectItem value="em_atraso">Em Atraso</SelectItem>
+              </SelectContent>
+            </Select>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-accent/50"><CreditCard className="h-5 w-5 text-accent-foreground" /></div>
-            <div>
-              <p className="text-xs text-muted-foreground">Próx. Cobrança</p>
-              <p className="text-sm font-medium text-foreground">{empresa?.proxima_cobranca || '—'}</p>
-            </div>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Próx. Cobrança</p>
+            <p className="text-sm font-medium text-foreground">{empresa?.proxima_cobranca || '—'}</p>
           </CardContent>
         </Card>
       </div>
@@ -586,7 +574,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2"><FileText className="h-4 w-4" /> Contratos</CardTitle>
+            <CardTitle className="text-base">Contratos</CardTitle>
             <Button variant="outline" size="sm" onClick={() => setShowContratoForm(true)}
               className="rounded-full shadow-[0_4px_14px_0_hsl(var(--border)/0.4)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200">
               Novo Contrato
@@ -798,7 +786,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
               <>
                 <Separator />
                 <div className="space-y-3">
-                  <Label className="text-sm font-semibold flex items-center gap-2"><CreditCard className="h-4 w-4" /> Dados do Cartão (Recorrência)</Label>
+                  <Label className="text-sm font-semibold">Dados do Cartão (Recorrência)</Label>
                   <p className="text-xs text-muted-foreground">Estes dados serão enviados ao Mercado Pago para cobrança automática mensal.</p>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
