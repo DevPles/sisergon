@@ -416,7 +416,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             </Card>
 
             <div className="flex justify-between pb-4">
-              <Button variant="outline" onClick={() => setCurrentStep((s) => s - 1)}>
+              <Button variant="outline" onClick={goBack}>
                 <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
               </Button>
               <Button onClick={() => setCurrentStep((s) => s + 1)} disabled={!isCurrentPageComplete}>
