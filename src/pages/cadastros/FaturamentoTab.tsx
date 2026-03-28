@@ -449,7 +449,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-accent/50"><CreditCard className="h-5 w-5 text-accent-foreground" /></div>
+            <div>
             <div>
               <p className="text-xs text-muted-foreground">Próx. Cobrança</p>
               <p className="text-sm font-medium text-foreground">{empresa?.proxima_cobranca || '—'}</p>
