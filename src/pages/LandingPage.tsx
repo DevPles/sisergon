@@ -381,7 +381,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                 </div>
 
                 {industryProfile && (
-                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                  <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="p-4 bg-gray-50/80 rounded-lg border border-gray-200">
                     <span className="font-semibold text-gray-900 text-sm">Análise de risco: {industryProfile.label}</span>
                     <p className="text-sm text-gray-600 mt-1 mb-3">{industryProfile.insight}</p>
                     <div className="grid grid-cols-2 gap-3">
