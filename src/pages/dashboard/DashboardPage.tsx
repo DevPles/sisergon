@@ -562,7 +562,7 @@ const DashboardPage = () => {
                     const role = userRoles.find((r: any) => r.user_id === p.id);
                     const empresa = empresas.find((e: any) => e.id === p.empresa_id);
                     return (
-                      <TableRow key={p.id}>
+                      <TableRow key={p.id} className="cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => navigate('/configuracoes?tab=usuarios')}>
                         <TableCell className="font-medium">{p.full_name || '—'}</TableCell>
                         <TableCell>{p.email || '—'}</TableCell>
                         <TableCell>
