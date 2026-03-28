@@ -315,7 +315,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             <Card className="mb-4">
               <CardHeader className="pb-3"><CardTitle className="text-base">Identificação</CardTitle></CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <Label className="text-xs">Título</Label>
                     <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: ARP Setor Administrativo" />
