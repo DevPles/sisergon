@@ -372,7 +372,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                       <button
                         key={key}
                         onClick={() => setIndustry(key)}
-                        className={`p-3 rounded-xl border text-sm font-medium text-left transition-all ${industry === key ? 'border-gray-400 bg-gray-50 text-gray-900' : 'border-gray-100 text-gray-500 hover:border-gray-200'}`}
+                        className={`p-3 rounded-lg border text-sm font-medium text-left transition-all duration-150 ${industry === key ? 'border-gray-800 bg-gray-800/[0.04] text-gray-900 shadow-sm' : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700'}`}
                       >
                         {prof.label}
                       </button>
