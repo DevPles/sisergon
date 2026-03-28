@@ -89,8 +89,9 @@ const MeuPerfil = () => {
         .eq('id', user!.id);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['meu-perfil'] });
+      await refreshProfile();
       toast({ title: 'Perfil atualizado com sucesso' });
     },
     onError: (err: any) => {
