@@ -259,13 +259,6 @@ const AETForm = () => {
     return last;
   }, [sections, checklist, allSteps]);
 
-  // Auto-advance when section is completed
-  useEffect(() => {
-    if (isSectionComplete(activeStep) && activeStep < allSteps.length - 1) {
-      const timer = setTimeout(() => setActiveStep(s => s + 1), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [sections, checklist, activeStep]);
 
   const currentSectionData = activeStep < AET_SECTIONS.length ? AET_SECTIONS[activeStep] : null;
 
