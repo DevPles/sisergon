@@ -28,6 +28,11 @@ const LaudosList = () => {
 
   const typeLabel: Record<string, string> = { aep: 'AEP', aet: 'AET', arp: 'ARP' };
 
+  const getEditRoute = (type: string, id: string) => {
+    if (type === 'arp') return `/riscos-psicossociais/${id}`;
+    return `/${type}/${id}`;
+  };
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -79,20 +84,53 @@ const LaudosList = () => {
         <DialogContent className="max-w-lg">
           <DialogHeader><DialogTitle>Detalhes do Laudo</DialogTitle></DialogHeader>
           {selected && (
-            <div className="space-y-3 text-sm">
-              <div className="grid grid-cols-2 gap-3">
-                <div><span className="text-muted-foreground">Título:</span><p className="font-medium">{selected.title || 'Sem título'}</p></div>
-                <div><span className="text-muted-foreground">Tipo:</span><p><Badge variant="outline">{typeLabel[selected.type] || selected.type}</Badge></p></div>
-                <div><span className="text-muted-foreground">Empresa:</span><p className="font-medium">{(selected.empresas as any)?.razao_social || '—'}</p></div>
-                <div><span className="text-muted-foreground">Score Total:</span><p className="font-mono text-lg">{Number(selected.score_total).toFixed(1)}</p></div>
-                <div><span className="text-muted-foreground">Classificação de Risco:</span><p><Badge variant={selected.risk_classification === 'baixo' ? 'secondary' : selected.risk_classification === 'moderado' ? 'default' : 'destructive'}>{selected.risk_classification || '—'}</Badge></p></div>
-                <div><span className="text-muted-foreground">Versão:</span><p>v{selected.version}</p></div>
-                <div><span className="text-muted-foreground">Data Criação:</span><p>{format(new Date(selected.created_at), 'dd/MM/yyyy')}</p></div>
-                <div><span className="text-muted-foreground">Data Finalização:</span><p>{selected.finalized_at ? format(new Date(selected.finalized_at), 'dd/MM/yyyy') : '—'}</p></div>
+            <div className="space-y-4 text-sm">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Título</p>
+                  <p className="font-medium">{selected.title || 'Sem título'}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Tipo</p>
+                  <Badge variant="outline">{typeLabel[selected.type] || selected.type}</Badge>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Empresa</p>
+                  <p className="font-medium">{(selected.empresas as any)?.razao_social || '—'}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Score Total</p>
+                  <p className="font-mono text-lg font-bold">{Number(selected.score_total).toFixed(1)}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Classificação de Risco</p>
+                  <Badge variant={selected.risk_classification === 'baixo' ? 'secondary' : selected.risk_classification === 'moderado' ? 'default' : 'destructive'}>
+                    {selected.risk_classification || '—'}
+                  </Badge>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Versão</p>
+                  <p>v{selected.version}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Data Criação</p>
+                  <p>{format(new Date(selected.created_at), 'dd/MM/yyyy')}</p>
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-xs text-muted-foreground">Data Finalização</p>
+                  <p>{selected.finalized_at ? format(new Date(selected.finalized_at), 'dd/MM/yyyy') : '—'}</p>
+                </div>
               </div>
-              {selected.description && <div><span className="text-muted-foreground">Descrição:</span><p className="mt-1">{selected.description}</p></div>}
-              <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" size="sm" onClick={() => { setSelected(null); navigate(`/${selected.type}/${selected.id}`); }}>Abrir Avaliação</Button>
+              {selected.description && (
+                <div className="space-y-1 border-t pt-3">
+                  <p className="text-xs text-muted-foreground">Descrição</p>
+                  <p className="text-sm leading-relaxed max-h-40 overflow-y-auto whitespace-pre-wrap">{selected.description}</p>
+                </div>
+              )}
+              <div className="flex justify-end gap-2 pt-2 border-t">
+                <Button variant="outline" size="sm" onClick={() => { setSelected(null); navigate(getEditRoute(selected.type, selected.id)); }}>
+                  Abrir Avaliação
+                </Button>
               </div>
             </div>
           )}
