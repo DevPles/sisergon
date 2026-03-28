@@ -848,22 +848,6 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
         </div>
       )}
 
-      {/* Filter toggle when using external toolbar */}
-      {!showInternalToolbar && (
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setShowFilters(prev => !prev)} className="gap-1.5">
-            <span className="text-xs">Filtros</span>
-            {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
-              <Badge className="h-5 w-5 p-0 flex items-center justify-center text-[10px]">!</Badge>
-            )}
-          </Button>
-          {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
-            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => { setFilterTipo('__all__'); setFilterStatus('__all__'); setFilterPadrao('__all__'); setSearchName(''); }}>
-              Limpar
-            </Button>
-          )}
-        </div>
-      )}
 
       {showFilters && (
         <div className="flex flex-wrap items-end gap-3 p-3 rounded-xl bg-muted/30 border border-border animate-in fade-in slide-in-from-top-2 duration-200">
