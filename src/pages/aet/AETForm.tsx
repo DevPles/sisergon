@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,10 +13,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { generateAetPdf } from '@/utils/aetPdfReport';
 import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
+import { ChevronLeft, ChevronRight, Check, CircleDot, Circle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── NR-17 Compliant AET Structure ────────────────────────────────────────────
 
@@ -90,7 +93,6 @@ const AET_SECTIONS = [
   },
 ];
 
-// Checklist de conformidade NR-17
 const NR17_CHECKLIST = [
   { key: 'mobiliario_adequado', label: 'Mobiliário atende aos requisitos dimensionais (17.3)' },
   { key: 'equipamentos_adequados', label: 'Equipamentos de trabalho adaptados às características do trabalhador (17.4)' },
@@ -142,7 +144,12 @@ const AETForm = () => {
   const [sections, setSections] = useState<Record<string, string>>({});
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
-  const [activeSection, setActiveSection] = useState(AET_SECTIONS[0].key);
+  const [activeStep, setActiveStep] = useState(0);
+
+  const allSteps = useMemo(() => [
+    ...AET_SECTIONS.map(s => ({ type: 'section' as const, key: s.key, label: s.label.split('.')[0] + '.' })),
+    { type: 'checklist' as const, key: 'checklist', label: 'Check' },
+  ], []);
 
   // Dynamic template for AET
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'aet');
@@ -235,6 +242,32 @@ const AETForm = () => {
   const filledFields = AET_SECTIONS.reduce((acc, s) => acc + s.subsections.filter(sub => (sections[sub.key] || '').trim().length > 0).length, 0)
     + NR17_CHECKLIST.filter(c => checklist[c.key]).length;
   const progress = Math.round((filledFields / totalFields) * 100);
+
+  const isSectionComplete = (idx: number) => {
+    if (idx < AET_SECTIONS.length) {
+      return AET_SECTIONS[idx].subsections.every(sub => (sections[sub.key] || '').trim().length > 0);
+    }
+    return NR17_CHECKLIST.filter(c => checklist[c.key]).length >= Math.ceil(NR17_CHECKLIST.length * 0.5);
+  };
+
+  const unlockedUpTo = useMemo(() => {
+    let last = 0;
+    for (let i = 0; i < allSteps.length; i++) {
+      if (isSectionComplete(i)) last = i + 1;
+      else break;
+    }
+    return last;
+  }, [sections, checklist, allSteps]);
+
+  // Auto-advance when section is completed
+  useEffect(() => {
+    if (isSectionComplete(activeStep) && activeStep < allSteps.length - 1) {
+      const timer = setTimeout(() => setActiveStep(s => s + 1), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [sections, checklist, activeStep]);
+
+  const currentSectionData = activeStep < AET_SECTIONS.length ? AET_SECTIONS[activeStep] : null;
 
   const handleSave = async (finalize = false) => {
     if (!empresaId) {
@@ -395,13 +428,11 @@ const AETForm = () => {
         autoDownload: true,
       });
 
-      toast({ title: 'Laudo PDF da AET gerado com sucesso' });
+      toast({ title: 'Laudo AET gerado com sucesso' });
     } catch (err: any) {
       toast({ title: 'Erro ao gerar PDF da AET', description: err.message, variant: 'destructive' });
     }
   };
-
-  const currentSectionData = AET_SECTIONS.find(s => s.key === activeSection);
 
   return (
     <div>
@@ -414,39 +445,42 @@ const AETForm = () => {
         <Button variant="outline" onClick={() => navigate('/aet')}>Voltar</Button>
       </div>
 
-      {/* Progress bar */}
-      <Card className="mb-6 border-2 border-primary/20">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium">Progresso do preenchimento</p>
-            <Badge variant={progress >= 80 ? 'default' : progress >= 50 ? 'secondary' : 'outline'}>
-              {progress}% — {filledFields}/{totalFields} campos
-            </Badge>
-          </div>
-          <div className="w-full bg-muted rounded-full h-2">
-            <div
-              className="bg-primary rounded-full h-2 transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <div className="flex flex-wrap gap-2 mt-3">
-            {AET_SECTIONS.map((s) => {
-              const filled = s.subsections.filter(sub => (sections[sub.key] || '').trim().length > 0).length;
-              const total = s.subsections.length;
-              return (
-                <Badge
-                  key={s.key}
-                  variant={filled === total ? 'default' : filled > 0 ? 'secondary' : 'outline'}
-                  className="cursor-pointer text-xs"
-                  onClick={() => setActiveSection(s.key)}
-                >
-                  {s.label.split('.')[0]}. {filled}/{total}
-                </Badge>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Progress bar & stepper */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-muted-foreground">
+            Seção {activeStep + 1} de {allSteps.length}
+          </p>
+          <p className="text-sm text-muted-foreground">{progress}% concluído — {filledFields}/{totalFields} campos</p>
+        </div>
+        <Progress value={progress} className="h-2" />
+        <div className="flex gap-1.5 mt-3 flex-wrap">
+          {allSteps.map((step, idx) => {
+            const complete = isSectionComplete(idx);
+            const unlocked = idx <= unlockedUpTo;
+            const isCurrent = idx === activeStep;
+            return (
+              <button
+                key={step.key}
+                onClick={() => unlocked && setActiveStep(idx)}
+                disabled={!unlocked}
+                className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border transition-all ${
+                  isCurrent
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : complete
+                    ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
+                    : unlocked
+                    ? 'bg-muted text-muted-foreground border-border hover:bg-accent'
+                    : 'bg-muted/50 text-muted-foreground/40 border-transparent cursor-not-allowed'
+                }`}
+              >
+                {complete ? <Check className="h-3 w-3" /> : isCurrent ? <CircleDot className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
+                {step.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Identification */}
       <Card className="mb-6">
@@ -520,130 +554,105 @@ const AETForm = () => {
         </CardContent>
       </Card>
 
-      {/* Section navigation */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {AET_SECTIONS.map((s) => (
-          <Button
-            key={s.key}
-            variant={activeSection === s.key ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setActiveSection(s.key)}
-          >
-            {s.label.split('—')[0].trim()}
-          </Button>
-        ))}
-        <Button
-          variant={activeSection === 'checklist' ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setActiveSection('checklist')}
-        >
-          Checklist NR-17
-        </Button>
-      </div>
-
       {/* Active section content */}
-      {currentSectionData && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{currentSectionData.label}</CardTitle>
-            <p className="text-sm text-muted-foreground">{currentSectionData.description}</p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {currentSectionData.subsections.map((sub) => (
-                <div key={sub.key}>
-                  <Label className="text-sm font-semibold mb-2 block">{sub.label}</Label>
-                  <Textarea
-                    value={sections[sub.key] || ''}
-                    onChange={(e) => setSections((prev) => ({ ...prev, [sub.key]: e.target.value }))}
-                    rows={5}
-                    placeholder={sub.placeholder}
-                    className="text-sm"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {(sections[sub.key] || '').trim().length > 0
-                      ? `${(sections[sub.key] || '').trim().length} caracteres`
-                      : 'Não preenchido'}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeStep}
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -30 }}
+          transition={{ duration: 0.2 }}
+        >
+          {currentSectionData && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>{currentSectionData.label}</CardTitle>
+                <p className="text-sm text-muted-foreground">{currentSectionData.description}</p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {currentSectionData.subsections.map((sub) => (
+                    <div key={sub.key}>
+                      <Label className="text-sm font-semibold mb-2 block">{sub.label}</Label>
+                      <Textarea
+                        value={sections[sub.key] || ''}
+                        onChange={(e) => setSections((prev) => ({ ...prev, [sub.key]: e.target.value }))}
+                        rows={5}
+                        placeholder={sub.placeholder}
+                        className="text-sm"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {(sections[sub.key] || '').trim().length > 0
+                          ? `${(sections[sub.key] || '').trim().length} caracteres`
+                          : 'Não preenchido'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* NR-17 Compliance Checklist */}
+          {activeStep >= AET_SECTIONS.length && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Checklist de Conformidade NR-17</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Verifique os itens que foram avaliados e estão em conformidade durante esta análise.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {NR17_CHECKLIST.map((item) => (
+                    <div key={item.key} className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                      <Checkbox
+                        id={item.key}
+                        checked={checklist[item.key] || false}
+                        onCheckedChange={(checked) =>
+                          setChecklist((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                        className="mt-0.5"
+                      />
+                      <label htmlFor={item.key} className="text-sm cursor-pointer flex-1">
+                        {item.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 p-3 bg-muted rounded-lg">
+                  <p className="text-sm font-medium">
+                    {NR17_CHECKLIST.filter(c => checklist[c.key]).length} de {NR17_CHECKLIST.length} itens verificados
                   </p>
                 </div>
-              ))}
-            </div>
+              </CardContent>
+            </Card>
+          )}
 
-            {/* Navigation between sections */}
-            <div className="flex justify-between mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={AET_SECTIONS.findIndex(s => s.key === activeSection) === 0}
-                onClick={() => {
-                  const idx = AET_SECTIONS.findIndex(s => s.key === activeSection);
-                  if (idx > 0) setActiveSection(AET_SECTIONS[idx - 1].key);
-                }}
-              >
-                Seção anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const idx = AET_SECTIONS.findIndex(s => s.key === activeSection);
-                  if (idx < AET_SECTIONS.length - 1) setActiveSection(AET_SECTIONS[idx + 1].key);
-                  else setActiveSection('checklist');
-                }}
-              >
-                Próxima seção
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* NR-17 Compliance Checklist */}
-      {activeSection === 'checklist' && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Checklist de Conformidade NR-17</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Verifique os itens que foram avaliados e estão em conformidade durante esta análise.
-              Itens não marcados indicam pontos que necessitam de atenção ou não se aplicam.
+          {/* Navigation between sections */}
+          <div className="flex items-center justify-between mb-6">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveStep((s) => Math.max(0, s - 1))}
+              disabled={activeStep === 0}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" /> Anterior
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              {isSectionComplete(activeStep) ? '✓ Seção completa' : 'Preencha todos os campos para avançar'}
             </p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {NR17_CHECKLIST.map((item) => (
-                <div key={item.key} className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-                  <Checkbox
-                    id={item.key}
-                    checked={checklist[item.key] || false}
-                    onCheckedChange={(checked) =>
-                      setChecklist((prev) => ({ ...prev, [item.key]: !!checked }))
-                    }
-                    className="mt-0.5"
-                  />
-                  <label htmlFor={item.key} className="text-sm cursor-pointer flex-1">
-                    {item.label}
-                  </label>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 p-3 bg-muted rounded-lg">
-              <p className="text-sm font-medium">
-                {NR17_CHECKLIST.filter(c => checklist[c.key]).length} de {NR17_CHECKLIST.length} itens verificados
-              </p>
-            </div>
-
-            <div className="flex justify-start mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveSection(AET_SECTIONS[AET_SECTIONS.length - 1].key)}
-              >
-                Seção anterior
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveStep((s) => Math.min(allSteps.length - 1, s + 1))}
+              disabled={activeStep >= allSteps.length - 1 || !isSectionComplete(activeStep)}
+            >
+              Próximo <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Action buttons */}
       <div className="flex flex-wrap gap-4 mb-8">
