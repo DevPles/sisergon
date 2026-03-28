@@ -10,11 +10,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { generateAepPdf } from '@/utils/aepPdfReport';
 import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding';
 import { format } from 'date-fns';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
+import { ChevronLeft, ChevronRight, Check, CircleDot, Circle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // AEP Questions per block from the document
 const AEP_BLOCKS = [
@@ -130,6 +133,7 @@ const AEPForm = () => {
   const [values, setValues] = useState<Record<string, number>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
 
   // Try to load dynamic template for this empresa
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'aep');
@@ -246,6 +250,31 @@ const AEPForm = () => {
     totalScore = Math.round(totalScore * 100) / 100;
     const classification = classifyScore(totalScore);
     return { blockScores, totalScore, classification };
+  }, [values, activeBlocks]);
+
+  // Check if a block is fully answered
+  const isBlockComplete = (blockIndex: number) => {
+    const block = activeBlocks[blockIndex];
+    if (!block) return false;
+    return block.questions.every((_, i) => values[`${block.domain}-${i}`] !== undefined);
+  };
+
+  // How many blocks are unlocked (completed blocks + 1)
+  const unlockedUpTo = useMemo(() => {
+    let last = 0;
+    for (let i = 0; i < activeBlocks.length; i++) {
+      if (isBlockComplete(i)) {
+        last = i + 1;
+      } else {
+        break;
+      }
+    }
+    return last;
+  }, [values, activeBlocks]);
+
+  const progressPercent = useMemo(() => {
+    const completed = activeBlocks.filter((_, i) => isBlockComplete(i)).length;
+    return Math.round((completed / activeBlocks.length) * 100);
   }, [values, activeBlocks]);
 
   const handleSave = async (finalize = false) => {
@@ -519,53 +548,123 @@ const AEPForm = () => {
         </div>
       )}
 
-      {/* Question blocks — 2 columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        {activeBlocks.map((block) => (
-          <Card key={block.domain}>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base">{block.label}</CardTitle>
-                <Badge variant="outline" className="text-xs">Peso: {block.weight} | Score: {blockScores[block.domain]?.toFixed(1) ?? '0.0'}</Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {block.questions.map((q, i) => {
-                  const key = `${block.domain}-${i}`;
-                  return (
-                    <div key={key} className="border-b pb-3 last:border-b-0 last:pb-0">
-                      <p className="text-sm font-medium text-foreground mb-2">
-                        {i + 1}) {q}
-                      </p>
-                      <div className="flex flex-wrap gap-1 mb-1">
-                        {SCORE_LABELS.map((label, val) => (
-                          <Button
-                            key={val}
-                            type="button"
-                            variant={values[key] === val ? 'default' : 'outline'}
-                            size="sm"
-                            className="text-xs h-7 px-2"
-                            onClick={() => setValues((prev) => ({ ...prev, [key]: val }))}
-                          >
-                            {label}
-                          </Button>
-                        ))}
-                      </div>
-                      <Input
-                        placeholder="Observação (opcional)"
-                        value={comments[key] || ''}
-                        onChange={(e) => setComments((prev) => ({ ...prev, [key]: e.target.value }))}
-                        className="mt-1 h-8 text-sm"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Stepper progress */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-muted-foreground">
+            Bloco {activeStep + 1} de {activeBlocks.length}
+          </p>
+          <p className="text-sm text-muted-foreground">{progressPercent}% concluído</p>
+        </div>
+        <Progress value={progressPercent} className="h-2" />
+        <div className="flex gap-1.5 mt-3 flex-wrap">
+          {activeBlocks.map((block, idx) => {
+            const complete = isBlockComplete(idx);
+            const unlocked = idx <= unlockedUpTo;
+            const isCurrent = idx === activeStep;
+            return (
+              <button
+                key={block.domain}
+                onClick={() => unlocked && setActiveStep(idx)}
+                disabled={!unlocked}
+                className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border transition-all ${
+                  isCurrent
+                    ? 'bg-primary text-primary-foreground border-primary'
+                    : complete
+                    ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
+                    : unlocked
+                    ? 'bg-muted text-muted-foreground border-border hover:bg-accent'
+                    : 'bg-muted/50 text-muted-foreground/40 border-transparent cursor-not-allowed'
+                }`}
+              >
+                {complete ? <Check className="h-3 w-3" /> : isCurrent ? <CircleDot className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
+                {block.domain.slice(0, 4).toUpperCase()}
+              </button>
+            );
+          })}
+        </div>
       </div>
+
+      {/* Active block */}
+      <AnimatePresence mode="wait">
+        {activeBlocks[activeStep] && (
+          <motion.div
+            key={activeStep}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Card className="mb-6">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base">{activeBlocks[activeStep].label}</CardTitle>
+                  <Badge variant="outline" className="text-xs">
+                    Peso: {activeBlocks[activeStep].weight} | Score: {blockScores[activeBlocks[activeStep].domain]?.toFixed(1) ?? '0.0'}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {activeBlocks[activeStep].questions.map((q, i) => {
+                    const key = `${activeBlocks[activeStep].domain}-${i}`;
+                    return (
+                      <div key={key} className="border-b pb-3 last:border-b-0 last:pb-0">
+                        <p className="text-sm font-medium text-foreground mb-2">
+                          {i + 1}) {q}
+                        </p>
+                        <div className="flex flex-wrap gap-1 mb-1">
+                          {SCORE_LABELS.map((label, val) => (
+                            <Button
+                              key={val}
+                              type="button"
+                              variant={values[key] === val ? 'default' : 'outline'}
+                              size="sm"
+                              className="text-xs h-7 px-2"
+                              onClick={() => setValues((prev) => ({ ...prev, [key]: val }))}
+                            >
+                              {label}
+                            </Button>
+                          ))}
+                        </div>
+                        <Input
+                          placeholder="Observação (opcional)"
+                          value={comments[key] || ''}
+                          onChange={(e) => setComments((prev) => ({ ...prev, [key]: e.target.value }))}
+                          className="mt-1 h-8 text-sm"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Block navigation */}
+            <div className="flex items-center justify-between mb-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveStep((s) => Math.max(0, s - 1))}
+                disabled={activeStep === 0}
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" /> Anterior
+              </Button>
+              <p className="text-xs text-muted-foreground">
+                {isBlockComplete(activeStep) ? '✓ Bloco completo' : 'Responda todas as perguntas para avançar'}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveStep((s) => Math.min(activeBlocks.length - 1, s + 1))}
+                disabled={activeStep >= activeBlocks.length - 1 || !isBlockComplete(activeStep)}
+              >
+                Próximo <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Action buttons */}
       <div className="flex flex-wrap gap-4 mb-8">
