@@ -390,7 +390,17 @@ const FinanceiroSection = ({ empresaId }: { empresaId: string }) => {
       queryClient.invalidateQueries({ queryKey: ['empresa-pagamentos', empresaId] });
       toast({ title: 'Pagamento registrado' });
       setShowForm(false);
-      setForm({ valor: '', data_vencimento: '', forma_pagamento: '', observacoes: '', descricao: '', email_pagador: '' });
+      setForm({
+        valor: '',
+        data_vencimento: '',
+        forma_pagamento: '',
+        observacoes: '',
+        descricao: '',
+        email_pagador: '',
+        tipo_cobranca: 'pontual',
+        card_holder_name: '',
+        card_holder_cpf: '',
+      });
     },
     onError: (err: Error) => toast({ title: 'Erro', description: err.message, variant: 'destructive' }),
   });
