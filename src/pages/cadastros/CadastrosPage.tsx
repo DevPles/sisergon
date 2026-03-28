@@ -688,7 +688,7 @@ const CadastrosPage = () => {
             </TabsContent>
 
             <TabsContent value="templates" className="mt-0 p-6">
-              <TemplatesTab selectedEmpresa={templateEmpresa} onSelectedEmpresaChange={setTemplateEmpresa} externalNewTrigger={templateNewTrigger} />
+              <TemplatesTab selectedEmpresa={templateEmpresa} onSelectedEmpresaChange={setTemplateEmpresa} externalNewTrigger={templateNewTrigger} externalShowFilters={templateShowFilters} />
             </TabsContent>
 
 
