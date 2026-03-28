@@ -154,7 +154,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
       setStages(loadedStages);
 
       // Load DISC test
-      const realEmpresaId = (t as any)?.empresa_id || empresaId;
+      const realEmpresaId = (t as any)?.empresa_id || selectedEmpresaId;
       if (realEmpresaId && realEmpresaId !== '__global__') {
         const { data: disc } = await supabase.from('test_templates' as any).select('*')
           .eq('empresa_id', realEmpresaId).eq('tipo', 'disc').limit(1).maybeSingle();
