@@ -400,7 +400,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-green-500/10"><CheckCircle className="h-5 w-5 text-green-600" /></div>
+            <div className="p-2 rounded-full bg-primary/10"><CheckCircle className="h-5 w-5 text-primary" /></div>
             <div>
               <p className="text-xs text-muted-foreground">Recebido</p>
               <p className="text-lg font-bold text-foreground">R$ {totalRecebido.toFixed(2)}</p>
@@ -409,7 +409,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-yellow-500/10"><DollarSign className="h-5 w-5 text-yellow-600" /></div>
+            <div className="p-2 rounded-full bg-secondary/50"><DollarSign className="h-5 w-5 text-secondary-foreground" /></div>
             <div>
               <p className="text-xs text-muted-foreground">Pendente</p>
               <p className="text-lg font-bold text-foreground">R$ {totalPendente.toFixed(2)}</p>
@@ -418,7 +418,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-red-500/10"><AlertTriangle className="h-5 w-5 text-red-600" /></div>
+            <div className="p-2 rounded-full bg-destructive/10"><AlertTriangle className="h-5 w-5 text-destructive" /></div>
             <div>
               <p className="text-xs text-muted-foreground">Status</p>
               <Select value={empresa?.status_financeiro || 'adimplente'} onValueChange={v => updateStatusFinanceiro.mutate(v)}>
@@ -434,7 +434,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
         </Card>
         <Card>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-full bg-blue-500/10"><CreditCard className="h-5 w-5 text-blue-600" /></div>
+            <div className="p-2 rounded-full bg-accent/50"><CreditCard className="h-5 w-5 text-accent-foreground" /></div>
             <div>
               <p className="text-xs text-muted-foreground">Próx. Cobrança</p>
               <p className="text-sm font-medium text-foreground">{empresa?.proxima_cobranca || '—'}</p>
