@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import logoErgon from '@/assets/logo-ergon.png';
 
 const Login = () => {
@@ -12,8 +14,10 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { signIn } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,12 +49,23 @@ const Login = () => {
           style={{ background: '#dde2e8' }}
         >
           <div
-            className="w-full max-w-sm p-8 rounded-[22px] text-center"
+            className="w-full max-w-sm p-8 rounded-[22px] text-center relative"
             style={{
               background: '#dde2e8',
               boxShadow: '12px 12px 24px #a4afc2, -12px -12px 24px #ffffff',
             }}
           >
+            {/* Back to site */}
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="absolute top-4 left-4 p-2 rounded-full transition-all duration-200 hover:scale-105"
+              style={{ boxShadow: '4px 4px 8px #a4afc2, -4px -4px 8px #ffffff' }}
+              title="Voltar ao site"
+            >
+              <ArrowLeft size={16} color="#4c5563" />
+            </button>
+
             <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: 'Space Grotesk', color: '#4c5563' }}>
               Ergon Login
             </h2>
@@ -69,20 +84,29 @@ const Login = () => {
                   fontSize: '14px',
                 }}
               />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Senha"
-                className="w-full px-4 py-3 text-sm rounded-[22px] border-none outline-none"
-                style={{
-                  background: '#dde2e8',
-                  boxShadow: 'inset 9px 9px 18px #a4afc2, inset -9px -9px 18px #ffffff',
-                  color: '#4c5563',
-                  fontSize: '14px',
-                }}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Senha"
+                  className="w-full px-4 py-3 pr-12 text-sm rounded-[22px] border-none outline-none"
+                  style={{
+                    background: '#dde2e8',
+                    boxShadow: 'inset 9px 9px 18px #a4afc2, inset -9px -9px 18px #ffffff',
+                    color: '#4c5563',
+                    fontSize: '14px',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-white/30 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={16} color="#8896a8" /> : <Eye size={16} color="#8896a8" />}
+                </button>
+              </div>
               <button
                 type="submit"
                 disabled={submitting}
