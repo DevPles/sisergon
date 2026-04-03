@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,14 +12,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { AlertTriangle, Upload, FileText, Eye, Download, Clock, X } from 'lucide-react';
+import { AlertTriangle, Upload, FileText, Eye, Download, Clock, User } from 'lucide-react';
 
-/* ─── Labor law alert logic ───
-   Art. 75 do Decreto 3.048/99 + Art. 59 da Lei 8.213/91:
-   Se o colaborador acumula 15+ dias de afastamento (mesmo CID ou CID correlato)
-   dentro de um período de 60 dias, a empresa deve encaminhá-lo ao INSS para
-   perícia de auxílio-doença. Não fazê-lo configura risco trabalhista.
-*/
+/* ─── Labor law alert logic ─── */
 const CID_ALERT_DAYS_THRESHOLD = 15;
 const CID_ALERT_WINDOW_DAYS = 60;
 
@@ -34,39 +29,28 @@ interface CidAlert {
 
 function computeCidAlerts(atestados: any[]): CidAlert[] {
   const grouped: Record<string, any[]> = {};
-
   for (const a of atestados) {
     if (!a.cid || !a.colaborador_id) continue;
     const key = `${a.colaborador_id}::${a.cid.toUpperCase().trim()}`;
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(a);
   }
-
   const alerts: CidAlert[] = [];
-
   for (const [, group] of Object.entries(grouped)) {
-    const sorted = group.sort((a: any, b: any) =>
-      new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime()
-    );
-
-    // Sliding window: check if any 60-day window has 15+ days
+    const sorted = group.sort((a: any, b: any) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
     for (let i = 0; i < sorted.length; i++) {
       const windowStart = new Date(sorted[i].data_inicio);
       const windowEnd = new Date(windowStart);
       windowEnd.setDate(windowEnd.getDate() + CID_ALERT_WINDOW_DAYS);
-
       let totalDias = 0;
       const windowAtestados: any[] = [];
-
       for (let j = i; j < sorted.length; j++) {
         const start = new Date(sorted[j].data_inicio);
         if (start > windowEnd) break;
         totalDias += sorted[j].dias || 0;
         windowAtestados.push(sorted[j]);
       }
-
       if (totalDias >= CID_ALERT_DAYS_THRESHOLD) {
-        // Avoid duplicates for same colaborador+cid
         if (!alerts.find(a => a.colaborador_id === sorted[0].colaborador_id && a.cid === sorted[0].cid?.toUpperCase().trim())) {
           alerts.push({
             colaborador_id: sorted[0].colaborador_id,
@@ -81,8 +65,17 @@ function computeCidAlerts(atestados: any[]): CidAlert[] {
       }
     }
   }
-
   return alerts;
+}
+
+/** Auto-calc data_fim = data_inicio + dias - 1 */
+function calcEndDate(startDate: string, dias: string): string {
+  if (!startDate || !dias) return '';
+  const d = parseInt(dias);
+  if (isNaN(d) || d < 1) return '';
+  const date = new Date(startDate + 'T00:00:00');
+  date.setDate(date.getDate() + d - 1);
+  return date.toISOString().split('T')[0];
 }
 
 const AtestadosPage = () => {
@@ -93,6 +86,7 @@ const AtestadosPage = () => {
   const [selected, setSelected] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [timelineColaborador, setTimelineColaborador] = useState<{ id: string; nome: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
@@ -100,6 +94,26 @@ const AtestadosPage = () => {
     data_inicio: '', data_fim: '', tipo: 'nao_ocupacional', observacoes: '',
     file: null as File | null,
   });
+
+  // Auto-calc data_fim on create form
+  useEffect(() => {
+    if (form.data_inicio && form.dias) {
+      const end = calcEndDate(form.data_inicio, form.dias);
+      if (end && end !== form.data_fim) {
+        setForm(p => ({ ...p, data_fim: end }));
+      }
+    }
+  }, [form.data_inicio, form.dias]);
+
+  // Auto-calc data_fim on edit form
+  useEffect(() => {
+    if (editingItem?.data_inicio && editingItem?.dias) {
+      const end = calcEndDate(editingItem.data_inicio, editingItem.dias);
+      if (end && end !== editingItem.data_fim) {
+        setEditingItem((p: any) => p ? ({ ...p, data_fim: end }) : p);
+      }
+    }
+  }, [editingItem?.data_inicio, editingItem?.dias]);
 
   const { data: empresas = [] } = useQuery({
     queryKey: ['empresas-atestados'],
@@ -120,6 +134,17 @@ const AtestadosPage = () => {
     enabled: !!(form.empresa_id || editingItem?.empresa_id),
   });
 
+  // Colaboradores for timeline tab (based on empresa filter)
+  const { data: filteredColaboradores = [] } = useQuery({
+    queryKey: ['colaboradores-timeline', empresaFilter],
+    queryFn: async () => {
+      if (empresaFilter === 'all') return [];
+      const { data } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', empresaFilter).eq('status', 'ativo').order('nome_completo');
+      return data ?? [];
+    },
+    enabled: empresaFilter !== 'all',
+  });
+
   const { data: atestados = [] } = useQuery({
     queryKey: ['atestados', empresaFilter],
     queryFn: async () => {
@@ -135,16 +160,33 @@ const AtestadosPage = () => {
 
   const cidAlerts = useMemo(() => computeCidAlerts(atestados), [atestados]);
 
-  // Timeline: group by month
-  const timeline = useMemo(() => {
-    const grouped: Record<string, any[]> = {};
+  // Timeline for a specific colaborador
+  const colaboradorTimeline = useMemo(() => {
+    if (!timelineColaborador) return [];
+    return atestados
+      .filter(a => a.colaborador_id === timelineColaborador.id)
+      .sort((a, b) => new Date(b.data_inicio || b.created_at).getTime() - new Date(a.data_inicio || a.created_at).getTime());
+  }, [atestados, timelineColaborador]);
+
+  // Count atestados per colaborador
+  const atestadosPerColaborador = useMemo(() => {
+    const map: Record<string, number> = {};
     for (const a of atestados) {
-      const d = a.data_inicio ? new Date(a.data_inicio) : new Date(a.created_at);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(a);
+      if (a.colaborador_id) {
+        map[a.colaborador_id] = (map[a.colaborador_id] || 0) + 1;
+      }
     }
-    return Object.entries(grouped).sort(([a], [b]) => b.localeCompare(a));
+    return map;
+  }, [atestados]);
+
+  const totalDiasPerColaborador = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const a of atestados) {
+      if (a.colaborador_id) {
+        map[a.colaborador_id] = (map[a.colaborador_id] || 0) + (a.dias || 0);
+      }
+    }
+    return map;
   }, [atestados]);
 
   const uploadFile = async (file: File, atestadoId: string): Promise<string | null> => {
@@ -170,12 +212,9 @@ const AtestadosPage = () => {
         tipo: form.tipo, observacoes: form.observacoes || null,
       } as any).select('id').single();
       if (error) throw error;
-
       if (form.file && data?.id) {
         const path = await uploadFile(form.file, data.id);
-        if (path) {
-          await supabase.from('atestados').update({ arquivo_url: path } as any).eq('id', data.id);
-        }
+        if (path) await supabase.from('atestados').update({ arquivo_url: path } as any).eq('id', data.id);
       }
     },
     onSuccess: () => {
@@ -198,12 +237,10 @@ const AtestadosPage = () => {
         data_inicio: editingItem.data_inicio || null, data_fim: editingItem.data_fim || null,
         tipo: editingItem.tipo, observacoes: editingItem.observacoes || null,
       };
-
       if (editingItem.newFile) {
         const path = await uploadFile(editingItem.newFile, editingItem.id);
         if (path) updateData.arquivo_url = path;
       }
-
       const { error } = await supabase.from('atestados').update(updateData).eq('id', editingItem.id);
       if (error) throw error;
     },
@@ -216,10 +253,7 @@ const AtestadosPage = () => {
     onSuccess: () => { toast({ title: 'Atestado removido' }); setSelected(null); queryClient.invalidateQueries({ queryKey: ['atestados'] }); },
   });
 
-  const openEdit = (item: any) => {
-    setSelected(null);
-    setEditingItem({ ...item, dias: String(item.dias || 1), newFile: null });
-  };
+  const openEdit = (item: any) => { setSelected(null); setEditingItem({ ...item, dias: String(item.dias || 1), newFile: null }); };
 
   const viewFile = async (path: string) => {
     const url = await getFileUrl(path);
@@ -229,12 +263,7 @@ const AtestadosPage = () => {
 
   const downloadFile = async (path: string) => {
     const url = await getFileUrl(path);
-    if (url) {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = path.split('/').pop() || 'atestado';
-      a.click();
-    }
+    if (url) { const a = document.createElement('a'); a.href = url; a.download = path.split('/').pop() || 'atestado'; a.click(); }
   };
 
   const formatMonth = (key: string) => {
@@ -283,7 +312,7 @@ const AtestadosPage = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div><Label>Início</Label><Input type="date" value={form.data_inicio} onChange={e => setForm(p => ({ ...p, data_inicio: e.target.value }))} /></div>
-                  <div><Label>Fim</Label><Input type="date" value={form.data_fim} onChange={e => setForm(p => ({ ...p, data_fim: e.target.value }))} /></div>
+                  <div><Label>Fim (auto)</Label><Input type="date" value={form.data_fim} readOnly className="bg-muted/50" /></div>
                 </div>
                 <div>
                   <Label>Tipo</Label>
@@ -303,23 +332,12 @@ const AtestadosPage = () => {
                       <span className="text-sm text-muted-foreground">
                         {form.file ? form.file.name : 'Clique para anexar arquivo (PDF, imagem)'}
                       </span>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.png,.webp"
-                        className="hidden"
-                        onChange={e => {
-                          const f = e.target.files?.[0] || null;
-                          setForm(p => ({ ...p, file: f }));
-                        }}
-                      />
+                      <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" className="hidden"
+                        onChange={e => { const f = e.target.files?.[0] || null; setForm(p => ({ ...p, file: f })); }} />
                     </label>
                     {form.file && (
-                      <button
-                        type="button"
-                        className="text-xs text-destructive mt-1 hover:underline"
-                        onClick={() => { setForm(p => ({ ...p, file: null })); if (fileInputRef.current) fileInputRef.current.value = ''; }}
-                      >
+                      <button type="button" className="text-xs text-destructive mt-1 hover:underline"
+                        onClick={() => { setForm(p => ({ ...p, file: null })); if (fileInputRef.current) fileInputRef.current.value = ''; }}>
                         Remover arquivo
                       </button>
                     )}
@@ -344,7 +362,7 @@ const AtestadosPage = () => {
               Alertas de Afastamento — Encaminhamento ao INSS
             </CardTitle>
             <p className="text-xs text-muted-foreground">
-              Art. 75 do Decreto 3.048/99: colaboradores com 15+ dias de afastamento pelo mesmo CID em 60 dias devem ser encaminhados ao INSS para perícia de auxílio-doença.
+              Art. 75 do Decreto 3.048/99: colaboradores com 15+ dias de afastamento pelo mesmo CID em 60 dias devem ser encaminhados ao INSS.
             </p>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -352,15 +370,9 @@ const AtestadosPage = () => {
               <div key={i} className="flex items-start gap-3 p-3 bg-background rounded-lg border border-destructive/20">
                 <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
                 <div className="text-sm">
-                  <p className="font-medium">
-                    {alert.colaborador_nome} <span className="text-muted-foreground font-normal">({alert.empresa_nome})</span>
-                  </p>
-                  <p className="text-muted-foreground">
-                    CID <span className="font-mono font-semibold text-foreground">{alert.cid}</span> — {alert.total_dias} dias acumulados em {alert.atestados.length} atestado(s)
-                  </p>
-                  <p className="text-destructive text-xs mt-1 font-medium">
-                    ⚠ Requer encaminhamento ao INSS para perícia médica
-                  </p>
+                  <p className="font-medium">{alert.colaborador_nome} <span className="text-muted-foreground font-normal">({alert.empresa_nome})</span></p>
+                  <p className="text-muted-foreground">CID <span className="font-mono font-semibold text-foreground">{alert.cid}</span> — {alert.total_dias} dias acumulados</p>
+                  <p className="text-destructive text-xs mt-1 font-medium">⚠ Requer encaminhamento ao INSS</p>
                 </div>
               </div>
             ))}
@@ -410,16 +422,10 @@ const AtestadosPage = () => {
                       <TableCell onClick={e => e.stopPropagation()}>
                         {a.arquivo_url ? (
                           <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => viewFile(a.arquivo_url)} title="Visualizar">
-                              <Eye className="h-3.5 w-3.5" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => downloadFile(a.arquivo_url)} title="Baixar">
-                              <Download className="h-3.5 w-3.5" />
-                            </Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => viewFile(a.arquivo_url)} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => downloadFile(a.arquivo_url)} title="Baixar"><Download className="h-3.5 w-3.5" /></Button>
                           </div>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">—</span>
-                        )}
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -432,50 +438,41 @@ const AtestadosPage = () => {
           </Card>
         </TabsContent>
 
-        {/* Tab: Timeline */}
+        {/* Tab: Timeline — per colaborador */}
         <TabsContent value="timeline">
-          <div className="space-y-6">
-            {timeline.length === 0 && (
-              <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum atestado para exibir na timeline</CardContent></Card>
-            )}
-            {timeline.map(([monthKey, items]) => (
-              <div key={monthKey}>
-                <div className="flex items-center gap-2 mb-3">
-                  <Clock className="h-4 w-4 text-primary" />
-                  <h3 className="font-semibold text-sm">{formatMonth(monthKey)}</h3>
-                  <Badge variant="secondary" className="text-xs">{items.length} atestado(s)</Badge>
-                </div>
-                <div className="relative pl-6 border-l-2 border-muted space-y-3">
-                  {items.map((a: any) => (
-                    <div key={a.id} className="relative">
-                      <div className="absolute -left-[25px] top-2 w-3 h-3 rounded-full bg-primary border-2 border-background" />
-                      <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setSelected(a)}>
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <p className="font-medium text-sm">{a.colaboradores?.nome_completo || '—'}</p>
-                              <p className="text-xs text-muted-foreground">{a.empresas?.razao_social}</p>
-                            </div>
-                            <div className="text-right">
-                              <Badge variant="outline" className="text-xs">{a.dias} dia(s)</Badge>
-                              {a.cid && <p className="text-xs font-mono text-muted-foreground mt-1">CID: {a.cid}</p>}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                            <span>{a.data_inicio || '—'} → {a.data_fim || '—'}</span>
-                            <Badge variant={a.tipo === 'ocupacional' ? 'default' : 'secondary'} className="text-[10px]">
-                              {a.tipo === 'ocupacional' ? 'Ocupacional' : 'Não Ocup.'}
-                            </Badge>
-                            {a.arquivo_url && <FileText className="h-3.5 w-3.5 text-primary" />}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          {empresaFilter === 'all' ? (
+            <Card><CardContent className="py-8 text-center text-muted-foreground">Selecione uma empresa acima para ver a timeline por funcionário</CardContent></Card>
+          ) : filteredColaboradores.length === 0 ? (
+            <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum colaborador encontrado nesta empresa</CardContent></Card>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredColaboradores.map((c: any) => {
+                const count = atestadosPerColaborador[c.id] || 0;
+                const totalDias = totalDiasPerColaborador[c.id] || 0;
+                const hasAlert = cidAlerts.some(a => a.colaborador_id === c.id);
+                return (
+                  <Card
+                    key={c.id}
+                    className={`cursor-pointer hover:shadow-md transition-shadow ${hasAlert ? 'border-destructive/40' : ''}`}
+                    onClick={() => setTimelineColaborador({ id: c.id, nome: c.nome_completo })}
+                  >
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <User className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm truncate">{c.nome_completo}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {count} atestado(s) · {totalDias} dia(s)
+                        </p>
+                      </div>
+                      {hasAlert && <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </TabsContent>
 
         {/* Tab: Alertas */}
@@ -493,13 +490,10 @@ const AtestadosPage = () => {
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     Conforme o <strong>Art. 75 do Decreto 3.048/99</strong> e <strong>Art. 59 da Lei 8.213/91</strong>,
                     quando um colaborador acumula <strong>15 ou mais dias</strong> de afastamento pelo <strong>mesmo CID</strong> dentro
-                    de um período de <strong>60 dias</strong>, a empresa tem o dever de encaminhá-lo ao INSS para perícia médica
-                    e possível concessão de auxílio-doença (B31 ou B91). O não cumprimento pode gerar passivos trabalhistas
-                    e previdenciários, incluindo multas e ações judiciais.
+                    de <strong>60 dias</strong>, deve ser encaminhado ao INSS para perícia médica e possível auxílio-doença (B31/B91).
                   </p>
                 </CardContent>
               </Card>
-
               {cidAlerts.map((alert, i) => (
                 <Card key={i} className="border-destructive/30">
                   <CardContent className="p-4 space-y-3">
@@ -511,18 +505,9 @@ const AtestadosPage = () => {
                       <Badge variant="destructive">Ação necessária</Badge>
                     </div>
                     <div className="grid grid-cols-3 gap-4 text-sm">
-                      <div>
-                        <span className="text-muted-foreground text-xs">CID</span>
-                        <p className="font-mono font-semibold">{alert.cid}</p>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground text-xs">Total de dias</span>
-                        <p className="font-semibold text-destructive">{alert.total_dias} dias</p>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground text-xs">Atestados</span>
-                        <p className="font-semibold">{alert.atestados.length}</p>
-                      </div>
+                      <div><span className="text-muted-foreground text-xs">CID</span><p className="font-mono font-semibold">{alert.cid}</p></div>
+                      <div><span className="text-muted-foreground text-xs">Total de dias</span><p className="font-semibold text-destructive">{alert.total_dias} dias</p></div>
+                      <div><span className="text-muted-foreground text-xs">Atestados</span><p className="font-semibold">{alert.atestados.length}</p></div>
                     </div>
                     <div className="border-t pt-2">
                       <p className="text-xs text-muted-foreground mb-2">Atestados relacionados:</p>
@@ -541,6 +526,51 @@ const AtestadosPage = () => {
         </TabsContent>
       </Tabs>
 
+      {/* Timeline Modal per Colaborador */}
+      <Dialog open={!!timelineColaborador} onOpenChange={open => !open && setTimelineColaborador(null)}>
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary" />
+              Timeline — {timelineColaborador?.nome}
+            </DialogTitle>
+          </DialogHeader>
+          {colaboradorTimeline.length === 0 ? (
+            <p className="text-center text-muted-foreground py-6 text-sm">Nenhum atestado registrado para este colaborador</p>
+          ) : (
+            <div className="relative pl-6 border-l-2 border-muted space-y-4 py-2">
+              {colaboradorTimeline.map((a: any) => {
+                const d = a.data_inicio ? new Date(a.data_inicio) : new Date(a.created_at);
+                const monthLabel = formatMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+                return (
+                  <div key={a.id} className="relative">
+                    <div className="absolute -left-[25px] top-2 w-3 h-3 rounded-full bg-primary border-2 border-background" />
+                    <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => { setTimelineColaborador(null); setSelected(a); }}>
+                      <CardContent className="p-3 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">{monthLabel}</span>
+                          <Badge variant="outline" className="text-xs">{a.dias} dia(s)</Badge>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span>{a.data_inicio || '—'} → {a.data_fim || '—'}</span>
+                          {a.cid && <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">CID: {a.cid}</span>}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={a.tipo === 'ocupacional' ? 'default' : 'secondary'} className="text-[10px]">
+                            {a.tipo === 'ocupacional' ? 'Ocupacional' : 'Não Ocup.'}
+                          </Badge>
+                          {a.arquivo_url && <FileText className="h-3.5 w-3.5 text-primary" />}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* View Modal */}
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
         <DialogContent className="max-w-md">
@@ -557,24 +587,15 @@ const AtestadosPage = () => {
                 <div><span className="text-muted-foreground">Tipo:</span><p><Badge variant="outline">{selected.tipo === 'ocupacional' ? 'Ocupacional' : 'Não Ocupacional'}</Badge></p></div>
               </div>
               {selected.observacoes && <div><span className="text-muted-foreground">Observações:</span><p className="mt-1">{selected.observacoes}</p></div>}
-
-              {/* File section */}
               {selected.arquivo_url ? (
                 <div className="border rounded-lg p-3 bg-muted/30">
                   <p className="text-xs text-muted-foreground mb-2">Arquivo anexado</p>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="gap-1" onClick={() => viewFile(selected.arquivo_url)}>
-                      <Eye className="h-3.5 w-3.5" /> Visualizar
-                    </Button>
-                    <Button variant="outline" size="sm" className="gap-1" onClick={() => downloadFile(selected.arquivo_url)}>
-                      <Download className="h-3.5 w-3.5" /> Baixar
-                    </Button>
+                    <Button variant="outline" size="sm" className="gap-1" onClick={() => viewFile(selected.arquivo_url)}><Eye className="h-3.5 w-3.5" /> Visualizar</Button>
+                    <Button variant="outline" size="sm" className="gap-1" onClick={() => downloadFile(selected.arquivo_url)}><Download className="h-3.5 w-3.5" /> Baixar</Button>
                   </div>
                 </div>
-              ) : (
-                <p className="text-xs text-muted-foreground italic">Nenhum arquivo anexado</p>
-              )}
-
+              ) : <p className="text-xs text-muted-foreground italic">Nenhum arquivo anexado</p>}
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" size="sm" onClick={() => openEdit(selected)}>Editar</Button>
                 <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(selected.id)}>Excluir</Button>
@@ -596,7 +617,7 @@ const AtestadosPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div><Label>Início</Label><Input type="date" value={editingItem.data_inicio || ''} onChange={e => setEditingItem((p: any) => ({ ...p, data_inicio: e.target.value }))} /></div>
-                <div><Label>Fim</Label><Input type="date" value={editingItem.data_fim || ''} onChange={e => setEditingItem((p: any) => ({ ...p, data_fim: e.target.value }))} /></div>
+                <div><Label>Fim (auto)</Label><Input type="date" value={editingItem.data_fim || ''} readOnly className="bg-muted/50" /></div>
               </div>
               <div>
                 <Label>Tipo</Label>
@@ -614,33 +635,18 @@ const AtestadosPage = () => {
                   <div className="flex items-center gap-2 mt-1 mb-2">
                     <FileText className="h-4 w-4 text-primary" />
                     <span className="text-xs text-muted-foreground">Arquivo já anexado</span>
-                    <Button variant="ghost" size="sm" className="h-6 text-xs gap-1" onClick={() => viewFile(editingItem.arquivo_url)}>
-                      <Eye className="h-3 w-3" /> Ver
-                    </Button>
+                    <Button variant="ghost" size="sm" className="h-6 text-xs gap-1" onClick={() => viewFile(editingItem.arquivo_url)}><Eye className="h-3 w-3" /> Ver</Button>
                   </div>
                 )}
                 <label className="flex items-center gap-2 cursor-pointer border border-dashed border-muted-foreground/30 rounded-lg p-3 hover:bg-muted/50 transition-colors">
                   <Upload className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    {editingItem.newFile ? editingItem.newFile.name : 'Substituir / anexar novo arquivo'}
-                  </span>
-                  <input
-                    ref={editFileInputRef}
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png,.webp"
-                    className="hidden"
-                    onChange={e => {
-                      const f = e.target.files?.[0] || null;
-                      setEditingItem((p: any) => ({ ...p, newFile: f }));
-                    }}
-                  />
+                  <span className="text-sm text-muted-foreground">{editingItem.newFile ? editingItem.newFile.name : 'Substituir / anexar novo arquivo'}</span>
+                  <input ref={editFileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" className="hidden"
+                    onChange={e => { const f = e.target.files?.[0] || null; setEditingItem((p: any) => ({ ...p, newFile: f })); }} />
                 </label>
                 {editingItem.newFile && (
-                  <button
-                    type="button"
-                    className="text-xs text-destructive mt-1 hover:underline"
-                    onClick={() => { setEditingItem((p: any) => ({ ...p, newFile: null })); if (editFileInputRef.current) editFileInputRef.current.value = ''; }}
-                  >
+                  <button type="button" className="text-xs text-destructive mt-1 hover:underline"
+                    onClick={() => { setEditingItem((p: any) => ({ ...p, newFile: null })); if (editFileInputRef.current) editFileInputRef.current.value = ''; }}>
                     Remover novo arquivo
                   </button>
                 )}
