@@ -694,9 +694,28 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                           placeholder="(00) 00000-0000"
                         />
                       </div>
-                      <button type="submit" className="w-full py-3 bg-gray-800 text-white rounded-xl text-sm font-semibold hover:bg-gray-900 transition-colors">
-                        Enviar proposta
-                      </button>
+                      <div className="flex gap-3">
+                        <button type="submit" className="flex-1 py-3 bg-gray-800 text-white rounded-xl text-sm font-semibold hover:bg-gray-900 transition-colors">
+                          Enviar proposta
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const content = `PROPOSTA COMERCIAL — ERGON\n\nEmpresa: ${contactForm.empresa}\nContato: ${contactForm.nome}\nE-mail: ${contactForm.email}\nTelefone: ${contactForm.telefone}\n\nServiços: ${selectedServices.map(s => s.label).join(', ')}\nColaboradores: ${colaboradores}\nPeríodo: ${contractOption.label}\nValor mensal: R$ ${monthlyWithDiscount.toLocaleString('pt-BR')}\nTotal contrato: R$ ${totalContract.toLocaleString('pt-BR')}\n\nExposição sem sistema: R$ ${totalRiskExposure.toLocaleString('pt-BR')}\nEconomia potencial: R$ ${potentialSavings.toLocaleString('pt-BR')}`;
+                            const blob = new Blob([content], { type: 'text/plain' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `proposta-ergon-${(contactForm.empresa || 'empresa').replace(/\s+/g, '-').toLowerCase()}.txt`;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                          }}
+                          className="px-5 py-3 border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors flex items-center gap-2"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                          Gerar PDF
+                        </button>
+                      </div>
                     </form>
                   </>
                 )}
@@ -818,9 +837,9 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {painPoints.map((p, i) => (
               <ScrollText key={p.title} delay={i * 0.1}>
-                <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
+                <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 h-full flex flex-col min-h-[180px]">
                   <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: 'Space Grotesk' }}>{p.title}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">{p.text}</p>
+                  <p className="text-sm text-gray-600 leading-relaxed flex-1">{p.text}</p>
                 </div>
               </ScrollText>
             ))}
@@ -840,7 +859,7 @@ const LandingPage = () => {
           <div className="grid sm:grid-cols-2 gap-6">
             {solutionSteps.map((s, i) => (
               <ScrollText key={s.num} delay={i * 0.1} direction={i % 2 === 0 ? 'left' : 'right'}>
-                <div className="p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 hover:bg-white/15 transition-all duration-300 h-full flex flex-col">
+                <div className="p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 hover:bg-white/15 transition-all duration-300 h-full flex flex-col min-h-[180px]">
                   <span className="text-teal-400 text-2xl font-bold">{s.num}</span>
                   <h3 className="text-lg font-semibold text-white mt-2 mb-2" style={{ fontFamily: 'Space Grotesk' }}>{s.title}</h3>
                   <p className="text-sm text-gray-300 leading-relaxed flex-1">{s.text}</p>
