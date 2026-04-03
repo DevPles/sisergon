@@ -474,8 +474,8 @@ const AtestadosPage = () => {
                       </TableCell>
                     </TableRow>
                   ))}
-                  {atestados.length === 0 && (
-                    <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhum atestado registrado</TableCell></TableRow>
+                  {displayedAtestados.length === 0 && (
+                    <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhum atestado encontrado</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
