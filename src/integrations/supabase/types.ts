@@ -77,6 +77,90 @@ export type Database = {
           },
         ]
       }
+      afastamento_acoes: {
+        Row: {
+          cid: string
+          colaborador_id: string
+          created_at: string
+          created_by: string | null
+          data_encaminhamento: string | null
+          data_pericia: string | null
+          data_retorno_efetivo: string | null
+          data_retorno_previsto: string | null
+          empresa_id: string
+          evidencia_pericia_url: string | null
+          evidencia_retorno_url: string | null
+          evidencia_url: string | null
+          id: string
+          observacoes: string | null
+          parecer_retorno: string | null
+          restricoes_retorno: string | null
+          resultado_pericia: string | null
+          status: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          cid: string
+          colaborador_id: string
+          created_at?: string
+          created_by?: string | null
+          data_encaminhamento?: string | null
+          data_pericia?: string | null
+          data_retorno_efetivo?: string | null
+          data_retorno_previsto?: string | null
+          empresa_id: string
+          evidencia_pericia_url?: string | null
+          evidencia_retorno_url?: string | null
+          evidencia_url?: string | null
+          id?: string
+          observacoes?: string | null
+          parecer_retorno?: string | null
+          restricoes_retorno?: string | null
+          resultado_pericia?: string | null
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          cid?: string
+          colaborador_id?: string
+          created_at?: string
+          created_by?: string | null
+          data_encaminhamento?: string | null
+          data_pericia?: string | null
+          data_retorno_efetivo?: string | null
+          data_retorno_previsto?: string | null
+          empresa_id?: string
+          evidencia_pericia_url?: string | null
+          evidencia_retorno_url?: string | null
+          evidencia_url?: string | null
+          id?: string
+          observacoes?: string | null
+          parecer_retorno?: string | null
+          restricoes_retorno?: string | null
+          resultado_pericia?: string | null
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "afastamento_acoes_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "afastamento_acoes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessment_items: {
         Row: {
           assessment_id: string
