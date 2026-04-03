@@ -63,7 +63,49 @@ function ParallaxBg({ src, speed = 0.3, overlay }: { src: string; speed?: number
   );
 }
 
-/* ══════════════════════════════════════════════════════════════
+/* ── Rotating typewriter text ── */
+const ROTATING_WORDS = ['sua empresa', 'seu funcionário', 'sua equipe', 'seu negócio'];
+
+function RotatingText() {
+  const [index, setIndex] = useState(0);
+  const [displayed, setDisplayed] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const word = ROTATING_WORDS[index];
+    const speed = isDeleting ? 40 : 70;
+
+    if (!isDeleting && displayed === word) {
+      const pause = setTimeout(() => setIsDeleting(true), 1800);
+      return () => clearTimeout(pause);
+    }
+
+    if (isDeleting && displayed === '') {
+      setIsDeleting(false);
+      setIndex((i) => (i + 1) % ROTATING_WORDS.length);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setDisplayed(isDeleting ? word.slice(0, displayed.length - 1) : word.slice(0, displayed.length + 1));
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [displayed, isDeleting, index]);
+
+  return (
+    <span className="relative">
+      <span className="text-teal-400">{displayed}</span>
+      <motion.span
+        className="inline-block w-[3px] h-[1em] bg-teal-400 ml-0.5 align-middle"
+        animate={{ opacity: [1, 0] }}
+        transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
+      />
+    </span>
+  );
+}
+
+
    QUOTE SIMULATOR DATA
 ══════════════════════════════════════════════════════════════ */
 const MARKUP = 1.20;
