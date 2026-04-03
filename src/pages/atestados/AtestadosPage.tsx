@@ -125,6 +125,16 @@ const AtestadosPage = () => {
     },
   });
 
+  const { data: unidades = [] } = useQuery({
+    queryKey: ['unidades-atestados', empresaFilter],
+    queryFn: async () => {
+      if (empresaFilter === 'all') return [];
+      const { data } = await supabase.from('unidades').select('id, nome').eq('empresa_id', empresaFilter).eq('ativa', true).order('nome');
+      return data ?? [];
+    },
+    enabled: empresaFilter !== 'all',
+  });
+
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores-atestados', form.empresa_id || editingItem?.empresa_id],
     queryFn: async () => {
