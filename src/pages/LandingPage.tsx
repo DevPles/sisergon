@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import logoErgon from '@/assets/logo-ergon.png';
@@ -63,9 +63,49 @@ function ParallaxBg({ src, speed = 0.3, overlay }: { src: string; speed?: number
   );
 }
 
-/* ══════════════════════════════════════════════════════════════
-   QUOTE SIMULATOR DATA
-══════════════════════════════════════════════════════════════ */
+/* ── Rotating typewriter text ── */
+const ROTATING_WORDS = ['sua empresa', 'seu funcionário', 'sua equipe', 'seu negócio'];
+
+function RotatingText() {
+  const [index, setIndex] = useState(0);
+  const [displayed, setDisplayed] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const word = ROTATING_WORDS[index];
+    const speed = isDeleting ? 40 : 70;
+
+    if (!isDeleting && displayed === word) {
+      const pause = setTimeout(() => setIsDeleting(true), 1800);
+      return () => clearTimeout(pause);
+    }
+
+    if (isDeleting && displayed === '') {
+      setIsDeleting(false);
+      setIndex((i) => (i + 1) % ROTATING_WORDS.length);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setDisplayed(isDeleting ? word.slice(0, displayed.length - 1) : word.slice(0, displayed.length + 1));
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [displayed, isDeleting, index]);
+
+  return (
+    <span className="relative">
+      <span className="text-teal-400">{displayed}</span>
+      <motion.span
+        className="inline-block w-[3px] h-[1em] bg-teal-400 ml-0.5 align-middle"
+        animate={{ opacity: [1, 0] }}
+        transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
+      />
+    </span>
+  );
+}
+
+/* ── QUOTE SIMULATOR DATA ── */
 const MARKUP = 1.20;
 
 interface ServiceOption {
@@ -734,7 +774,7 @@ const LandingPage = () => {
           <ScrollText direction="up" className="max-w-xl">
             <p className="text-teal-400 text-sm font-semibold uppercase tracking-widest mb-4">Plataforma SST completa</p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.08] tracking-tight" style={{ fontFamily: 'Space Grotesk', textWrap: 'balance' as any }}>
-              Proteja sua empresa.<br />Documente tudo.
+              Proteja <RotatingText />.<br />Documente tudo.
             </h1>
             <p className="mt-6 text-lg text-gray-300 leading-relaxed max-w-md" style={{ textWrap: 'pretty' as any }}>
               Gestão ergonômica, saúde ocupacional e riscos psicossociais — com evidência jurídica contínua.
