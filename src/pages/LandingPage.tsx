@@ -105,9 +105,7 @@ function RotatingText() {
   );
 }
 
-
-   QUOTE SIMULATOR DATA
-══════════════════════════════════════════════════════════════ */
+/* ── QUOTE SIMULATOR DATA ── */
 const MARKUP = 1.20;
 
 interface ServiceOption {
