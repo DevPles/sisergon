@@ -148,10 +148,12 @@ const AtestadosPage = () => {
 
   // Colaboradores for timeline tab (based on empresa filter)
   const { data: filteredColaboradores = [] } = useQuery({
-    queryKey: ['colaboradores-timeline', empresaFilter],
+    queryKey: ['colaboradores-timeline', empresaFilter, unidadeFilter],
     queryFn: async () => {
       if (empresaFilter === 'all') return [];
-      const { data } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', empresaFilter).eq('status', 'ativo').order('nome_completo');
+      let q = supabase.from('colaboradores').select('id, nome_completo, unidade_id').eq('empresa_id', empresaFilter).eq('status', 'ativo').order('nome_completo');
+      if (unidadeFilter !== 'all') q = q.eq('unidade_id', unidadeFilter);
+      const { data } = await q;
       return data ?? [];
     },
     enabled: empresaFilter !== 'all',
