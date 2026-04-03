@@ -665,7 +665,8 @@ const AtestadosPage = () => {
                 );
               })}
             </div>
-          )}
+          );
+          })()}
         </TabsContent>
 
         {/* Tab: Alertas */}
