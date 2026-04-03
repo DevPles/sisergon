@@ -456,7 +456,7 @@ const AtestadosPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {atestados.map((a: any) => (
+                  {displayedAtestados.map((a: any) => (
                     <TableRow key={a.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelected(a)}>
                       <TableCell>{a.colaboradores?.nome_completo || '—'}</TableCell>
                       <TableCell>{a.empresas?.razao_social || '—'}</TableCell>
