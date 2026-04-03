@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { AlertTriangle, Upload, FileText, Eye, Download, Clock, User, Search, ClipboardCheck, Bell, CheckCircle2 } from 'lucide-react';
+import { Upload, FileText, Eye, Download, Clock, User, Search, ClipboardCheck, Bell, CheckCircle2 } from 'lucide-react';
 
 /* ─── Labor law alert logic ─── */
 const CID_ALERT_DAYS_THRESHOLD = 15;
@@ -542,7 +542,6 @@ const AtestadosPage = () => {
         <Card className="border-destructive/50 bg-destructive/5">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-destructive text-base">
-              <AlertTriangle className="h-5 w-5" />
               Alertas de Afastamento — Encaminhamento ao INSS
             </CardTitle>
             <p className="text-xs text-muted-foreground">
@@ -554,7 +553,7 @@ const AtestadosPage = () => {
               const hasAction = alertsWithActions.has(`${alert.colaborador_id}::${alert.cid}`);
               return (
                 <div key={i} className="flex items-start gap-3 p-3 bg-background rounded-lg border border-destructive/20">
-                  <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                  
                   <div className="flex-1 text-sm">
                     <p className="font-medium">{alert.colaborador_nome} <span className="text-muted-foreground font-normal">({alert.empresa_nome})</span></p>
                     <p className="text-muted-foreground">CID <span className="font-mono font-semibold text-foreground">{alert.cid}</span> — {alert.total_dias} dias acumulados</p>
@@ -656,7 +655,7 @@ const AtestadosPage = () => {
                         <p className="font-medium text-sm truncate">{c.nome_completo}</p>
                         <p className="text-xs text-muted-foreground">{count} atestado(s) · {totalDias} dia(s)</p>
                       </div>
-                      {hasAlert && <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />}
+                      
                     </CardContent>
                   </Card>
                 );
@@ -674,7 +673,6 @@ const AtestadosPage = () => {
               <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-sm mb-1 flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-amber-600" />
                     Regra Trabalhista
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
@@ -857,7 +855,6 @@ const AtestadosPage = () => {
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
               Registrar Encaminhamento ao INSS
             </DialogTitle>
           </DialogHeader>
