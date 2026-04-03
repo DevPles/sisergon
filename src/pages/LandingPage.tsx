@@ -774,7 +774,7 @@ const LandingPage = () => {
           <ScrollText direction="up" className="max-w-xl">
             <p className="text-teal-400 text-sm font-semibold uppercase tracking-widest mb-4">Plataforma SST completa</p>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.08] tracking-tight" style={{ fontFamily: 'Space Grotesk', textWrap: 'balance' as any }}>
-              Proteja sua empresa.<br />Documente tudo.
+              Proteja <RotatingText />.<br />Documente tudo.
             </h1>
             <p className="mt-6 text-lg text-gray-300 leading-relaxed max-w-md" style={{ textWrap: 'pretty' as any }}>
               Gestão ergonômica, saúde ocupacional e riscos psicossociais — com evidência jurídica contínua.
