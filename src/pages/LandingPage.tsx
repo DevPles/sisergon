@@ -859,7 +859,7 @@ const LandingPage = () => {
           <div className="grid sm:grid-cols-2 gap-6">
             {solutionSteps.map((s, i) => (
               <ScrollText key={s.num} delay={i * 0.1} direction={i % 2 === 0 ? 'left' : 'right'}>
-                <div className="p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 hover:bg-white/15 transition-all duration-300 h-full flex flex-col">
+                <div className="p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 hover:bg-white/15 transition-all duration-300 h-full flex flex-col min-h-[180px]">
                   <span className="text-teal-400 text-2xl font-bold">{s.num}</span>
                   <h3 className="text-lg font-semibold text-white mt-2 mb-2" style={{ fontFamily: 'Space Grotesk' }}>{s.title}</h3>
                   <p className="text-sm text-gray-300 leading-relaxed flex-1">{s.text}</p>
