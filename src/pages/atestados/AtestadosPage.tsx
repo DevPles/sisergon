@@ -553,7 +553,7 @@ const AtestadosPage = () => {
               const hasAction = alertsWithActions.has(`${alert.colaborador_id}::${alert.cid}`);
               return (
                 <div key={i} className="flex items-start gap-3 p-3 bg-background rounded-lg border border-destructive/20">
-                  <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                  
                   <div className="flex-1 text-sm">
                     <p className="font-medium">{alert.colaborador_nome} <span className="text-muted-foreground font-normal">({alert.empresa_nome})</span></p>
                     <p className="text-muted-foreground">CID <span className="font-mono font-semibold text-foreground">{alert.cid}</span> — {alert.total_dias} dias acumulados</p>
