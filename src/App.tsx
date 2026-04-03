@@ -35,19 +35,20 @@ import NotificacoesPage from "./pages/notificacoes/NotificacoesPage";
 
 import MeuPerfil from "./pages/perfil/MeuPerfil";
 import NotFound from "./pages/NotFound";
+import LoadingScreen from "./components/LoadingScreen";
 
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Carregando...</div>;
+  if (loading) return <LoadingScreen />;
   if (!session) return <Navigate to="/login" replace />;
   return <>{children}</>;
 };
 
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading } = useAuth();
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Carregando...</div>;
+  if (loading) return <LoadingScreen />;
   if (session) return <Navigate to="/painel" replace />;
   return <>{children}</>;
 };
