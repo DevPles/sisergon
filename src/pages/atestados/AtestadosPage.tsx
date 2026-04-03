@@ -542,7 +542,6 @@ const AtestadosPage = () => {
         <Card className="border-destructive/50 bg-destructive/5">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-destructive text-base">
-              <AlertTriangle className="h-5 w-5" />
               Alertas de Afastamento — Encaminhamento ao INSS
             </CardTitle>
             <p className="text-xs text-muted-foreground">
