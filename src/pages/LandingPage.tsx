@@ -772,7 +772,7 @@ const LandingPage = () => {
         <ParallaxBg src={heroImages[heroIdx]} speed={0.2} overlay="bg-gradient-to-r from-gray-900/85 via-gray-900/60 to-transparent" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-24">
           <ScrollText direction="up" className="max-w-xl">
-            <p className="text-teal-400 text-sm font-semibold uppercase tracking-widest mb-4">Plataforma SST completa</p>
+            
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.08] tracking-tight" style={{ fontFamily: 'Space Grotesk', textWrap: 'balance' as any }}>
               Proteja <RotatingText />.<br />Documente tudo.
             </h1>
