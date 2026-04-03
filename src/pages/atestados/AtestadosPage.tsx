@@ -655,7 +655,7 @@ const AtestadosPage = () => {
                         <p className="font-medium text-sm truncate">{c.nome_completo}</p>
                         <p className="text-xs text-muted-foreground">{count} atestado(s) · {totalDias} dia(s)</p>
                       </div>
-                      {hasAlert && <AlertTriangle className="h-4 w-4 text-destructive shrink-0" />}
+                      
                     </CardContent>
                   </Card>
                 );
