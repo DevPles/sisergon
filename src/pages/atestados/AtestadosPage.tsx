@@ -636,11 +636,15 @@ const AtestadosPage = () => {
         <TabsContent value="timeline">
           {empresaFilter === 'all' ? (
             <Card><CardContent className="py-8 text-center text-muted-foreground">Selecione uma empresa acima para ver a timeline por funcionário</CardContent></Card>
-          ) : filteredColaboradores.length === 0 ? (
-            <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum colaborador encontrado nesta empresa</CardContent></Card>
+          ) : (() => {
+            const visibleColabs = searchTerm.trim()
+              ? filteredColaboradores.filter((c: any) => c.nome_completo?.toLowerCase().includes(searchTerm.toLowerCase().trim()))
+              : filteredColaboradores;
+            return visibleColabs.length === 0 ? (
+            <Card><CardContent className="py-8 text-center text-muted-foreground">Nenhum colaborador encontrado</CardContent></Card>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredColaboradores.map((c: any) => {
+              {visibleColabs.map((c: any) => {
                 const count = atestadosPerColaborador[c.id] || 0;
                 const totalDias = totalDiasPerColaborador[c.id] || 0;
                 const hasAlert = cidAlerts.some(a => a.colaborador_id === c.id);
@@ -661,7 +665,8 @@ const AtestadosPage = () => {
                 );
               })}
             </div>
-          )}
+          );
+          })()}
         </TabsContent>
 
         {/* Tab: Alertas */}
