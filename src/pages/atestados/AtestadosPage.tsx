@@ -164,13 +164,26 @@ const AtestadosPage = () => {
     queryFn: async () => {
       let q = supabase
         .from('atestados')
-        .select('*, colaboradores:colaborador_id(nome_completo), empresas:empresa_id(razao_social)')
+        .select('*, colaboradores:colaborador_id(nome_completo, unidade_id), empresas:empresa_id(razao_social)')
         .order('data_inicio', { ascending: false });
       if (empresaFilter !== 'all') q = q.eq('empresa_id', empresaFilter);
       const { data } = await q;
       return (data ?? []) as any[];
     },
   });
+
+  // Client-side filtering by unidade and search
+  const displayedAtestados = useMemo(() => {
+    let list = atestados;
+    if (unidadeFilter !== 'all') {
+      list = list.filter((a: any) => a.colaboradores?.unidade_id === unidadeFilter);
+    }
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase().trim();
+      list = list.filter((a: any) => a.colaboradores?.nome_completo?.toLowerCase().includes(term));
+    }
+    return list;
+  }, [atestados, unidadeFilter, searchTerm]);
 
   const cidAlerts = useMemo(() => computeCidAlerts(atestados), [atestados]);
 
