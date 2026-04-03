@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { AlertTriangle, Upload, FileText, Eye, Download, Clock, User } from 'lucide-react';
+import { AlertTriangle, Upload, FileText, Eye, Download, Clock, User, Search } from 'lucide-react';
 
 /* ─── Labor law alert logic ─── */
 const CID_ALERT_DAYS_THRESHOLD = 15;
@@ -82,6 +82,8 @@ const AtestadosPage = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [empresaFilter, setEmpresaFilter] = useState('all');
+  const [unidadeFilter, setUnidadeFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const [showNew, setShowNew] = useState(false);
   const [selected, setSelected] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -123,6 +125,16 @@ const AtestadosPage = () => {
     },
   });
 
+  const { data: unidades = [] } = useQuery({
+    queryKey: ['unidades-atestados', empresaFilter],
+    queryFn: async () => {
+      if (empresaFilter === 'all') return [];
+      const { data } = await supabase.from('unidades').select('id, nome').eq('empresa_id', empresaFilter).eq('ativa', true).order('nome');
+      return data ?? [];
+    },
+    enabled: empresaFilter !== 'all',
+  });
+
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores-atestados', form.empresa_id || editingItem?.empresa_id],
     queryFn: async () => {
@@ -136,10 +148,12 @@ const AtestadosPage = () => {
 
   // Colaboradores for timeline tab (based on empresa filter)
   const { data: filteredColaboradores = [] } = useQuery({
-    queryKey: ['colaboradores-timeline', empresaFilter],
+    queryKey: ['colaboradores-timeline', empresaFilter, unidadeFilter],
     queryFn: async () => {
       if (empresaFilter === 'all') return [];
-      const { data } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', empresaFilter).eq('status', 'ativo').order('nome_completo');
+      let q = supabase.from('colaboradores').select('id, nome_completo, unidade_id').eq('empresa_id', empresaFilter).eq('status', 'ativo').order('nome_completo');
+      if (unidadeFilter !== 'all') q = q.eq('unidade_id', unidadeFilter);
+      const { data } = await q;
       return data ?? [];
     },
     enabled: empresaFilter !== 'all',
@@ -150,13 +164,26 @@ const AtestadosPage = () => {
     queryFn: async () => {
       let q = supabase
         .from('atestados')
-        .select('*, colaboradores:colaborador_id(nome_completo), empresas:empresa_id(razao_social)')
+        .select('*, colaboradores:colaborador_id(nome_completo, unidade_id), empresas:empresa_id(razao_social)')
         .order('data_inicio', { ascending: false });
       if (empresaFilter !== 'all') q = q.eq('empresa_id', empresaFilter);
       const { data } = await q;
       return (data ?? []) as any[];
     },
   });
+
+  // Client-side filtering by unidade and search
+  const displayedAtestados = useMemo(() => {
+    let list = atestados;
+    if (unidadeFilter !== 'all') {
+      list = list.filter((a: any) => a.colaboradores?.unidade_id === unidadeFilter);
+    }
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase().trim();
+      list = list.filter((a: any) => a.colaboradores?.nome_completo?.toLowerCase().includes(term));
+    }
+    return list;
+  }, [atestados, unidadeFilter, searchTerm]);
 
   const cidAlerts = useMemo(() => computeCidAlerts(atestados), [atestados]);
 
@@ -279,14 +306,32 @@ const AtestadosPage = () => {
           <h1 className="text-2xl font-bold">Atestados e Absenteísmo</h1>
           <p className="text-muted-foreground text-sm">Registro e acompanhamento de afastamentos</p>
         </div>
-        <div className="flex gap-2">
-          <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
+        <div className="flex flex-wrap gap-2">
+          <Select value={empresaFilter} onValueChange={v => { setEmpresaFilter(v); setUnidadeFilter('all'); }}>
             <SelectTrigger className="w-48"><SelectValue placeholder="Todas" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
+              <SelectItem value="all">Todas empresas</SelectItem>
               {empresas.map((e: any) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
             </SelectContent>
           </Select>
+          {empresaFilter !== 'all' && unidades.length > 0 && (
+            <Select value={unidadeFilter} onValueChange={setUnidadeFilter}>
+              <SelectTrigger className="w-44"><SelectValue placeholder="Todas unidades" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas unidades</SelectItem>
+                {unidades.map((u: any) => <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          )}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar funcionário..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="pl-8 w-48"
+            />
+          </div>
           <Dialog open={showNew} onOpenChange={setShowNew}>
             <DialogTrigger asChild><Button>Novo Atestado</Button></DialogTrigger>
             <DialogContent>
@@ -411,7 +456,7 @@ const AtestadosPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {atestados.map((a: any) => (
+                  {displayedAtestados.map((a: any) => (
                     <TableRow key={a.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelected(a)}>
                       <TableCell>{a.colaboradores?.nome_completo || '—'}</TableCell>
                       <TableCell>{a.empresas?.razao_social || '—'}</TableCell>
@@ -429,8 +474,8 @@ const AtestadosPage = () => {
                       </TableCell>
                     </TableRow>
                   ))}
-                  {atestados.length === 0 && (
-                    <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhum atestado registrado</TableCell></TableRow>
+                  {displayedAtestados.length === 0 && (
+                    <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhum atestado encontrado</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
