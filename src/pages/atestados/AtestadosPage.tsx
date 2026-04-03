@@ -306,14 +306,32 @@ const AtestadosPage = () => {
           <h1 className="text-2xl font-bold">Atestados e Absenteísmo</h1>
           <p className="text-muted-foreground text-sm">Registro e acompanhamento de afastamentos</p>
         </div>
-        <div className="flex gap-2">
-          <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
+        <div className="flex flex-wrap gap-2">
+          <Select value={empresaFilter} onValueChange={v => { setEmpresaFilter(v); setUnidadeFilter('all'); }}>
             <SelectTrigger className="w-48"><SelectValue placeholder="Todas" /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
+              <SelectItem value="all">Todas empresas</SelectItem>
               {empresas.map((e: any) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
             </SelectContent>
           </Select>
+          {empresaFilter !== 'all' && unidades.length > 0 && (
+            <Select value={unidadeFilter} onValueChange={setUnidadeFilter}>
+              <SelectTrigger className="w-44"><SelectValue placeholder="Todas unidades" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas unidades</SelectItem>
+                {unidades.map((u: any) => <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          )}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar funcionário..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="pl-8 w-48"
+            />
+          </div>
           <Dialog open={showNew} onOpenChange={setShowNew}>
             <DialogTrigger asChild><Button>Novo Atestado</Button></DialogTrigger>
             <DialogContent>
