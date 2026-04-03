@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { AlertTriangle, Upload, FileText, Eye, Download, Clock, User, Search, ClipboardCheck, Bell, CheckCircle2 } from 'lucide-react';
+import { Upload, FileText, Eye, Download, Clock, User, Search, ClipboardCheck, Bell, CheckCircle2 } from 'lucide-react';
 
 /* ─── Labor law alert logic ─── */
 const CID_ALERT_DAYS_THRESHOLD = 15;
