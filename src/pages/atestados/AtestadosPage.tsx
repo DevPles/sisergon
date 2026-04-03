@@ -855,7 +855,6 @@ const AtestadosPage = () => {
         <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
               Registrar Encaminhamento ao INSS
             </DialogTitle>
           </DialogHeader>
