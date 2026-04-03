@@ -673,7 +673,6 @@ const AtestadosPage = () => {
               <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
                 <CardContent className="p-4">
                   <h3 className="font-semibold text-sm mb-1 flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-amber-600" />
                     Regra Trabalhista
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
