@@ -129,7 +129,7 @@ const LikertQuestionnaireForm = () => {
       const saved = recover();
       if (saved) {
         setEmpresaId(saved.empresaId || '');
-        setSetorId(saved.setorId || '');
+        setSetorId(saved.setorId || 'all');
         setActiveBlock(saved.activeBlock || 0);
         setAnswers(saved.answers || {});
       }
