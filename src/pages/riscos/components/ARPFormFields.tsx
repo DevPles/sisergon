@@ -407,7 +407,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                     });
                   })()}
                 </div>
-              </div>
             </div>
 
             <div className="flex justify-between pb-4">
