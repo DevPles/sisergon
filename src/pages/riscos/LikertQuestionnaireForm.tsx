@@ -110,7 +110,7 @@ const LikertQuestionnaireForm = () => {
   const queryClient = useQueryClient();
 
   const [empresaId, setEmpresaId] = useState('');
-  const [setorId, setSetorId] = useState('');
+  const [setorId, setSetorId] = useState('all');
   const [activeBlock, setActiveBlock] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
@@ -129,7 +129,7 @@ const LikertQuestionnaireForm = () => {
       const saved = recover();
       if (saved) {
         setEmpresaId(saved.empresaId || '');
-        setSetorId(saved.setorId || '');
+        setSetorId(saved.setorId || 'all');
         setActiveBlock(saved.activeBlock || 0);
         setAnswers(saved.answers || {});
       }
@@ -206,7 +206,7 @@ const LikertQuestionnaireForm = () => {
       const hash = `anon-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       const { error } = await supabase.from('avaliacoes_psicossociais_likert' as any).insert({
         empresa_id: empresaId,
-        setor_id: setorId || null,
+        setor_id: setorId === 'all' ? null : setorId,
         respondente_hash: hash,
         respostas: answers,
         scores: scores.blockScores,
@@ -274,7 +274,7 @@ const LikertQuestionnaireForm = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label>Empresa</Label>
-            <Select value={empresaId} onValueChange={v => { setEmpresaId(v); setSetorId(''); }}>
+            <Select value={empresaId} onValueChange={v => { setEmpresaId(v); setSetorId('all'); }}>
               <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
               <SelectContent>{empresas.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}</SelectContent>
             </Select>
@@ -284,7 +284,7 @@ const LikertQuestionnaireForm = () => {
             <Select value={setorId} onValueChange={setSetorId}>
               <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
                 {setores.map(s => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}
               </SelectContent>
             </Select>
