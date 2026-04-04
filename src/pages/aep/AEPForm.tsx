@@ -378,6 +378,7 @@ const AEPForm = () => {
       queryClient.invalidateQueries({ queryKey: ['aep-list'] });
       queryClient.invalidateQueries({ queryKey: ['home-counts'] });
       toast({ title: finalize ? 'AEP finalizada com sucesso' : 'AEP salva como rascunho' });
+      clearDraft();
       navigate('/aep');
     } catch (err: any) {
       toast({ title: 'Erro ao salvar', description: err.message, variant: 'destructive' });
