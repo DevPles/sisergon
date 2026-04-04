@@ -19,12 +19,20 @@ export interface Notification {
   read_at: string | null;
 }
 
+type NotificationChannelEntry = {
+  channel: ReturnType<typeof supabase.channel>;
+  subscribers: number;
+};
+
+const notificationChannelRegistry = new Map<string, NotificationChannelEntry>();
+
 export const useNotifications = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const userId = user?.id;
 
   const { data: notifications = [], isLoading } = useQuery({
-    queryKey: ['notifications', user?.id],
+    queryKey: ['notifications', userId],
     queryFn: async () => {
       if (!user) return [];
       const { data, error } = await supabase
@@ -42,21 +50,50 @@ export const useNotifications = () => {
   const unreadCount = notifications.filter(n => n.status === 'pending').length;
 
   useEffect(() => {
-    if (!user) return;
-    const channelName = `notifications-realtime-${user.id}`;
-    const channel = supabase.channel(channelName);
-    channel
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'notifications',
-        filter: `user_id=eq.${user.id}`,
-      }, () => {
-        queryClient.invalidateQueries({ queryKey: ['notifications', user.id] });
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [user, queryClient]);
+    if (!userId) return;
+
+    const channelName = `notifications-realtime-${userId}`;
+    const existingEntry = notificationChannelRegistry.get(channelName);
+
+    if (existingEntry) {
+      existingEntry.subscribers += 1;
+    } else {
+      const channel = supabase
+        .channel(channelName)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`,
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['notifications', userId] });
+          }
+        )
+        .subscribe();
+
+      notificationChannelRegistry.set(channelName, {
+        channel,
+        subscribers: 1,
+      });
+    }
+
+    return () => {
+      const entry = notificationChannelRegistry.get(channelName);
+
+      if (!entry) return;
+
+      if (entry.subscribers === 1) {
+        notificationChannelRegistry.delete(channelName);
+        void supabase.removeChannel(entry.channel);
+        return;
+      }
+
+      entry.subscribers -= 1;
+    };
+  }, [queryClient, userId]);
 
   const markAsRead = useMutation({
     mutationFn: async (id: string) => {
@@ -66,7 +103,7 @@ export const useNotifications = () => {
         .eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications', user?.id] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications', userId] }),
   });
 
   const markAsResolved = useMutation({
@@ -77,7 +114,7 @@ export const useNotifications = () => {
         .eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications', user?.id] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications', userId] }),
   });
 
   const markAllAsRead = useMutation({
@@ -90,7 +127,7 @@ export const useNotifications = () => {
         .eq('status', 'pending' as any);
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications', user?.id] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications', userId] }),
   });
 
   return { notifications, unreadCount, isLoading, markAsRead, markAsResolved, markAllAsRead };
