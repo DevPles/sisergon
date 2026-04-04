@@ -440,8 +440,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             <div className="flex flex-wrap gap-3 pb-4">
               <Button variant="outline" onClick={goBack}>
