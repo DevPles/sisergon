@@ -357,8 +357,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                     <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Dynamic template indicator */}
             {dynamicTemplate && dynamicQuestions.length > 0 && (
