@@ -124,7 +124,7 @@ const LikertQuestionnaireForm = () => {
   });
 
   // Recover on mount
-  useState(() => {
+  useEffect(() => {
     if (hasSavedData()) {
       const saved = recover();
       if (saved) {
@@ -134,7 +134,7 @@ const LikertQuestionnaireForm = () => {
         setAnswers(saved.answers || {});
       }
     }
-  });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data: empresas = [] } = useQuery({
     queryKey: ['empresas-likert'],
