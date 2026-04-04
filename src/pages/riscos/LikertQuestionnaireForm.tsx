@@ -110,7 +110,7 @@ const LikertQuestionnaireForm = () => {
   const queryClient = useQueryClient();
 
   const [empresaId, setEmpresaId] = useState('');
-  const [setorId, setSetorId] = useState('');
+  const [setorId, setSetorId] = useState('all');
   const [activeBlock, setActiveBlock] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
