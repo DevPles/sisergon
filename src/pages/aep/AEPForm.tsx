@@ -18,6 +18,8 @@ import { format } from 'date-fns';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
 import { ChevronLeft, ChevronRight, Check, CircleDot, Circle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import AutoSaveBadge from '@/components/AutoSaveBadge';
 
 // AEP Questions per block from the document
 const AEP_BLOCKS = [
