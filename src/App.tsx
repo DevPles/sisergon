@@ -127,6 +127,9 @@ const App = () => (
               <Route path="/riscos-psicossociais/:id" element={
                 <RoleGuard allowed={['admin_master', 'consultor']}><ARPForm /></RoleGuard>
               } />
+              <Route path="/riscos-psicossociais/likert" element={
+                <RoleGuard allowed={['admin_master', 'consultor']}><LikertQuestionnaireForm /></RoleGuard>
+              } />
               <Route path="/checklists" element={
                 <RoleGuard allowed={['admin_master', 'consultor', 'empresa_admin', 'empresa_gestor', 'colaborador']}><ChecklistsList /></RoleGuard>
               } />
