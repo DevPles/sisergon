@@ -135,17 +135,17 @@ const Home = () => {
   return (
     <div style={{ minHeight: '100%' }}>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold" style={{ fontFamily: 'Space Grotesk', color: '#4c5563' }}>Painel Principal</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ fontFamily: 'Space Grotesk', color: '#4c5563' }}>Painel Principal</h1>
         <p className="mt-1" style={{ color: '#7a8599' }}>
           {primaryRole ? ROLE_LABELS[primaryRole] : 'Selecione um módulo para começar'}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {visibleCards.map((card) => (
           <div
             key={card.path}
-            className="cursor-pointer transition-all duration-200 hover:-translate-y-1 group h-full flex flex-col p-6 rounded-[22px]"
+            className="cursor-pointer transition-all duration-200 hover:-translate-y-1 group h-full flex flex-col p-4 sm:p-6 rounded-[18px] sm:rounded-[22px]"
             style={{
               background: '#dde2e8',
               boxShadow: '9px 9px 18px #a4afc2, -9px -9px 18px #ffffff',

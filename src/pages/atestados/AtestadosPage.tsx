@@ -446,15 +446,15 @@ const AtestadosPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Atestados e Absenteísmo</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Atestados e Absenteísmo</h1>
           <p className="text-muted-foreground text-sm">Registro e acompanhamento de afastamentos</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2">
           <Select value={empresaFilter} onValueChange={v => { setEmpresaFilter(v); setUnidadeFilter('all'); }}>
-            <SelectTrigger className="w-48"><SelectValue placeholder="Todas" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Todas" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas empresas</SelectItem>
               {empresas.map((e: any) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
@@ -462,20 +462,20 @@ const AtestadosPage = () => {
           </Select>
           {empresaFilter !== 'all' && unidades.length > 0 && (
             <Select value={unidadeFilter} onValueChange={setUnidadeFilter}>
-              <SelectTrigger className="w-44"><SelectValue placeholder="Todas unidades" /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-44"><SelectValue placeholder="Todas unidades" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas unidades</SelectItem>
                 {unidades.map((u: any) => <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>)}
               </SelectContent>
             </Select>
           )}
-          <div className="relative">
+          <div className="relative flex-1 min-w-0">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Buscar funcionário..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-8 w-48" />
+            <Input placeholder="Buscar funcionário..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-8 w-full sm:w-48" />
           </div>
           <Dialog open={showNew} onOpenChange={setShowNew}>
-            <DialogTrigger asChild><Button>Novo Atestado</Button></DialogTrigger>
-            <DialogContent>
+            <DialogTrigger asChild><Button className="w-full sm:w-auto">Novo Atestado</Button></DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
               <DialogHeader><DialogTitle>Registrar Atestado</DialogTitle></DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -492,11 +492,11 @@ const AtestadosPage = () => {
                     <SelectContent>{colaboradores.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div><Label>CID</Label><Input value={form.cid} onChange={e => setForm(p => ({ ...p, cid: e.target.value }))} /></div>
                   <div><Label>Dias</Label><Input type="number" value={form.dias} onChange={e => setForm(p => ({ ...p, dias: e.target.value }))} /></div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div><Label>Início</Label><Input type="date" value={form.data_inicio} onChange={e => setForm(p => ({ ...p, data_inicio: e.target.value }))} /></div>
                   <div><Label>Fim (auto)</Label><Input type="date" value={form.data_fim} readOnly className="bg-muted/50" /></div>
                 </div>
@@ -515,7 +515,7 @@ const AtestadosPage = () => {
                   <div className="mt-1">
                     <label className="flex items-center gap-2 cursor-pointer border border-dashed border-muted-foreground/30 rounded-lg p-3 hover:bg-muted/50 transition-colors">
                       <Upload className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{form.file ? form.file.name : 'Clique para anexar arquivo (PDF, imagem)'}</span>
+                      <span className="text-sm text-muted-foreground truncate">{form.file ? form.file.name : 'Clique para anexar arquivo'}</span>
                       <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" className="hidden"
                         onChange={e => { const f = e.target.files?.[0] || null; setForm(p => ({ ...p, file: f })); }} />
                     </label>
@@ -572,48 +572,48 @@ const AtestadosPage = () => {
       )}
 
       <Tabs defaultValue="lista">
-        <TabsList>
-          <TabsTrigger value="lista">Cadastrados</TabsTrigger>
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
-          <TabsTrigger value="alertas" className="relative">
+        <TabsList className="w-full sm:w-auto flex overflow-x-auto">
+          <TabsTrigger value="lista" className="text-xs sm:text-sm">Cadastrados</TabsTrigger>
+          <TabsTrigger value="timeline" className="text-xs sm:text-sm">Timeline</TabsTrigger>
+          <TabsTrigger value="alertas" className="relative text-xs sm:text-sm">
             Alertas
             {cidAlerts.length > 0 && (
-              <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground">
+              <span className="ml-1 inline-flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 text-[9px] sm:text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground">
                 {cidAlerts.length}
               </span>
             )}
           </TabsTrigger>
-          <TabsTrigger value="retorno" className="relative">
-            Avaliação de Retorno
+          <TabsTrigger value="retorno" className="text-xs sm:text-sm">
+            Retorno
           </TabsTrigger>
         </TabsList>
 
         {/* Tab: Lista */}
         <TabsContent value="lista">
           <Card>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Colaborador</TableHead>
-                    <TableHead>Empresa</TableHead>
+                    <TableHead className="hidden md:table-cell">Empresa</TableHead>
                     <TableHead>CID</TableHead>
                     <TableHead>Dias</TableHead>
-                    <TableHead>Período</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Arquivo</TableHead>
+                    <TableHead className="hidden sm:table-cell">Período</TableHead>
+                    <TableHead className="hidden lg:table-cell">Tipo</TableHead>
+                    <TableHead className="hidden sm:table-cell">Arquivo</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {displayedAtestados.map((a: any) => (
                     <TableRow key={a.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelected(a)}>
-                      <TableCell>{a.colaboradores?.nome_completo || '—'}</TableCell>
-                      <TableCell>{a.empresas?.razao_social || '—'}</TableCell>
+                      <TableCell className="max-w-[120px] truncate">{a.colaboradores?.nome_completo || '—'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{a.empresas?.razao_social || '—'}</TableCell>
                       <TableCell className="font-mono">{a.cid || '—'}</TableCell>
                       <TableCell>{a.dias}</TableCell>
-                      <TableCell className="text-xs">{a.data_inicio || '—'} → {a.data_fim || '—'}</TableCell>
-                      <TableCell><Badge variant="outline">{a.tipo === 'ocupacional' ? 'Ocupacional' : 'Não Ocup.'}</Badge></TableCell>
-                      <TableCell onClick={e => e.stopPropagation()}>
+                      <TableCell className="text-xs hidden sm:table-cell">{a.data_inicio || '—'} → {a.data_fim || '—'}</TableCell>
+                      <TableCell className="hidden lg:table-cell"><Badge variant="outline">{a.tipo === 'ocupacional' ? 'Ocupacional' : 'Não Ocup.'}</Badge></TableCell>
+                      <TableCell className="hidden sm:table-cell" onClick={e => e.stopPropagation()}>
                         {a.arquivo_url ? (
                           <div className="flex gap-1">
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => viewFile(a.arquivo_url)} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
