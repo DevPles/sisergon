@@ -292,18 +292,16 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   return (
     <ScrollArea className="max-h-[75vh] pr-4">
       {/* Score */}
-      <Card className="mb-4 border-2 border-primary/20">
-        <CardContent className="p-4 flex flex-wrap items-center gap-4">
+      <div className="mb-4 rounded-xl bg-muted/50 border border-border p-4 flex flex-wrap items-center gap-4">
           <div>
             <p className="text-xs text-muted-foreground">Score</p>
-            <p className="text-3xl font-bold">{totalScore.toFixed(1)}</p>
+            <p className="text-3xl font-bold text-foreground">{totalScore.toFixed(1)}</p>
           </div>
           <Badge variant={classification === 'baixo' ? 'secondary' : classification === 'moderado' ? 'default' : 'destructive'} className="text-sm px-3 py-1">
             {classification.charAt(0).toUpperCase() + classification.slice(1)}
           </Badge>
           {hasCritical && <Badge variant="destructive" className="text-xs px-3 py-1">Alerta confidencial — item crítico</Badge>}
-        </CardContent>
-      </Card>
+      </div>
 
       {/* Progress bar */}
       <div className="mb-4">
