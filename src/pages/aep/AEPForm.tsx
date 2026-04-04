@@ -137,6 +137,34 @@ const AEPForm = () => {
   const [saving, setSaving] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
 
+  // Auto-save draft (only for new assessments)
+  const formData = useMemo(() => ({ title, empresaId, unidadeId, setorId, cargoId, description, values, comments, activeStep }), [title, empresaId, unidadeId, setorId, cargoId, description, values, comments, activeStep]);
+  const { lastSaved, recover, clear: clearDraft, hasSavedData, recovered } = useAutoSave({
+    key: `aep-${id || 'nova'}`,
+    data: formData,
+    debounceMs: 10000,
+    enabled: !isEdit,
+  });
+
+  // Recover draft on mount
+  useEffect(() => {
+    if (isEdit) return;
+    if (hasSavedData()) {
+      const saved = recover();
+      if (saved) {
+        setTitle(saved.title || '');
+        setEmpresaId(saved.empresaId || '');
+        setUnidadeId(saved.unidadeId || '');
+        setSetorId(saved.setorId || '');
+        setCargoId(saved.cargoId || '');
+        setDescription(saved.description || '');
+        setValues(saved.values || {});
+        setComments(saved.comments || {});
+        setActiveStep(saved.activeStep || 0);
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Try to load dynamic template for this empresa
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'aep');
   const { questions: dynamicQuestions, sections: dynamicSections, getOptionsForQuestion } = useTemplateQuestions(dynamicTemplate?.id);
