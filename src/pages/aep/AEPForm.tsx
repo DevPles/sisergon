@@ -480,7 +480,10 @@ const AEPForm = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">{isEdit ? 'Editar AEP' : 'Nova Avaliação AEP'}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold">{isEdit ? 'Editar AEP' : 'Nova Avaliação AEP'}</h1>
+            {!isEdit && <AutoSaveBadge lastSaved={lastSaved} recovered={recovered} />}
+          </div>
           <p className="text-muted-foreground">Avaliação Ergonômica Preliminar — NR-17</p>
         </div>
         <Button variant="outline" onClick={() => navigate('/aep')}>Voltar</Button>
