@@ -323,8 +323,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         {/* Step 0: Identification */}
         {currentStep === 0 && (
           <motion.div key="identification" {...fadeIn}>
-            <Card className="mb-4">
-              <CardHeader className="pb-3"><CardTitle className="text-base">Identificação</CardTitle></CardHeader>
+            <div className="mb-4 rounded-xl border border-border bg-background p-6">
+              <h3 className="text-base font-semibold text-foreground mb-3">Identificação</h3>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
