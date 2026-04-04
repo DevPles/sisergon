@@ -380,13 +380,10 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         {/* Steps 1..N: Question pages */}
         {currentStep >= 1 && currentStep <= totalPages && (
           <motion.div key={`questions-page-${currentStep}`} {...fadeIn}>
-            <Card className="mb-4">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">
+            <div className="mb-4 rounded-xl border border-border bg-background p-6">
+              <h3 className="text-base font-semibold text-foreground mb-3">
                   Fatores Psicossociais — Página {currentStep} de {totalPages}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+              </h3>
                 <div className="space-y-5">
                   {(() => {
                     const pageIdx = currentStep - 1;
