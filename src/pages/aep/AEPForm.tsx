@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -18,6 +18,8 @@ import { format } from 'date-fns';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
 import { ChevronLeft, ChevronRight, Check, CircleDot, Circle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import AutoSaveBadge from '@/components/AutoSaveBadge';
 
 // AEP Questions per block from the document
 const AEP_BLOCKS = [
@@ -134,6 +136,34 @@ const AEPForm = () => {
   const [comments, setComments] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
+
+  // Auto-save draft (only for new assessments)
+  const formData = useMemo(() => ({ title, empresaId, unidadeId, setorId, cargoId, description, values, comments, activeStep }), [title, empresaId, unidadeId, setorId, cargoId, description, values, comments, activeStep]);
+  const { lastSaved, recover, clear: clearDraft, hasSavedData, recovered } = useAutoSave({
+    key: `aep-${id || 'nova'}`,
+    data: formData,
+    debounceMs: 10000,
+    enabled: !isEdit,
+  });
+
+  // Recover draft on mount
+  useEffect(() => {
+    if (isEdit) return;
+    if (hasSavedData()) {
+      const saved = recover();
+      if (saved) {
+        setTitle(saved.title || '');
+        setEmpresaId(saved.empresaId || '');
+        setUnidadeId(saved.unidadeId || '');
+        setSetorId(saved.setorId || '');
+        setCargoId(saved.cargoId || '');
+        setDescription(saved.description || '');
+        setValues(saved.values || {});
+        setComments(saved.comments || {});
+        setActiveStep(saved.activeStep || 0);
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Try to load dynamic template for this empresa
   const { data: dynamicTemplate } = useCompanyTemplate(empresaId || undefined, 'aep');
@@ -348,6 +378,7 @@ const AEPForm = () => {
       queryClient.invalidateQueries({ queryKey: ['aep-list'] });
       queryClient.invalidateQueries({ queryKey: ['home-counts'] });
       toast({ title: finalize ? 'AEP finalizada com sucesso' : 'AEP salva como rascunho' });
+      clearDraft();
       navigate('/aep');
     } catch (err: any) {
       toast({ title: 'Erro ao salvar', description: err.message, variant: 'destructive' });
@@ -449,7 +480,10 @@ const AEPForm = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">{isEdit ? 'Editar AEP' : 'Nova Avaliação AEP'}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold">{isEdit ? 'Editar AEP' : 'Nova Avaliação AEP'}</h1>
+            {!isEdit && <AutoSaveBadge lastSaved={lastSaved} recovered={recovered} />}
+          </div>
           <p className="text-muted-foreground">Avaliação Ergonômica Preliminar — NR-17</p>
         </div>
         <Button variant="outline" onClick={() => navigate('/aep')}>Voltar</Button>

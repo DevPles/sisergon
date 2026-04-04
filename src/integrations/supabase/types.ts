@@ -406,6 +406,72 @@ export type Database = {
         }
         Relationships: []
       }
+      avaliacoes_psicossociais_likert: {
+        Row: {
+          alerta_violencia: boolean | null
+          classificacao: string | null
+          created_at: string
+          empresa_id: string
+          enfermeira_id: string | null
+          finalizado_em: string | null
+          id: string
+          respondente_hash: string | null
+          respostas: Json
+          score_total: number | null
+          scores: Json | null
+          setor_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          alerta_violencia?: boolean | null
+          classificacao?: string | null
+          created_at?: string
+          empresa_id: string
+          enfermeira_id?: string | null
+          finalizado_em?: string | null
+          id?: string
+          respondente_hash?: string | null
+          respostas?: Json
+          score_total?: number | null
+          scores?: Json | null
+          setor_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          alerta_violencia?: boolean | null
+          classificacao?: string | null
+          created_at?: string
+          empresa_id?: string
+          enfermeira_id?: string | null
+          finalizado_em?: string | null
+          id?: string
+          respondente_hash?: string | null
+          respostas?: Json
+          score_total?: number | null
+          scores?: Json | null
+          setor_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avaliacoes_psicossociais_likert_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avaliacoes_psicossociais_likert_setor_id_fkey"
+            columns: ["setor_id"]
+            isOneToOne: false
+            referencedRelation: "setores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cargos: {
         Row: {
           ativo: boolean | null
