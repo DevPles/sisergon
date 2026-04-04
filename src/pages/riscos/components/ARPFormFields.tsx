@@ -407,8 +407,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                     });
                   })()}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             <div className="flex justify-between pb-4">
               <Button variant="outline" onClick={goBack}>
