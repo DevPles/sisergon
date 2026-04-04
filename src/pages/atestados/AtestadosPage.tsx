@@ -572,47 +572,47 @@ const AtestadosPage = () => {
       )}
 
       <Tabs defaultValue="lista">
-        <TabsList>
-          <TabsTrigger value="lista">Cadastrados</TabsTrigger>
-          <TabsTrigger value="timeline">Timeline</TabsTrigger>
-          <TabsTrigger value="alertas" className="relative">
+        <TabsList className="w-full sm:w-auto flex overflow-x-auto">
+          <TabsTrigger value="lista" className="text-xs sm:text-sm">Cadastrados</TabsTrigger>
+          <TabsTrigger value="timeline" className="text-xs sm:text-sm">Timeline</TabsTrigger>
+          <TabsTrigger value="alertas" className="relative text-xs sm:text-sm">
             Alertas
             {cidAlerts.length > 0 && (
-              <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground">
+              <span className="ml-1 inline-flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 text-[9px] sm:text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground">
                 {cidAlerts.length}
               </span>
             )}
           </TabsTrigger>
-          <TabsTrigger value="retorno" className="relative">
-            Avaliação de Retorno
+          <TabsTrigger value="retorno" className="text-xs sm:text-sm">
+            Retorno
           </TabsTrigger>
         </TabsList>
 
         {/* Tab: Lista */}
         <TabsContent value="lista">
           <Card>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Colaborador</TableHead>
-                    <TableHead>Empresa</TableHead>
+                    <TableHead className="hidden md:table-cell">Empresa</TableHead>
                     <TableHead>CID</TableHead>
                     <TableHead>Dias</TableHead>
-                    <TableHead>Período</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Arquivo</TableHead>
+                    <TableHead className="hidden sm:table-cell">Período</TableHead>
+                    <TableHead className="hidden lg:table-cell">Tipo</TableHead>
+                    <TableHead className="hidden sm:table-cell">Arquivo</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {displayedAtestados.map((a: any) => (
                     <TableRow key={a.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelected(a)}>
-                      <TableCell>{a.colaboradores?.nome_completo || '—'}</TableCell>
-                      <TableCell>{a.empresas?.razao_social || '—'}</TableCell>
+                      <TableCell className="max-w-[120px] truncate">{a.colaboradores?.nome_completo || '—'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{a.empresas?.razao_social || '—'}</TableCell>
                       <TableCell className="font-mono">{a.cid || '—'}</TableCell>
                       <TableCell>{a.dias}</TableCell>
-                      <TableCell className="text-xs">{a.data_inicio || '—'} → {a.data_fim || '—'}</TableCell>
-                      <TableCell><Badge variant="outline">{a.tipo === 'ocupacional' ? 'Ocupacional' : 'Não Ocup.'}</Badge></TableCell>
+                      <TableCell className="text-xs hidden sm:table-cell">{a.data_inicio || '—'} → {a.data_fim || '—'}</TableCell>
+                      <TableCell className="hidden lg:table-cell"><Badge variant="outline">{a.tipo === 'ocupacional' ? 'Ocupacional' : 'Não Ocup.'}</Badge></TableCell>
                       <TableCell onClick={e => e.stopPropagation()}>
                         {a.arquivo_url ? (
                           <div className="flex gap-1">
