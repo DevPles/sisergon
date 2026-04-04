@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth, AppRole } from '@/contexts/AuthContext';
-import { Card, CardContent } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import AnimatedCard from '@/components/AnimatedCard';
+import PageTransition from '@/components/PageTransition';
 
 interface NavCard {
   title: string;
