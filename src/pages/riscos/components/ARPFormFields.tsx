@@ -424,9 +424,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         {/* Last step: Review & Actions */}
         {currentStep > totalPages && (
           <motion.div key="review" {...fadeIn}>
-            <Card className="mb-4">
-              <CardHeader className="pb-3"><CardTitle className="text-base">Revisão</CardTitle></CardHeader>
-              <CardContent>
+            <div className="mb-4 rounded-xl border border-border bg-background p-6">
+              <h3 className="text-base font-semibold text-foreground mb-3">Revisão</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
                   {activeQuestions.map((q: string, i: number) => (
                     <div key={i} className="flex items-center gap-2 p-1.5 rounded bg-muted/50">
