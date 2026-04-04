@@ -274,7 +274,7 @@ const LikertQuestionnaireForm = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <Label>Empresa</Label>
-            <Select value={empresaId} onValueChange={v => { setEmpresaId(v); setSetorId(''); }}>
+            <Select value={empresaId} onValueChange={v => { setEmpresaId(v); setSetorId('all'); }}>
               <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
               <SelectContent>{empresas.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}</SelectContent>
             </Select>
