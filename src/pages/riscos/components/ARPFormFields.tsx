@@ -325,7 +325,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
           <motion.div key="identification" {...fadeIn}>
             <div className="mb-4 rounded-xl border border-border bg-background p-6">
               <h3 className="text-base font-semibold text-foreground mb-3">Identificação</h3>
-              <CardContent>
+              <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <Label className="text-xs">Título</Label>
