@@ -446,15 +446,15 @@ const AtestadosPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Atestados e Absenteísmo</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Atestados e Absenteísmo</h1>
           <p className="text-muted-foreground text-sm">Registro e acompanhamento de afastamentos</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2">
           <Select value={empresaFilter} onValueChange={v => { setEmpresaFilter(v); setUnidadeFilter('all'); }}>
-            <SelectTrigger className="w-48"><SelectValue placeholder="Todas" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Todas" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas empresas</SelectItem>
               {empresas.map((e: any) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
@@ -462,20 +462,20 @@ const AtestadosPage = () => {
           </Select>
           {empresaFilter !== 'all' && unidades.length > 0 && (
             <Select value={unidadeFilter} onValueChange={setUnidadeFilter}>
-              <SelectTrigger className="w-44"><SelectValue placeholder="Todas unidades" /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-44"><SelectValue placeholder="Todas unidades" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas unidades</SelectItem>
                 {unidades.map((u: any) => <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>)}
               </SelectContent>
             </Select>
           )}
-          <div className="relative">
+          <div className="relative flex-1 min-w-0">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Buscar funcionário..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-8 w-48" />
+            <Input placeholder="Buscar funcionário..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-8 w-full sm:w-48" />
           </div>
           <Dialog open={showNew} onOpenChange={setShowNew}>
-            <DialogTrigger asChild><Button>Novo Atestado</Button></DialogTrigger>
-            <DialogContent>
+            <DialogTrigger asChild><Button className="w-full sm:w-auto">Novo Atestado</Button></DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
               <DialogHeader><DialogTitle>Registrar Atestado</DialogTitle></DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -492,11 +492,11 @@ const AtestadosPage = () => {
                     <SelectContent>{colaboradores.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div><Label>CID</Label><Input value={form.cid} onChange={e => setForm(p => ({ ...p, cid: e.target.value }))} /></div>
                   <div><Label>Dias</Label><Input type="number" value={form.dias} onChange={e => setForm(p => ({ ...p, dias: e.target.value }))} /></div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div><Label>Início</Label><Input type="date" value={form.data_inicio} onChange={e => setForm(p => ({ ...p, data_inicio: e.target.value }))} /></div>
                   <div><Label>Fim (auto)</Label><Input type="date" value={form.data_fim} readOnly className="bg-muted/50" /></div>
                 </div>
@@ -515,7 +515,7 @@ const AtestadosPage = () => {
                   <div className="mt-1">
                     <label className="flex items-center gap-2 cursor-pointer border border-dashed border-muted-foreground/30 rounded-lg p-3 hover:bg-muted/50 transition-colors">
                       <Upload className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{form.file ? form.file.name : 'Clique para anexar arquivo (PDF, imagem)'}</span>
+                      <span className="text-sm text-muted-foreground truncate">{form.file ? form.file.name : 'Clique para anexar arquivo'}</span>
                       <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" className="hidden"
                         onChange={e => { const f = e.target.files?.[0] || null; setForm(p => ({ ...p, file: f })); }} />
                     </label>
