@@ -135,7 +135,7 @@ const Home = () => {
   return (
     <div style={{ minHeight: '100%' }}>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold" style={{ fontFamily: 'Space Grotesk', color: '#4c5563' }}>Painel Principal</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold" style={{ fontFamily: 'Space Grotesk', color: '#4c5563' }}>Painel Principal</h1>
         <p className="mt-1" style={{ color: '#7a8599' }}>
           {primaryRole ? ROLE_LABELS[primaryRole] : 'Selecione um módulo para começar'}
         </p>
