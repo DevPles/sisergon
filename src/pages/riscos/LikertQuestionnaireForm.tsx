@@ -206,7 +206,7 @@ const LikertQuestionnaireForm = () => {
       const hash = `anon-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
       const { error } = await supabase.from('avaliacoes_psicossociais_likert' as any).insert({
         empresa_id: empresaId,
-        setor_id: setorId || null,
+        setor_id: setorId === 'all' ? null : setorId,
         respondente_hash: hash,
         respostas: answers,
         scores: scores.blockScores,
