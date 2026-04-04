@@ -145,7 +145,7 @@ const Home = () => {
         {visibleCards.map((card) => (
           <div
             key={card.path}
-            className="cursor-pointer transition-all duration-200 hover:-translate-y-1 group h-full flex flex-col p-6 rounded-[22px]"
+            className="cursor-pointer transition-all duration-200 hover:-translate-y-1 group h-full flex flex-col p-4 sm:p-6 rounded-[18px] sm:rounded-[22px]"
             style={{
               background: '#dde2e8',
               boxShadow: '9px 9px 18px #a4afc2, -9px -9px 18px #ffffff',
