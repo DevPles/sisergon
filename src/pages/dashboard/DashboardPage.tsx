@@ -482,16 +482,16 @@ const DashboardPage = () => {
             <CardHeader>
               <CardTitle className="text-base">Pagamentos Recentes</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Empresa</TableHead>
                     <TableHead>Valor</TableHead>
-                    <TableHead>Vencimento</TableHead>
-                    <TableHead>Pagamento</TableHead>
+                    <TableHead className="hidden sm:table-cell">Vencimento</TableHead>
+                    <TableHead className="hidden md:table-cell">Pagamento</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Forma</TableHead>
+                    <TableHead className="hidden sm:table-cell">Forma</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -499,14 +499,14 @@ const DashboardPage = () => {
                     const emp = empresas.find((e: any) => e.id === p.empresa_id);
                     return (
                       <TableRow key={p.id}>
-                        <TableCell className="font-medium">{emp ? (emp as any).nome_fantasia || (emp as any).razao_social : '—'}</TableCell>
-                        <TableCell>R$ {Number(p.valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                        <TableCell>{p.data_vencimento ? format(parseISO(p.data_vencimento), 'dd/MM/yyyy') : '—'}</TableCell>
-                        <TableCell>{p.data_pagamento ? format(parseISO(p.data_pagamento), 'dd/MM/yyyy') : '—'}</TableCell>
+                        <TableCell className="font-medium max-w-[120px] truncate">{emp ? (emp as any).nome_fantasia || (emp as any).razao_social : '—'}</TableCell>
+                        <TableCell className="whitespace-nowrap">R$ {Number(p.valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="hidden sm:table-cell">{p.data_vencimento ? format(parseISO(p.data_vencimento), 'dd/MM/yyyy') : '—'}</TableCell>
+                        <TableCell className="hidden md:table-cell">{p.data_pagamento ? format(parseISO(p.data_pagamento), 'dd/MM/yyyy') : '—'}</TableCell>
                         <TableCell>
                           <Badge variant={p.status === 'pago' ? 'outline' : 'destructive'}>{p.status}</Badge>
                         </TableCell>
-                        <TableCell>{p.forma_pagamento || '—'}</TableCell>
+                        <TableCell className="hidden sm:table-cell">{p.forma_pagamento || '—'}</TableCell>
                       </TableRow>
                     );
                   })}
