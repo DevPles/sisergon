@@ -653,19 +653,20 @@ const DashboardPage = () => {
                 </div>
               </div>
 
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Colaborador</TableHead>
-                    <TableHead>Empresa</TableHead>
-                    <TableHead>Matrícula</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="hidden sm:table-cell">Empresa</TableHead>
+                    <TableHead className="hidden md:table-cell">Matrícula</TableHead>
+                    <TableHead className="hidden sm:table-cell">Status</TableHead>
                     <TableHead className="text-center">Aval.</TableHead>
                     <TableHead>Risco Máx.</TableHead>
-                    <TableHead className="text-center">Atest.</TableHead>
-                    <TableHead className="text-center">Dias Af.</TableHead>
-                    <TableHead className="text-center">PCMSO</TableHead>
-                    <TableHead className="text-center">Testes</TableHead>
+                    <TableHead className="text-center hidden sm:table-cell">Atest.</TableHead>
+                    <TableHead className="text-center hidden md:table-cell">Dias Af.</TableHead>
+                    <TableHead className="text-center hidden md:table-cell">PCMSO</TableHead>
+                    <TableHead className="text-center hidden lg:table-cell">Testes</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
