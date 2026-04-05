@@ -143,6 +143,14 @@ const Login = () => {
                 {submitting ? 'Entrando...' : 'Sign In'}
               </button>
             </form>
+            <button
+              type="button"
+              onClick={() => setIsForgotPassword(true)}
+              className="mt-3 text-xs font-medium hover:underline transition-colors"
+              style={{ color: '#8896a8' }}
+            >
+              Esqueci minha senha
+            </button>
           </div>
         </div>
 
