@@ -673,26 +673,27 @@ const DashboardPage = () => {
                 <TableBody>
                   {dossieData.map((d) => (
                     <TableRow key={d.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setHistoryColabId(d.id)}>
-                      <TableCell className="font-medium text-primary underline-offset-2 hover:underline">{d.nome}</TableCell>
-                      <TableCell className="text-sm">{d.empresaNome}</TableCell>
-                      <TableCell>{d.matricula || '—'}</TableCell>
-                      <TableCell>
+                      <TableCell className="font-medium text-primary underline-offset-2 hover:underline max-w-[120px] truncate">{d.nome}</TableCell>
+                      <TableCell className="text-sm hidden sm:table-cell">{d.empresaNome}</TableCell>
+                      <TableCell className="hidden md:table-cell">{d.matricula || '—'}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Badge variant={d.status === 'ativo' ? 'outline' : 'secondary'}>{d.status}</Badge>
                       </TableCell>
                       <TableCell className="text-center font-medium">{d.totalAvaliacoes}</TableCell>
                       <TableCell>{riskBadge(d.riscoMaisAlto)}</TableCell>
-                      <TableCell className="text-center">{d.atestados}</TableCell>
-                      <TableCell className="text-center font-medium">{d.diasAfastamento}</TableCell>
-                      <TableCell className="text-center">{d.pcmso}</TableCell>
-                      <TableCell className="text-center">{d.testes}</TableCell>
+                      <TableCell className="text-center hidden sm:table-cell">{d.atestados}</TableCell>
+                      <TableCell className="text-center font-medium hidden md:table-cell">{d.diasAfastamento}</TableCell>
+                      <TableCell className="text-center hidden md:table-cell">{d.pcmso}</TableCell>
+                      <TableCell className="text-center hidden lg:table-cell">{d.testes}</TableCell>
                       <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" onClick={() => setHistoryColabId(d.id)}>
-                            Ver Histórico
+                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setHistoryColabId(d.id)}>
+                            Histórico
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
+                            className="text-xs px-2"
                             disabled={generatingPdf}
                             onClick={async () => {
                               setGeneratingPdf(true);
