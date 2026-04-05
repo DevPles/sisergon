@@ -276,8 +276,7 @@ const UserForm = ({ empresas, user, onClose }: UserFormProps) => {
           </div>
           <div className="space-y-2">
             <Label>E-mail *</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isEdit} />
-            {isEdit && <p className="text-xs text-muted-foreground">O e-mail não pode ser alterado após o cadastro</p>}
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label>Perfil de acesso</Label>
