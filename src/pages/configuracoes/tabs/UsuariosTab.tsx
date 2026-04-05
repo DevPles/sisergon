@@ -196,6 +196,15 @@ const UserForm = ({ empresas, user, onClose }: UserFormProps) => {
     if (isEdit) {
       setSending(true);
       try {
+        // Update email if changed
+        if (email !== user.email) {
+          const { data: emailResult, error: emailFnError } = await supabase.functions.invoke('update-user-email', {
+            body: { user_id: user.id, new_email: email },
+          });
+          if (emailFnError) throw emailFnError;
+          if (emailResult?.error) throw new Error(emailResult.error);
+        }
+
         const { error: profileError } = await supabase.from('profiles').update({
           full_name: fullName,
           empresa_id: empresaId === 'none' ? null : empresaId,
