@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth, AppRole } from "@/contexts/AuthContext";
 
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import LandingPage from "./pages/LandingPage";
 import Home from "./pages/Home";
 import AppLayout from "./components/AppLayout";
