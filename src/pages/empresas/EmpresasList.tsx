@@ -113,9 +113,9 @@ const EmpresasList = () => {
                         {emp.nome_fantasia && <p className="text-sm text-muted-foreground">{emp.nome_fantasia}</p>}
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{emp.cnpj || '—'}</TableCell>
-                    <TableCell>{emp.endereco_cidade && emp.endereco_uf ? `${emp.endereco_cidade}/${emp.endereco_uf}` : '—'}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell font-mono text-sm">{emp.cnpj || '—'}</TableCell>
+                    <TableCell className="hidden md:table-cell">{emp.endereco_cidade && emp.endereco_uf ? `${emp.endereco_cidade}/${emp.endereco_uf}` : '—'}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       {emp.grau_risco ? (
                         <Badge variant={grauRiscoColor(emp.grau_risco)}>GR {emp.grau_risco}</Badge>
                       ) : '—'}
