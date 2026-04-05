@@ -620,11 +620,11 @@ const DashboardPage = () => {
                     ))}
                   </SelectContent>
                 </Select>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm text-muted-foreground whitespace-nowrap">Admissão de:</span>
-                  <Input type="date" value={dossieDateFrom} onChange={e => setDossieDateFrom(e.target.value)} className="w-[150px]" />
+                  <Input type="date" value={dossieDateFrom} onChange={e => setDossieDateFrom(e.target.value)} className="w-full sm:w-[150px]" />
                   <span className="text-sm text-muted-foreground">até</span>
-                  <Input type="date" value={dossieDateTo} onChange={e => setDossieDateTo(e.target.value)} className="w-[150px]" />
+                  <Input type="date" value={dossieDateTo} onChange={e => setDossieDateTo(e.target.value)} className="w-full sm:w-[150px]" />
                 </div>
                 {(dossieSearch || dossieEmpresa !== 'all' || dossieDateFrom || dossieDateTo) && (
                   <Button variant="ghost" size="sm" onClick={() => { setDossieSearch(''); setDossieEmpresa('all'); setDossieDateFrom(''); setDossieDateTo(''); }}>
