@@ -337,7 +337,24 @@ const Login = () => {
         <div className="md:hidden absolute inset-0 flex flex-col items-center justify-center p-6 bg-card z-30">
           <img src={logoErgon} alt="Ergon" className="h-12 mx-auto mb-6" />
 
-          {!isSignUp ? (
+          {isForgotPassword ? (
+            <div className="w-full max-w-sm animate-fade-in">
+              <h2 className="text-2xl font-bold text-foreground mb-1 text-center" style={{ fontFamily: 'Space Grotesk' }}>Recuperar Senha</h2>
+              <p className="text-muted-foreground text-sm mb-6 text-center">Informe seu e-mail para redefinição</p>
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="m-forgot-email">E-mail</Label>
+                  <Input id="m-forgot-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="seu@email.com" className="h-12 rounded-xl bg-muted/50" />
+                </div>
+                <Button type="submit" className="w-full h-12 text-base" disabled={submitting}>
+                  {submitting ? 'Enviando...' : 'Enviar Link'}
+                </Button>
+              </form>
+              <button onClick={() => setIsForgotPassword(false)} className="w-full text-center mt-6 text-sm text-primary font-medium hover:underline transition-colors">
+                Voltar ao login
+              </button>
+            </div>
+          ) : !isSignUp ? (
             <div className="w-full max-w-sm animate-fade-in">
               <h2 className="text-2xl font-bold text-foreground mb-1 text-center" style={{ fontFamily: 'Space Grotesk' }}>Entrar</h2>
               <p className="text-muted-foreground text-sm mb-6 text-center">Acesse sua conta</p>
@@ -354,7 +371,10 @@ const Login = () => {
                   {submitting ? 'Entrando...' : 'Entrar'}
                 </Button>
               </form>
-              <button onClick={() => setIsSignUp(true)} className="w-full text-center mt-6 text-sm text-primary font-medium hover:underline transition-colors">
+              <button onClick={() => setIsForgotPassword(true)} className="w-full text-center mt-3 text-xs text-muted-foreground hover:underline transition-colors">
+                Esqueci minha senha
+              </button>
+              <button onClick={() => setIsSignUp(true)} className="w-full text-center mt-3 text-sm text-primary font-medium hover:underline transition-colors">
                 Não tem conta? Cadastrar
               </button>
             </div>
