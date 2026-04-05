@@ -87,14 +87,14 @@ const EmpresasList = () => {
             </span>
           </div>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Razão Social</TableHead>
-                <TableHead>CNPJ</TableHead>
-                <TableHead>Cidade/UF</TableHead>
-                <TableHead>Grau de Risco</TableHead>
+                <TableHead className="hidden sm:table-cell">CNPJ</TableHead>
+                <TableHead className="hidden md:table-cell">Cidade/UF</TableHead>
+                <TableHead className="hidden sm:table-cell">Grau de Risco</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
@@ -113,9 +113,9 @@ const EmpresasList = () => {
                         {emp.nome_fantasia && <p className="text-sm text-muted-foreground">{emp.nome_fantasia}</p>}
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{emp.cnpj || '—'}</TableCell>
-                    <TableCell>{emp.endereco_cidade && emp.endereco_uf ? `${emp.endereco_cidade}/${emp.endereco_uf}` : '—'}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell font-mono text-sm">{emp.cnpj || '—'}</TableCell>
+                    <TableCell className="hidden md:table-cell">{emp.endereco_cidade && emp.endereco_uf ? `${emp.endereco_cidade}/${emp.endereco_uf}` : '—'}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       {emp.grau_risco ? (
                         <Badge variant={grauRiscoColor(emp.grau_risco)}>GR {emp.grau_risco}</Badge>
                       ) : '—'}
@@ -124,9 +124,9 @@ const EmpresasList = () => {
                       <Badge variant={emp.ativa ? 'default' : 'secondary'}>{emp.ativa ? 'Ativa' : 'Inativa'}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex justify-end gap-1 sm:gap-2" onClick={(e) => e.stopPropagation()}>
                         <Button variant="ghost" size="sm" onClick={() => setEditingId(emp.id)}>Editar</Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(emp.id)} className="text-destructive hover:text-destructive">
+                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(emp.id)} className="text-destructive hover:text-destructive hidden sm:inline-flex">
                           Excluir
                         </Button>
                       </div>

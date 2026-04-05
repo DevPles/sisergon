@@ -269,7 +269,7 @@ const DashboardPage = () => {
         </div>
         <div className="flex items-center gap-3">
           <Select value={selectedEmpresa} onValueChange={setSelectedEmpresa}>
-            <SelectTrigger className="w-[240px]">
+            <SelectTrigger className="w-full sm:w-[240px]">
               <SelectValue placeholder="Todas as empresas" />
             </SelectTrigger>
             <SelectContent>
@@ -284,13 +284,15 @@ const DashboardPage = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="visao-geral">Visão Geral</TabsTrigger>
-          <TabsTrigger value="empresas">Empresas</TabsTrigger>
-          <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
-          <TabsTrigger value="perfis">Perfis</TabsTrigger>
-          <TabsTrigger value="dossie">Dossiê</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+          <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-5">
+            <TabsTrigger value="visao-geral" className="text-xs sm:text-sm whitespace-nowrap">Visão Geral</TabsTrigger>
+            <TabsTrigger value="empresas" className="text-xs sm:text-sm">Empresas</TabsTrigger>
+            <TabsTrigger value="financeiro" className="text-xs sm:text-sm">Financeiro</TabsTrigger>
+            <TabsTrigger value="perfis" className="text-xs sm:text-sm">Perfis</TabsTrigger>
+            <TabsTrigger value="dossie" className="text-xs sm:text-sm">Dossiê</TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* ═══════════ VISÃO GERAL ═══════════ */}
         <TabsContent value="visao-geral" className="space-y-6 mt-6">
@@ -405,34 +407,34 @@ const DashboardPage = () => {
               <CardTitle className="text-base">Ranking de Empresas</CardTitle>
               <CardDescription>Ordenado por quantidade de riscos críticos e altos</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Empresa</TableHead>
-                    <TableHead className="text-center">Colaboradores</TableHead>
-                    <TableHead className="text-center">Avaliações</TableHead>
+                    <TableHead className="text-center hidden sm:table-cell">Colaboradores</TableHead>
+                    <TableHead className="text-center hidden sm:table-cell">Avaliações</TableHead>
                     <TableHead className="text-center">Riscos Críticos</TableHead>
-                    <TableHead className="text-center">Riscos Altos</TableHead>
-                    <TableHead className="text-center">Planos Pendentes</TableHead>
-                    <TableHead>Status Financeiro</TableHead>
+                    <TableHead className="text-center hidden md:table-cell">Riscos Altos</TableHead>
+                    <TableHead className="text-center hidden md:table-cell">Planos Pendentes</TableHead>
+                    <TableHead className="hidden sm:table-cell">Status Financeiro</TableHead>
                     <TableHead className="text-right">Valor em Aberto</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {empresaRanking.map((e) => (
                     <TableRow key={e.id}>
-                      <TableCell className="font-medium">{e.nome}</TableCell>
-                      <TableCell className="text-center">{e.colaboradores}</TableCell>
-                      <TableCell className="text-center">{e.avaliacoes}</TableCell>
+                      <TableCell className="font-medium max-w-[120px] truncate">{e.nome}</TableCell>
+                      <TableCell className="text-center hidden sm:table-cell">{e.colaboradores}</TableCell>
+                      <TableCell className="text-center hidden sm:table-cell">{e.avaliacoes}</TableCell>
                       <TableCell className="text-center">
                         {e.riscos_criticos > 0 ? <Badge variant="destructive">{e.riscos_criticos}</Badge> : '0'}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center hidden md:table-cell">
                         {e.riscos_altos > 0 ? <Badge variant="destructive">{e.riscos_altos}</Badge> : '0'}
                       </TableCell>
-                      <TableCell className="text-center">{e.planos_pendentes}</TableCell>
-                      <TableCell>
+                      <TableCell className="text-center hidden md:table-cell">{e.planos_pendentes}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Badge variant={e.status_financeiro === 'inadimplente' ? 'destructive' : 'outline'}>
                           {STATUS_MAP[e.status_financeiro] || e.status_financeiro}
                         </Badge>
@@ -480,16 +482,16 @@ const DashboardPage = () => {
             <CardHeader>
               <CardTitle className="text-base">Pagamentos Recentes</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Empresa</TableHead>
                     <TableHead>Valor</TableHead>
-                    <TableHead>Vencimento</TableHead>
-                    <TableHead>Pagamento</TableHead>
+                    <TableHead className="hidden sm:table-cell">Vencimento</TableHead>
+                    <TableHead className="hidden md:table-cell">Pagamento</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Forma</TableHead>
+                    <TableHead className="hidden sm:table-cell">Forma</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -497,14 +499,14 @@ const DashboardPage = () => {
                     const emp = empresas.find((e: any) => e.id === p.empresa_id);
                     return (
                       <TableRow key={p.id}>
-                        <TableCell className="font-medium">{emp ? (emp as any).nome_fantasia || (emp as any).razao_social : '—'}</TableCell>
-                        <TableCell>R$ {Number(p.valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                        <TableCell>{p.data_vencimento ? format(parseISO(p.data_vencimento), 'dd/MM/yyyy') : '—'}</TableCell>
-                        <TableCell>{p.data_pagamento ? format(parseISO(p.data_pagamento), 'dd/MM/yyyy') : '—'}</TableCell>
+                        <TableCell className="font-medium max-w-[120px] truncate">{emp ? (emp as any).nome_fantasia || (emp as any).razao_social : '—'}</TableCell>
+                        <TableCell className="whitespace-nowrap">R$ {Number(p.valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
+                        <TableCell className="hidden sm:table-cell">{p.data_vencimento ? format(parseISO(p.data_vencimento), 'dd/MM/yyyy') : '—'}</TableCell>
+                        <TableCell className="hidden md:table-cell">{p.data_pagamento ? format(parseISO(p.data_pagamento), 'dd/MM/yyyy') : '—'}</TableCell>
                         <TableCell>
                           <Badge variant={p.status === 'pago' ? 'outline' : 'destructive'}>{p.status}</Badge>
                         </TableCell>
-                        <TableCell>{p.forma_pagamento || '—'}</TableCell>
+                        <TableCell className="hidden sm:table-cell">{p.forma_pagamento || '—'}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -516,7 +518,7 @@ const DashboardPage = () => {
 
         {/* ═══════════ PERFIS ═══════════ */}
         <TabsContent value="perfis" className="space-y-6 mt-6">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {roleCounts.map(rc => (
               <KpiCard key={rc.role} label={rc.label} value={rc.count} />
             ))}
@@ -618,11 +620,11 @@ const DashboardPage = () => {
                     ))}
                   </SelectContent>
                 </Select>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm text-muted-foreground whitespace-nowrap">Admissão de:</span>
-                  <Input type="date" value={dossieDateFrom} onChange={e => setDossieDateFrom(e.target.value)} className="w-[150px]" />
+                  <Input type="date" value={dossieDateFrom} onChange={e => setDossieDateFrom(e.target.value)} className="w-full sm:w-[150px]" />
                   <span className="text-sm text-muted-foreground">até</span>
-                  <Input type="date" value={dossieDateTo} onChange={e => setDossieDateTo(e.target.value)} className="w-[150px]" />
+                  <Input type="date" value={dossieDateTo} onChange={e => setDossieDateTo(e.target.value)} className="w-full sm:w-[150px]" />
                 </div>
                 {(dossieSearch || dossieEmpresa !== 'all' || dossieDateFrom || dossieDateTo) && (
                   <Button variant="ghost" size="sm" onClick={() => { setDossieSearch(''); setDossieEmpresa('all'); setDossieDateFrom(''); setDossieDateTo(''); }}>
@@ -651,45 +653,47 @@ const DashboardPage = () => {
                 </div>
               </div>
 
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Colaborador</TableHead>
-                    <TableHead>Empresa</TableHead>
-                    <TableHead>Matrícula</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="hidden sm:table-cell">Empresa</TableHead>
+                    <TableHead className="hidden md:table-cell">Matrícula</TableHead>
+                    <TableHead className="hidden sm:table-cell">Status</TableHead>
                     <TableHead className="text-center">Aval.</TableHead>
                     <TableHead>Risco Máx.</TableHead>
-                    <TableHead className="text-center">Atest.</TableHead>
-                    <TableHead className="text-center">Dias Af.</TableHead>
-                    <TableHead className="text-center">PCMSO</TableHead>
-                    <TableHead className="text-center">Testes</TableHead>
+                    <TableHead className="text-center hidden sm:table-cell">Atest.</TableHead>
+                    <TableHead className="text-center hidden md:table-cell">Dias Af.</TableHead>
+                    <TableHead className="text-center hidden md:table-cell">PCMSO</TableHead>
+                    <TableHead className="text-center hidden lg:table-cell">Testes</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {dossieData.map((d) => (
                     <TableRow key={d.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setHistoryColabId(d.id)}>
-                      <TableCell className="font-medium text-primary underline-offset-2 hover:underline">{d.nome}</TableCell>
-                      <TableCell className="text-sm">{d.empresaNome}</TableCell>
-                      <TableCell>{d.matricula || '—'}</TableCell>
-                      <TableCell>
+                      <TableCell className="font-medium text-primary underline-offset-2 hover:underline max-w-[120px] truncate">{d.nome}</TableCell>
+                      <TableCell className="text-sm hidden sm:table-cell">{d.empresaNome}</TableCell>
+                      <TableCell className="hidden md:table-cell">{d.matricula || '—'}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Badge variant={d.status === 'ativo' ? 'outline' : 'secondary'}>{d.status}</Badge>
                       </TableCell>
                       <TableCell className="text-center font-medium">{d.totalAvaliacoes}</TableCell>
                       <TableCell>{riskBadge(d.riscoMaisAlto)}</TableCell>
-                      <TableCell className="text-center">{d.atestados}</TableCell>
-                      <TableCell className="text-center font-medium">{d.diasAfastamento}</TableCell>
-                      <TableCell className="text-center">{d.pcmso}</TableCell>
-                      <TableCell className="text-center">{d.testes}</TableCell>
+                      <TableCell className="text-center hidden sm:table-cell">{d.atestados}</TableCell>
+                      <TableCell className="text-center font-medium hidden md:table-cell">{d.diasAfastamento}</TableCell>
+                      <TableCell className="text-center hidden md:table-cell">{d.pcmso}</TableCell>
+                      <TableCell className="text-center hidden lg:table-cell">{d.testes}</TableCell>
                       <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" onClick={() => setHistoryColabId(d.id)}>
-                            Ver Histórico
+                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setHistoryColabId(d.id)}>
+                            Histórico
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
+                            className="text-xs px-2"
                             disabled={generatingPdf}
                             onClick={async () => {
                               setGeneratingPdf(true);
@@ -713,7 +717,8 @@ const DashboardPage = () => {
                     <TableRow><TableCell colSpan={11} className="text-center text-muted-foreground py-8">Nenhum colaborador encontrado</TableCell></TableRow>
                   )}
                 </TableBody>
-              </Table>
+               </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
