@@ -424,17 +424,17 @@ const DashboardPage = () => {
                 <TableBody>
                   {empresaRanking.map((e) => (
                     <TableRow key={e.id}>
-                      <TableCell className="font-medium">{e.nome}</TableCell>
-                      <TableCell className="text-center">{e.colaboradores}</TableCell>
-                      <TableCell className="text-center">{e.avaliacoes}</TableCell>
+                      <TableCell className="font-medium max-w-[120px] truncate">{e.nome}</TableCell>
+                      <TableCell className="text-center hidden sm:table-cell">{e.colaboradores}</TableCell>
+                      <TableCell className="text-center hidden sm:table-cell">{e.avaliacoes}</TableCell>
                       <TableCell className="text-center">
                         {e.riscos_criticos > 0 ? <Badge variant="destructive">{e.riscos_criticos}</Badge> : '0'}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center hidden md:table-cell">
                         {e.riscos_altos > 0 ? <Badge variant="destructive">{e.riscos_altos}</Badge> : '0'}
                       </TableCell>
-                      <TableCell className="text-center">{e.planos_pendentes}</TableCell>
-                      <TableCell>
+                      <TableCell className="text-center hidden md:table-cell">{e.planos_pendentes}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <Badge variant={e.status_financeiro === 'inadimplente' ? 'destructive' : 'outline'}>
                           {STATUS_MAP[e.status_financeiro] || e.status_financeiro}
                         </Badge>
