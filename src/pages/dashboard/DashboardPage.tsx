@@ -407,17 +407,17 @@ const DashboardPage = () => {
               <CardTitle className="text-base">Ranking de Empresas</CardTitle>
               <CardDescription>Ordenado por quantidade de riscos críticos e altos</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Empresa</TableHead>
-                    <TableHead className="text-center">Colaboradores</TableHead>
-                    <TableHead className="text-center">Avaliações</TableHead>
+                    <TableHead className="text-center hidden sm:table-cell">Colaboradores</TableHead>
+                    <TableHead className="text-center hidden sm:table-cell">Avaliações</TableHead>
                     <TableHead className="text-center">Riscos Críticos</TableHead>
-                    <TableHead className="text-center">Riscos Altos</TableHead>
-                    <TableHead className="text-center">Planos Pendentes</TableHead>
-                    <TableHead>Status Financeiro</TableHead>
+                    <TableHead className="text-center hidden md:table-cell">Riscos Altos</TableHead>
+                    <TableHead className="text-center hidden md:table-cell">Planos Pendentes</TableHead>
+                    <TableHead className="hidden sm:table-cell">Status Financeiro</TableHead>
                     <TableHead className="text-right">Valor em Aberto</TableHead>
                   </TableRow>
                 </TableHeader>
