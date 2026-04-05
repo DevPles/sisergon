@@ -717,7 +717,8 @@ const DashboardPage = () => {
                     <TableRow><TableCell colSpan={11} className="text-center text-muted-foreground py-8">Nenhum colaborador encontrado</TableCell></TableRow>
                   )}
                 </TableBody>
-              </Table>
+               </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
