@@ -156,3 +156,24 @@
     border: none;
   }
 }
+
+/* ── Mobile optimizations ── */
+@layer utilities {
+  @media (max-width: 639px) {
+    .neu-card {
+      border-radius: 16px;
+      box-shadow: 6px 6px 12px #a4afc2, -6px -6px 12px #ffffff;
+    }
+    .neu-card:hover {
+      box-shadow: 6px 6px 12px #a4afc2, -6px -6px 12px #ffffff;
+    }
+    .neu-input {
+      border-radius: 16px;
+      box-shadow: inset 6px 6px 12px #a4afc2, inset -6px -6px 12px #ffffff;
+    }
+    .neu-btn, .neu-btn-primary {
+      border-radius: 16px;
+      box-shadow: 6px 6px 12px #a4afc2, -6px -6px 12px #ffffff;
+    }
+  }
+}

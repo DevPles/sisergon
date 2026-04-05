@@ -518,7 +518,7 @@ const DashboardPage = () => {
 
         {/* ═══════════ PERFIS ═══════════ */}
         <TabsContent value="perfis" className="space-y-6 mt-6">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {roleCounts.map(rc => (
               <KpiCard key={rc.role} label={rc.label} value={rc.count} />
             ))}
