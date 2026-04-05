@@ -284,13 +284,15 @@ const DashboardPage = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="visao-geral">Visão Geral</TabsTrigger>
-          <TabsTrigger value="empresas">Empresas</TabsTrigger>
-          <TabsTrigger value="financeiro">Financeiro</TabsTrigger>
-          <TabsTrigger value="perfis">Perfis</TabsTrigger>
-          <TabsTrigger value="dossie">Dossiê</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+          <TabsList className="inline-flex w-auto min-w-full sm:grid sm:w-full sm:grid-cols-5">
+            <TabsTrigger value="visao-geral" className="text-xs sm:text-sm whitespace-nowrap">Visão Geral</TabsTrigger>
+            <TabsTrigger value="empresas" className="text-xs sm:text-sm">Empresas</TabsTrigger>
+            <TabsTrigger value="financeiro" className="text-xs sm:text-sm">Financeiro</TabsTrigger>
+            <TabsTrigger value="perfis" className="text-xs sm:text-sm">Perfis</TabsTrigger>
+            <TabsTrigger value="dossie" className="text-xs sm:text-sm">Dossiê</TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* ═══════════ VISÃO GERAL ═══════════ */}
         <TabsContent value="visao-geral" className="space-y-6 mt-6">
