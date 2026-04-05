@@ -64,10 +64,65 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#dde2e8' }}>
       <div className="w-full max-w-4xl h-[540px] rounded-[22px] overflow-hidden relative" style={{ background: '#dde2e8', boxShadow: '12px 12px 24px #a4afc2, -12px -12px 24px #ffffff' }}>
         
+        {/* ===== FORGOT PASSWORD FORM (left side) ===== */}
+        {isForgotPassword && (
+          <div
+            className="absolute top-0 left-0 w-1/2 h-full flex flex-col items-center justify-center p-8 sm:p-12 z-10 animate-fade-in"
+            style={{ background: '#dde2e8' }}
+          >
+            <div
+              className="w-full max-w-sm p-8 rounded-[22px] text-center relative"
+              style={{ background: '#dde2e8', boxShadow: '12px 12px 24px #a4afc2, -12px -12px 24px #ffffff' }}
+            >
+              <button
+                type="button"
+                onClick={() => setIsForgotPassword(false)}
+                className="absolute top-4 left-4 p-2 rounded-full transition-all duration-200 hover:scale-105"
+                style={{ boxShadow: '4px 4px 8px #a4afc2, -4px -4px 8px #ffffff' }}
+              >
+                <ArrowLeft size={16} color="#4c5563" />
+              </button>
+              <h2 className="text-xl font-bold mb-2" style={{ fontFamily: 'Space Grotesk', color: '#4c5563' }}>
+                Recuperar Senha
+              </h2>
+              <p className="text-xs mb-5" style={{ color: '#8896a8' }}>
+                Informe seu e-mail para receber o link de redefinição
+              </p>
+              <form onSubmit={handleForgotPassword} className="space-y-5">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="E-mail"
+                  className="w-full px-4 py-3 text-sm rounded-[22px] border-none outline-none"
+                  style={{
+                    background: '#dde2e8',
+                    boxShadow: 'inset 9px 9px 18px #a4afc2, inset -9px -9px 18px #ffffff',
+                    color: '#4c5563',
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-8 py-3 rounded-[22px] border-none cursor-pointer text-sm font-medium transition-all duration-200 disabled:opacity-50"
+                  style={{
+                    background: '#dde2e8',
+                    boxShadow: '9px 9px 18px #a4afc2, -9px -9px 18px #ffffff',
+                    color: '#4c5563',
+                  }}
+                >
+                  {submitting ? 'Enviando...' : 'Enviar Link'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* ===== SIGN IN FORM (left side) — Neumorphic ===== */}
         <div
           className={`absolute top-0 left-0 w-1/2 h-full flex flex-col items-center justify-center p-8 sm:p-12 transition-all duration-700 ease-in-out ${
-            isSignUp ? 'opacity-0 pointer-events-none -translate-x-10' : 'opacity-100 translate-x-0'
+            isSignUp || isForgotPassword ? 'opacity-0 pointer-events-none -translate-x-10' : 'opacity-100 translate-x-0'
           }`}
           style={{ background: '#dde2e8' }}
         >
