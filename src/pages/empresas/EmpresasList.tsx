@@ -87,14 +87,14 @@ const EmpresasList = () => {
             </span>
           </div>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Razão Social</TableHead>
-                <TableHead>CNPJ</TableHead>
-                <TableHead>Cidade/UF</TableHead>
-                <TableHead>Grau de Risco</TableHead>
+                <TableHead className="hidden sm:table-cell">CNPJ</TableHead>
+                <TableHead className="hidden md:table-cell">Cidade/UF</TableHead>
+                <TableHead className="hidden sm:table-cell">Grau de Risco</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
