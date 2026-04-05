@@ -124,9 +124,9 @@ const EmpresasList = () => {
                       <Badge variant={emp.ativa ? 'default' : 'secondary'}>{emp.ativa ? 'Ativa' : 'Inativa'}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex justify-end gap-1 sm:gap-2" onClick={(e) => e.stopPropagation()}>
                         <Button variant="ghost" size="sm" onClick={() => setEditingId(emp.id)}>Editar</Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(emp.id)} className="text-destructive hover:text-destructive">
+                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(emp.id)} className="text-destructive hover:text-destructive hidden sm:inline-flex">
                           Excluir
                         </Button>
                       </div>

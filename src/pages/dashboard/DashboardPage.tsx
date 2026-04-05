@@ -269,7 +269,7 @@ const DashboardPage = () => {
         </div>
         <div className="flex items-center gap-3">
           <Select value={selectedEmpresa} onValueChange={setSelectedEmpresa}>
-            <SelectTrigger className="w-[240px]">
+            <SelectTrigger className="w-full sm:w-[240px]">
               <SelectValue placeholder="Todas as empresas" />
             </SelectTrigger>
             <SelectContent>
