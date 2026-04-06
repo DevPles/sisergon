@@ -60,16 +60,18 @@ const RiscosPsicossociaisList = () => {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Riscos Psicossociais</h1>
-          <p className="text-muted-foreground">Avaliação de fatores psicossociais e organizacionais — ARP</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Riscos Psicossociais</h1>
+          <p className="text-sm text-muted-foreground">Avaliação de fatores psicossociais e organizacionais — ARP</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-[220px]" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+          <Input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full sm:max-w-[220px]" />
           <span className="text-sm text-muted-foreground whitespace-nowrap">{assessments?.length ?? 0} registros</span>
-          <Button variant="outline" onClick={() => navigate('/riscos-psicossociais/likert')}>Questionário Likert</Button>
-          <Button onClick={openNew}>Nova Avaliação</Button>
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1 sm:flex-none text-xs sm:text-sm" onClick={() => navigate('/riscos-psicossociais/likert')}>Questionário Likert</Button>
+            <Button className="flex-1 sm:flex-none text-xs sm:text-sm" onClick={openNew}>Nova Avaliação</Button>
+          </div>
         </div>
       </div>
 
