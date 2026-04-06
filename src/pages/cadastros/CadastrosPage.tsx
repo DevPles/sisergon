@@ -658,12 +658,13 @@ const CadastrosPage = () => {
             </TabsContent>
 
             <TabsContent value="colaboradores" className="mt-0">
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Nome</TableHead>
-                    <TableHead>Matrícula</TableHead>
-                    <TableHead>Empresa</TableHead>
+                    <TableHead className="hidden sm:table-cell">Matrícula</TableHead>
+                    <TableHead className="hidden md:table-cell">Empresa</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
@@ -675,20 +676,21 @@ const CadastrosPage = () => {
                     <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Nenhum colaborador cadastrado</TableCell></TableRow>
                   ) : colaboradores?.map((col) => (
                     <TableRow key={col.id}>
-                      <TableCell className="font-medium">{col.nome_completo}</TableCell>
-                      <TableCell>{col.matricula || '—'}</TableCell>
-                      <TableCell>{(col.empresas as any)?.razao_social || '—'}</TableCell>
+                      <TableCell className="font-medium text-sm">{col.nome_completo}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{col.matricula || '—'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{(col.empresas as any)?.razao_social || '—'}</TableCell>
                       <TableCell><Badge variant={col.status === 'ativo' ? 'default' : 'secondary'}>{col.status}</Badge></TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => setEditingColabId(col.id)}>Editar</Button>
-                          <Button variant="ghost" size="sm" onClick={() => deleteColab.mutate(col.id)} className="text-destructive hover:text-destructive">Excluir</Button>
+                        <div className="flex justify-end gap-1">
+                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setEditingColabId(col.id)}>Editar</Button>
+                          <Button variant="ghost" size="sm" className="text-xs px-2 text-destructive hover:text-destructive" onClick={() => deleteColab.mutate(col.id)}>Excluir</Button>
                         </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </TabsContent>
 
             <TabsContent value="templates" className="mt-0 p-6">
