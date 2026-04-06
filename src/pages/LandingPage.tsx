@@ -747,7 +747,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
           {!submitted && (
             <div className="px-7 py-5 border-t border-gray-100 flex justify-between items-center">
               {step > 1 ? (
-                <button onClick={() => setStep(s => s - 1)} className="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-900 rounded-lg hover:bg-gray-50 transition-colors">
+                <button onClick={() => setStep(s => s - 1)} className="px-7 py-3 bg-gray-800 text-white rounded-xl text-sm font-semibold hover:bg-gray-900 transition-colors">
                   ← Voltar
                 </button>
               ) : <div />}
