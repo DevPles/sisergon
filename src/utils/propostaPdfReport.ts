@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { C, M, needsNewPage, drawFooter, sectionTitle, subHeader } from './pdfShared';
+import { loadBrandLogo } from './pdfDownload';
 
 interface ServiceDetail {
   label: string;
@@ -26,26 +27,12 @@ interface PropostaData {
   exposicaoSemSistema: number;
   economiaPotencial: number;
   avgReduction: number;
-  logoUrl?: string;
 }
 
 function fmt(v: number) {
   return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 }
 
-async function loadImage(url: string): Promise<string | null> {
-  try {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = url;
-    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    canvas.getContext('2d')!.drawImage(img, 0, 0);
-    return canvas.toDataURL('image/png');
-  } catch { return null; }
-}
 
 export async function generatePropostaPdf(data: PropostaData) {
   const doc = new jsPDF('p', 'mm', 'a4');
@@ -55,12 +42,10 @@ export async function generatePropostaPdf(data: PropostaData) {
   doc.setFillColor(...C.navy);
   doc.rect(0, 0, pw, 50, 'F');
 
-  // Logo
-  if (data.logoUrl) {
-    const logoData = await loadImage(data.logoUrl);
-    if (logoData) {
-      try { doc.addImage(logoData, 'PNG', M, 8, 32, 32); } catch { /* */ }
-    }
+  // Logo Ergon (brand)
+  const brandLogo = await loadBrandLogo();
+  if (brandLogo) {
+    try { doc.addImage(brandLogo, 'PNG', M, 10, 40, 28); } catch { /* */ }
   }
 
   doc.setFontSize(22);
@@ -124,6 +109,7 @@ export async function generatePropostaPdf(data: PropostaData) {
 
     y = needsNewPage(doc, y, 25);
     y = subHeader(doc, categoryLabels[cat] || cat, y);
+    y += 3; // spacing between category label and first service
 
     for (const svc of items) {
       y = needsNewPage(doc, y, 22);
@@ -241,26 +227,21 @@ export async function generatePropostaPdf(data: PropostaData) {
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...C.muted);
-  doc.text('Esta proposta tem validade de 30 dias a partir da data de emissão.', pw / 2, y + 6.5, { align: 'center' });
-  y += 16;
+  doc.text('Esta proposta tem validade de 15 dias a partir da data de emissão.', pw / 2, y + 6.5, { align: 'center' });
+  y += 20;
 
   // ─── ASSINATURAS ───
-  y = needsNewPage(doc, y, 35);
+  y = needsNewPage(doc, y, 40);
   doc.setDrawColor(...C.navy);
   doc.setLineWidth(0.4);
-  doc.line(M + 5, y, M + 70, y);
-  doc.line(pw - M - 70, y, pw - M - 5, y);
-  y += 4;
+  doc.line(M + 5, y, M + 75, y);
+  doc.line(pw - M - 75, y, pw - M - 5, y);
+  y += 5;
   doc.setFontSize(7.5);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...C.muted);
   doc.text('ERGON — Responsável Comercial', M + 5, y);
-  doc.text('Cliente — Responsável', pw - M - 70, y);
-  y += 4;
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...C.text);
-  doc.text('_________________________', M + 5, y);
-  doc.text(data.contato || '_________________________', pw - M - 70, y);
+  doc.text(`Cliente — ${data.contato || 'Responsável'}`, pw - M - 75, y);
 
   // ─── FOOTERS ───
   const totalPages = doc.getNumberOfPages();
