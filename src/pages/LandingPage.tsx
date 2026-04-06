@@ -44,8 +44,8 @@ function ScrollText({
   );
 }
 
-/* ── Parallax background ── */
-function ParallaxBg({ src, speed = 0.3, overlay }: { src: string; speed?: number; overlay: string }) {
+/* ── Parallax background (image or video) ── */
+function ParallaxBg({ src, speed = 0.3, overlay, isVideo = false }: { src: string; speed?: number; overlay: string; isVideo?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [`-${speed * 100}%`, `${speed * 100}%`]);
@@ -53,10 +53,21 @@ function ParallaxBg({ src, speed = 0.3, overlay }: { src: string; speed?: number
   return (
     <div ref={ref} className="absolute inset-0 overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-0 h-[130%] -top-[15%]">
-        <div
-          style={{ backgroundImage: `url(${src})` }}
-          className="absolute inset-0 bg-cover bg-center"
-        />
+        {isVideo ? (
+          <video
+            src={src}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div
+            style={{ backgroundImage: `url(${src})` }}
+            className="absolute inset-0 bg-cover bg-center"
+          />
+        )}
         <div className={`absolute inset-0 ${overlay}`} />
       </motion.div>
     </div>
