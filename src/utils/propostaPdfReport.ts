@@ -33,19 +33,6 @@ function fmt(v: number) {
   return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 }
 
-async function loadImage(url: string): Promise<string | null> {
-  try {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = url;
-    await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    canvas.getContext('2d')!.drawImage(img, 0, 0);
-    return canvas.toDataURL('image/png');
-  } catch { return null; }
-}
 
 export async function generatePropostaPdf(data: PropostaData) {
   const doc = new jsPDF('p', 'mm', 'a4');
