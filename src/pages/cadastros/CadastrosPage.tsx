@@ -557,13 +557,15 @@ const CadastrosPage = () => {
       <Card>
         <CardContent className="p-6">
           <Tabs defaultValue="empresas" onValueChange={(v) => setActiveTab(v)}>
-            <div className="px-6 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <TabsList>
-                <TabsTrigger value="empresas">Empresas ({empresas?.length ?? 0})</TabsTrigger>
-                <TabsTrigger value="colaboradores">Colaboradores ({colaboradores?.length ?? 0})</TabsTrigger>
-                <TabsTrigger value="templates">Formulários</TabsTrigger>
-                <TabsTrigger value="faturamento">Faturamento</TabsTrigger>
-              </TabsList>
+            <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col gap-4">
+              <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+                <TabsList className="inline-flex w-auto min-w-full sm:w-auto">
+                  <TabsTrigger value="empresas" className="text-xs sm:text-sm whitespace-nowrap">Empresas ({empresas?.length ?? 0})</TabsTrigger>
+                  <TabsTrigger value="colaboradores" className="text-xs sm:text-sm whitespace-nowrap">Colaboradores ({colaboradores?.length ?? 0})</TabsTrigger>
+                  <TabsTrigger value="templates" className="text-xs sm:text-sm whitespace-nowrap">Formulários</TabsTrigger>
+                  <TabsTrigger value="faturamento" className="text-xs sm:text-sm whitespace-nowrap">Faturamento</TabsTrigger>
+                </TabsList>
+              </div>
               {activeTab === 'faturamento' && (
                 <div className="flex items-center gap-3">
                   <Select value={faturamentoEmpresa} onValueChange={setFaturamentoEmpresa}>
