@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { C, M, needsNewPage, drawFooter, sectionTitle, subHeader } from './pdfShared';
+import { loadBrandLogo } from './pdfDownload';
 
 interface ServiceDetail {
   label: string;
