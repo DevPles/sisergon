@@ -56,12 +56,10 @@ export async function generatePropostaPdf(data: PropostaData) {
   doc.setFillColor(...C.navy);
   doc.rect(0, 0, pw, 50, 'F');
 
-  // Logo
-  if (data.logoUrl) {
-    const logoData = await loadImage(data.logoUrl);
-    if (logoData) {
-      try { doc.addImage(logoData, 'PNG', M, 8, 32, 32); } catch { /* */ }
-    }
+  // Logo Ergon (brand)
+  const brandLogo = await loadBrandLogo();
+  if (brandLogo) {
+    try { doc.addImage(brandLogo, 'PNG', M, 10, 40, 28); } catch { /* */ }
   }
 
   doc.setFontSize(22);
