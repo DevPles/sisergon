@@ -716,14 +716,20 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                         <button
                           type="button"
                           onClick={() => {
-                            const content = `PROPOSTA COMERCIAL — ERGON\n\nEmpresa: ${contactForm.empresa}\nContato: ${contactForm.nome}\nE-mail: ${contactForm.email}\nTelefone: ${contactForm.telefone}\n\nServiços: ${selectedServices.map(s => s.label).join(', ')}\nColaboradores: ${colaboradores}\nPeríodo: ${contractOption.label}\nValor mensal: R$ ${monthlyWithDiscount.toLocaleString('pt-BR')}\nTotal contrato: R$ ${totalContract.toLocaleString('pt-BR')}\n\nExposição sem sistema: R$ ${totalRiskExposure.toLocaleString('pt-BR')}\nEconomia potencial: R$ ${potentialSavings.toLocaleString('pt-BR')}`;
-                            const blob = new Blob([content], { type: 'text/plain' });
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = `proposta-ergon-${(contactForm.empresa || 'empresa').replace(/\s+/g, '-').toLowerCase()}.txt`;
-                            a.click();
-                            URL.revokeObjectURL(url);
+                            const { generatePropostaPdf } = await import('@/utils/propostaPdfReport');
+                            generatePropostaPdf({
+                              empresa: contactForm.empresa,
+                              contato: contactForm.nome,
+                              email: contactForm.email,
+                              telefone: contactForm.telefone,
+                              servicos: selectedServices.map(s => s.label),
+                              colaboradores,
+                              periodo: contractOption.label,
+                              valorMensal: monthlyWithDiscount,
+                              totalContrato: totalContract,
+                              exposicaoSemSistema: totalRiskExposure,
+                              economiaPotencial: potentialSavings,
+                            });
                           }}
                           className="px-5 py-3 border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors flex items-center gap-2"
                         >
