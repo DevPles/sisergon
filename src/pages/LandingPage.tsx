@@ -803,7 +803,7 @@ const LandingPage = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/login')}
-              className="px-5 py-2.5 border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 hover:scale-105 active:scale-[0.97] transition-all duration-200"
+              className="px-5 py-2.5 bg-[hsl(216,61%,18%)] text-white rounded-full text-sm font-medium hover:bg-[hsl(216,61%,25%)] hover:scale-105 active:scale-[0.97] transition-all duration-200"
             >
               Entrar
             </button>
