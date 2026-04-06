@@ -765,7 +765,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 const LandingPage = () => {
   const navigate = useNavigate();
   const [quoteOpen, setQuoteOpen] = useState(false);
-  const heroVideos = ['/videos/hero-1.mp4', '/videos/hero-2.mp4', '/videos/hero-3.mp4'];
+  const heroVideos = ['/videos/hero-1.mp4', '/videos/hero-2.mp4', '/videos/hero-3.mp4']; // video carousel
   const [heroIdx, setHeroIdx] = useState(0);
 
   // Auto-rotate hero every 5 seconds
