@@ -799,7 +799,7 @@ const LandingPage = () => {
 
       {/* Hero */}
       <section className="relative min-h-[80vh] flex items-center overflow-hidden">
-        <ParallaxBg src={heroImages[heroIdx]} speed={0.2} overlay="bg-gradient-to-r from-gray-900/85 via-gray-900/60 to-transparent" />
+        <ParallaxBg src={heroVideos[heroIdx]} speed={0.2} overlay="bg-gradient-to-r from-gray-900/85 via-gray-900/60 to-transparent" isVideo />
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-24">
           <ScrollText direction="up" className="max-w-xl">
             
