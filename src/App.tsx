@@ -17,7 +17,7 @@ import AEPForm from "./pages/aep/AEPForm";
 import AETList from "./pages/aet/AETList";
 import AETForm from "./pages/aet/AETForm";
 import RiscosPsicossociaisList from "./pages/riscos/RiscosPsicossociaisList";
-import LikertQuestionnaireForm from "./pages/riscos/LikertQuestionnaireForm";
+// LikertQuestionnaireForm removed — integrated into ARP modal
 import ARPForm from "./pages/riscos/ARPForm";
 import ChecklistsList from "./pages/checklists/ChecklistsList";
 import ChecklistForm from "./pages/checklists/ChecklistForm";
