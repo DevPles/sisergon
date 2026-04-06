@@ -133,6 +133,7 @@ interface ServiceOption {
   avgLawsuitCost: number;
   riskReduction: number;
   riskContext: string;
+  jurisprudencia: string;
 }
 
 const services: ServiceOption[] = [
