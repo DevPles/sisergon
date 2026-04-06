@@ -329,6 +329,58 @@ const UserForm = ({ empresas, user, onClose }: UserFormProps) => {
           </CardContent>
         </Card>
 
+        {/* Admin password reset */}
+        {isEdit && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <Label>Definir nova senha para este usuário</Label>
+              <div className="flex gap-2">
+                <div className="relative flex-1 max-w-sm">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    placeholder="Nova senha (mín. 6 caracteres)"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  disabled={resettingPw || newPassword.length < 6}
+                  onClick={async () => {
+                    setResettingPw(true);
+                    try {
+                      const { data: result, error } = await supabase.functions.invoke('admin-reset-password', {
+                        body: { user_id: user.id, new_password: newPassword },
+                      });
+                      if (error) throw error;
+                      if (result?.error) throw new Error(result.error);
+                      toast({ title: 'Senha alterada com sucesso' });
+                      setNewPassword('');
+                    } catch (err: any) {
+                      toast({ title: 'Erro', description: err.message, variant: 'destructive' });
+                    } finally {
+                      setResettingPw(false);
+                    }
+                  }}
+                >
+                  {resettingPw ? 'Alterando...' : 'Alterar Senha'}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">A senha será alterada imediatamente. O usuário poderá usar a nova senha no próximo login.</p>
+            </div>
+          </>
+        )}
+
         <Separator />
         <div className="flex items-center justify-between">
           <div>
