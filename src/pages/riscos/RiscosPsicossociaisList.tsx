@@ -69,7 +69,6 @@ const RiscosPsicossociaisList = () => {
           <Input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full sm:max-w-[220px]" />
           <span className="text-sm text-muted-foreground whitespace-nowrap">{assessments?.length ?? 0} registros</span>
           <div className="flex gap-2">
-            <Button variant="outline" className="flex-1 sm:flex-none text-xs sm:text-sm" onClick={() => navigate('/riscos-psicossociais/likert')}>Questionário Likert</Button>
             <Button className="flex-1 sm:flex-none text-xs sm:text-sm" onClick={openNew}>Nova Avaliação</Button>
           </div>
         </div>

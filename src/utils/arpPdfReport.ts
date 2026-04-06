@@ -16,8 +16,15 @@ const C = {
 };
 
 const SCORE_MAP: Record<number, string> = { 0: 'Adequado', 1: 'Leve', 2: 'Moderado', 3: 'Alto' };
-const classLabel = (c: string) => ({ baixo: 'BAIXO', moderado: 'MODERADO', alto: 'ALTO', critico: 'CRITICO' }[c] || c.toUpperCase());
-const classColor = (c: string): [number, number, number] => ({ baixo: C.green, moderado: C.amber, alto: C.red, critico: C.red }[c] || C.text);
+const classLabel = (c: string) => ({ baixo: 'BAIXO', moderado: 'MODERADO', alto: 'ALTO', muito_alto: 'MUITO ALTO', critico: 'CRITICO' }[c] || c.toUpperCase());
+const classColor = (c: string): [number, number, number] => ({ baixo: C.green, moderado: C.amber, alto: C.red, muito_alto: C.red, critico: C.red }[c] || C.text);
+
+export interface LikertReportData {
+  totalPct: number;
+  classification: string;
+  blocks: { id: string; label: string; pct: number; alerts: string[] }[];
+  violenceAlert: boolean;
+}
 
 export interface ArpReportData {
   title: string;
@@ -35,6 +42,7 @@ export interface ArpReportData {
   classification: string;
   hasCritical: boolean;
   questions: { number: number; text: string; value: number; comment?: string }[];
+  likert?: LikertReportData;
 }
 
 const M = 15;
@@ -64,6 +72,7 @@ function ftr(doc: jsPDF, pg: number, total: number) {
   doc.setDrawColor(...C.muted); doc.setLineWidth(0.15); doc.line(M, ph - 14, pw - M, ph - 14);
   doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.muted);
   doc.text('ERGON — Laudo Tecnico ARP — Documento confidencial', M, ph - 9);
+  doc.text('www.sisergon.com', pw / 2, ph - 9, { align: 'center' });
   doc.text(`Pagina ${pg} de ${total}`, pw - M, ph - 9, { align: 'right' });
   doc.setTextColor(...C.text);
 }
@@ -88,18 +97,23 @@ export async function generateArpPdf(data: ArpReportData, options: { autoDownloa
   ]);
 
   let y = hdr(doc, brandLogo, companyLogo);
+  let sn = 0;
 
   // Title
   doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.navy);
   doc.text('LAUDO DE AVALIACAO DE RISCOS PSICOSSOCIAIS (ARP)', pw / 2, y, { align: 'center' });
   y += 4;
   doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.muted);
-  doc.text('Conforme NR-1 e NR-17 — Fatores Psicossociais e Organizacionais', pw / 2, y, { align: 'center' });
+  const subtitle = data.likert
+    ? 'Conforme NR-1 e NR-17 — Avaliacao Tecnica + Questionario Likert Integrado'
+    : 'Conforme NR-1 e NR-17 — Fatores Psicossociais e Organizacionais';
+  doc.text(subtitle, pw / 2, y, { align: 'center' });
   doc.setTextColor(...C.text);
   y += 7;
 
   // 1. Identification
-  y = sec(doc, '1. IDENTIFICACAO', y);
+  sn++;
+  y = sec(doc, `${sn}. IDENTIFICACAO`, y);
   const idRows = [
     ['Titulo', data.title],
     ['Empresa / Razao Social', data.empresa],
@@ -122,8 +136,9 @@ export async function generateArpPdf(data: ArpReportData, options: { autoDownloa
 
   // Description
   if (data.description) {
+    sn++;
     y = np(doc, y, 25);
-    y = sec(doc, '2. OBSERVACOES', y);
+    y = sec(doc, `${sn}. OBSERVACOES`, y);
     doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
     const dl = doc.splitTextToSize(data.description, pw - M * 2 - 6);
     doc.setFillColor(...C.bg);
@@ -132,40 +147,68 @@ export async function generateArpPdf(data: ArpReportData, options: { autoDownloa
     y += dl.length * 3.2 + 8;
   }
 
-  // 3. Global result
-  const sn = data.description ? 3 : 2;
+  // Global result
+  sn++;
   y = np(doc, y, 40);
   y = sec(doc, `${sn}. RESULTADO GLOBAL`, y);
 
   const [cr, cg, cb] = classColor(data.classification);
   doc.setFillColor(...C.bg);
-  doc.roundedRect(M, y, pw - M * 2, 20, 2, 2, 'F');
+  const resultH = data.likert ? 32 : 20;
+  doc.roundedRect(M, y, pw - M * 2, resultH, 2, 2, 'F');
 
-  doc.setFontSize(24); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.navy);
-  doc.text(data.totalScore.toFixed(1), M + 8, y + 13);
-  doc.setFontSize(9); doc.text('/ 100', M + 32, y + 13);
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.muted);
+  doc.text('ARP', M + 5, y + 5);
+  doc.setFontSize(24); doc.setTextColor(...C.navy);
+  doc.text(data.totalScore.toFixed(1), M + 5, y + 14);
+  doc.setFontSize(9); doc.text('/ 100', M + 29, y + 14);
 
   doc.setFillColor(cr, cg, cb);
   const ct = classLabel(data.classification);
   const cw = doc.getTextWidth(ct) + 8;
-  doc.roundedRect(M + 50, y + 5, cw, 9, 2, 2, 'F');
+  doc.roundedRect(M + 48, y + 7, cw, 9, 2, 2, 'F');
   doc.setFontSize(9); doc.setTextColor(...C.white);
-  doc.text(ct, M + 50 + cw / 2, y + 11, { align: 'center' });
+  doc.text(ct, M + 48 + cw / 2, y + 13, { align: 'center' });
   doc.setTextColor(...C.text);
 
   if (data.hasCritical) {
     doc.setFillColor(...C.red);
-    doc.roundedRect(M + 50 + cw + 4, y + 5, 55, 9, 2, 2, 'F');
+    doc.roundedRect(M + 48 + cw + 4, y + 7, 55, 9, 2, 2, 'F');
     doc.setFontSize(7.5); doc.setTextColor(...C.white);
-    doc.text('ALERTA CONFIDENCIAL', M + 50 + cw + 4 + 27.5, y + 11, { align: 'center' });
+    doc.text('ALERTA CONFIDENCIAL', M + 48 + cw + 4 + 27.5, y + 13, { align: 'center' });
     doc.setTextColor(...C.text);
   }
-  y += 24;
 
-  // 4. Detail per question
-  const ds = sn + 1;
+  if (data.likert) {
+    const ly = y + 20;
+    const [lr, lg, lb] = classColor(data.likert.classification);
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.muted);
+    doc.text('LIKERT', M + 5, ly + 1);
+    doc.setFontSize(18); doc.setTextColor(...C.navy);
+    doc.text(`${data.likert.totalPct}%`, M + 30, ly + 1);
+
+    doc.setFillColor(lr, lg, lb);
+    const lct = classLabel(data.likert.classification);
+    const lcw = doc.getTextWidth(lct) + 8;
+    doc.roundedRect(M + 48, ly - 4, lcw, 9, 2, 2, 'F');
+    doc.setFontSize(9); doc.setTextColor(...C.white);
+    doc.text(lct, M + 48 + lcw / 2, ly + 2, { align: 'center' });
+    doc.setTextColor(...C.text);
+
+    if (data.likert.violenceAlert) {
+      doc.setFillColor(...C.red);
+      doc.roundedRect(M + 48 + lcw + 4, ly - 4, 48, 9, 2, 2, 'F');
+      doc.setFontSize(7.5); doc.setTextColor(...C.white);
+      doc.text('ALERTA VIOLENCIA', M + 48 + lcw + 4 + 24, ly + 2, { align: 'center' });
+      doc.setTextColor(...C.text);
+    }
+  }
+  y += resultH + 4;
+
+  // ARP Detail per question
+  sn++;
   y = np(doc, y, 25);
-  y = sec(doc, `${ds}. DETALHAMENTO POR FATOR`, y);
+  y = sec(doc, `${sn}. DETALHAMENTO ARP — FATORES PSICOSSOCIAIS`, y);
 
   const qRows = data.questions.map(q => [
     `${q.number}) ${q.text}`,
@@ -188,10 +231,67 @@ export async function generateArpPdf(data: ArpReportData, options: { autoDownloa
   });
   y = (doc as any).lastAutoTable.finalY + 6;
 
-  // 5. Legal
-  const ls = ds + 1;
+  // Likert Section
+  if (data.likert) {
+    sn++;
+    y = np(doc, y, 30);
+    y = sec(doc, `${sn}. QUESTIONARIO LIKERT — ANALISE POR BLOCO`, y);
+
+    const likertRows = data.likert.blocks.map(b => [
+      b.label,
+      `${b.pct}%`,
+      b.pct <= 30 ? 'Baixo' : b.pct <= 50 ? 'Moderado' : b.pct <= 70 ? 'Alto' : 'Muito Alto',
+      b.alerts.length > 0 ? `${b.alerts.length} alerta(s)` : '—',
+    ]);
+    autoTable(doc, {
+      startY: y, head: [['Bloco', 'Score', 'Classificacao', 'Alertas']], body: likertRows, theme: 'grid',
+      headStyles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: 'bold' },
+      styles: { fontSize: 7.5, cellPadding: 1.5 },
+      columnStyles: { 0: { cellWidth: 55 }, 1: { cellWidth: 20, halign: 'center' }, 2: { cellWidth: 30, halign: 'center' }, 3: { cellWidth: 'auto' } },
+      didParseCell: (d: any) => {
+        if (d.section === 'body' && d.column.index === 2) {
+          const v = d.cell.raw as string;
+          if (v === 'Alto' || v === 'Muito Alto') d.cell.styles.textColor = C.red;
+          else if (v === 'Moderado') d.cell.styles.textColor = C.amber;
+        }
+        if (d.section === 'body' && d.column.index === 3 && d.cell.raw !== '—') {
+          d.cell.styles.textColor = C.red;
+          d.cell.styles.fontStyle = 'bold';
+        }
+      },
+      margin: { left: M, right: M },
+    });
+    y = (doc as any).lastAutoTable.finalY + 5;
+
+    // Alerts detail
+    const allAlerts = data.likert.blocks.flatMap(b => b.alerts.map(a => [b.label, a]));
+    if (allAlerts.length > 0) {
+      sn++;
+      y = np(doc, y, 20);
+      y = sec(doc, `${sn}. ALERTAS CRITICOS IDENTIFICADOS`, y);
+
+      doc.setFillColor(255, 240, 240);
+      doc.roundedRect(M, y, pw - M * 2, 6, 1, 1, 'F');
+      doc.setFontSize(7); doc.setFont('helvetica', 'bold'); doc.setTextColor(...C.red);
+      doc.text(`${allAlerts.length} alerta(s) que requerem atencao imediata`, M + 3, y + 4);
+      doc.setTextColor(...C.text);
+      y += 8;
+
+      autoTable(doc, {
+        startY: y, head: [['Bloco', 'Item com Alerta']], body: allAlerts, theme: 'grid',
+        headStyles: { fillColor: C.red, textColor: 255, fontSize: 8, fontStyle: 'bold' },
+        styles: { fontSize: 7, cellPadding: 1.3 },
+        columnStyles: { 0: { cellWidth: 40 }, 1: { cellWidth: 'auto' } },
+        margin: { left: M, right: M },
+      });
+      y = (doc as any).lastAutoTable.finalY + 6;
+    }
+  }
+
+  // Legal
+  sn++;
   y = np(doc, y, 45);
-  y = sec(doc, `${ls}. FUNDAMENTACAO LEGAL`, y);
+  y = sec(doc, `${sn}. FUNDAMENTACAO LEGAL`, y);
   doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
   const legal = [
     'Este laudo foi elaborado em conformidade com:',
@@ -201,24 +301,38 @@ export async function generateArpPdf(data: ArpReportData, options: { autoDownloa
     '- Convencao OIT n. 155 — Seguranca e Saude dos Trabalhadores',
     '- Fatores psicossociais conforme diretrizes da OMS/OIT',
     '',
-    'Criterios de classificacao:',
+    'Criterios de classificacao ARP:',
     '  Baixo (0-33): fator controlado, monitoramento periodico',
     '  Moderado (34-66): acoes corretivas necessarias em ate 90 dias',
     '  Alto (67-100): intervencao imediata necessaria',
   ];
+  if (data.likert) {
+    legal.push('', 'Criterios Likert (escala invertida para fatores positivos):',
+      '  Baixo (0-30%): risco minimo',
+      '  Moderado (31-50%): monitoramento necessario',
+      '  Alto (51-70%): acoes corretivas em 60 dias',
+      '  Muito Alto (71-100%): intervencao imediata');
+  }
   for (const l of legal) { y = np(doc, y, 4); doc.text(l, M + 2, y); y += 3.3; }
   y += 3;
 
-  // 6. Recommendations
-  const rs = ls + 1;
+  // Recommendations
+  sn++;
   y = np(doc, y, 35);
-  y = sec(doc, `${rs}. RECOMENDACOES`, y);
+  y = sec(doc, `${sn}. RECOMENDACOES`, y);
   doc.setFontSize(7.5);
-  const recs = data.classification === 'baixo'
+  const recs = data.classification === 'baixo' && (!data.likert || data.likert.classification === 'baixo')
     ? ['- Manter condicoes atuais com monitoramento periodico.', '- Manter canais de comunicacao abertos.', '- Reavaliacao conforme periodicidade do PGR.']
-    : data.classification === 'moderado'
+    : data.classification === 'moderado' || (data.likert?.classification === 'moderado')
       ? ['- Implementar programa de gestao de riscos psicossociais.', '- Realizar escuta ativa com trabalhadores afetados.', '- Revisar organizacao do trabalho nos setores criticos.', '- Reavaliacao em prazo maximo de 90 dias.']
       : ['- ACAO IMEDIATA: Investigar fatores criticos identificados.', '- Acionar programa de apoio psicologico aos trabalhadores.', '- Avaliar necessidade de mediacao de conflitos.', '- Revisar politicas de assedio e violencia.', '- Comunicar SESMT e RH para providencias.', '- Reavaliacao em prazo maximo de 30 dias.'];
+
+  if (data.likert?.violenceAlert) {
+    recs.push('', '** ACAO URGENTE — VIOLENCIA/ASSEDIO **',
+      '- Acionar canal de denuncia e ouvidoria.',
+      '- Avaliar afastamento cautelar do(s) envolvido(s).',
+      '- Registrar ocorrencia para fins legais e de compliance.');
+  }
   for (const r of recs) { y = np(doc, y, 5); doc.text(r, M + 2, y); y += 3.8; }
 
   // Signatures
