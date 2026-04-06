@@ -785,7 +785,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 const LandingPage = () => {
   const navigate = useNavigate();
   const [quoteOpen, setQuoteOpen] = useState(false);
-  const heroVideos = ['/videos/hero-1.mp4', '/__l5e/assets-v1/b39581d9-e4a0-46d5-a8a7-d7ee0a5134be/hero-2.mp4', '/videos/hero-3.mp4']; // video carousel
+  const heroVideos = ['/videos/hero-1.mp4', '/__l5e/assets-v1/c8c03f81-afc2-400c-a7b3-541886969034/hero-2-v2.mp4', '/videos/hero-3.mp4']; // video carousel
   const [heroIdx, setHeroIdx] = useState(0);
 
   // Auto-rotate hero every 5 seconds
