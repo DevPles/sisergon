@@ -133,24 +133,25 @@ interface ServiceOption {
   avgLawsuitCost: number;
   riskReduction: number;
   riskContext: string;
+  jurisprudencia: string;
 }
 
 const services: ServiceOption[] = [
-  { id: 'aep', label: 'Avaliação Ergonômica Preliminar (AEP)', description: 'Identificação inicial de riscos ergonômicos no ambiente de trabalho', basePrice: 800, category: 'essential', avgLawsuitCost: 60000, riskReduction: 0.60, riskContext: 'Condenações por LER/DORT no TST chegam a R$ 60 mil por caso.' },
-  { id: 'aet', label: 'Análise Ergonômica do Trabalho (AET)', description: 'Análise aprofundada com recomendações técnicas detalhadas', basePrice: 1500, category: 'essential', avgLawsuitCost: 80000, riskReduction: 0.75, riskContext: 'Perícias sem laudo técnico geram condenações entre R$ 50 mil e R$ 100 mil.' },
-  { id: 'pcmso', label: 'Gestão PCMSO Integrada', description: 'Controle de exames médicos, ASOs e cronogramas de saúde', basePrice: 1200, category: 'essential', avgLawsuitCost: 25000, riskReduction: 0.70, riskContext: 'Empresas autuadas por SST pagaram em média R$ 18,4 mil em multas em 2025.' },
-  { id: 'psicossocial', label: 'Avaliação de Riscos Psicossociais', description: 'Mapeamento de fatores como estresse, assédio e carga mental', basePrice: 2000, category: 'advanced', avgLawsuitCost: 100000, riskReduction: 0.65, riskContext: 'Ações por burnout cresceram 14,5% e somam R$ 3,75 bilhões em impacto.' },
-  { id: 'dashboard', label: 'Dashboard Executivo e Indicadores', description: 'Painel visual com KPIs, tendências e relatórios para gestão', basePrice: 900, category: 'advanced', avgLawsuitCost: 25000, riskReduction: 0.50, riskContext: 'Grandes empresas reincidentes pagam até R$ 25 mil por autuação.' },
-  { id: 'alertas', label: 'Alertas e Notificações Inteligentes', description: 'Avisos automáticos de vencimentos, prazos e ações pendentes', basePrice: 600, category: 'advanced', avgLawsuitCost: 18000, riskReduction: 0.55, riskContext: 'Multas por documentos vencidos chegam a R$ 12,6 mil para grandes empresas.' },
-  { id: 'planos_acao', label: 'Planos de Ação Automatizados', description: 'Geração automática de planos corretivos com rastreabilidade', basePrice: 1100, category: 'premium', avgLawsuitCost: 50000, riskReduction: 0.70, riskContext: 'PGR sem plano de ação gera multa de até R$ 12,6 mil, dobrando em reincidência.' },
-  { id: 'multiempresa', label: 'Gestão Multi-empresa', description: 'Gerencie diversas empresas em um único painel centralizado', basePrice: 1800, category: 'premium', avgLawsuitCost: 80000, riskReduction: 0.60, riskContext: 'Cada filial é fiscalizada independentemente. Multas multiplicam a exposição.' },
-  { id: 'suporte', label: 'Suporte Prioritário e Personalização', description: 'Atendimento dedicado, treinamentos e configurações sob medida', basePrice: 1500, category: 'premium', avgLawsuitCost: 25000, riskReduction: 0.45, riskContext: 'Treinamentos obrigatórios não realizados geram autuações.' },
+  { id: 'aep', label: 'Avaliação Ergonômica Preliminar (AEP)', description: 'Identificação inicial de riscos ergonômicos no ambiente de trabalho', basePrice: 800, category: 'essential', avgLawsuitCost: 60000, riskReduction: 0.60, riskContext: 'Condenações por LER/DORT no TST chegam a R$ 60 mil por caso.', jurisprudencia: 'https://jurisprudencia.tst.jus.br/' },
+  { id: 'aet', label: 'Análise Ergonômica do Trabalho (AET)', description: 'Análise aprofundada com recomendações técnicas detalhadas', basePrice: 1500, category: 'essential', avgLawsuitCost: 80000, riskReduction: 0.75, riskContext: 'Perícias sem laudo técnico geram condenações entre R$ 50 mil e R$ 100 mil.', jurisprudencia: 'https://jurisprudencia.tst.jus.br/' },
+  { id: 'pcmso', label: 'Gestão PCMSO Integrada', description: 'Controle de exames médicos, ASOs e cronogramas de saúde', basePrice: 1200, category: 'essential', avgLawsuitCost: 25000, riskReduction: 0.70, riskContext: 'Empresas autuadas por SST pagaram em média R$ 18,4 mil em multas em 2025.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'psicossocial', label: 'Avaliação de Riscos Psicossociais', description: 'Mapeamento de fatores como estresse, assédio e carga mental', basePrice: 2000, category: 'advanced', avgLawsuitCost: 100000, riskReduction: 0.65, riskContext: 'Ações por burnout cresceram 14,5% e somam R$ 3,75 bilhões em impacto.', jurisprudencia: 'https://jurisprudencia.tst.jus.br/' },
+  { id: 'dashboard', label: 'Dashboard Executivo e Indicadores', description: 'Painel visual com KPIs, tendências e relatórios para gestão', basePrice: 900, category: 'advanced', avgLawsuitCost: 25000, riskReduction: 0.50, riskContext: 'Grandes empresas reincidentes pagam até R$ 25 mil por autuação.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'alertas', label: 'Alertas e Notificações Inteligentes', description: 'Avisos automáticos de vencimentos, prazos e ações pendentes', basePrice: 600, category: 'advanced', avgLawsuitCost: 18000, riskReduction: 0.55, riskContext: 'Multas por documentos vencidos chegam a R$ 12,6 mil para grandes empresas.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'planos_acao', label: 'Planos de Ação Automatizados', description: 'Geração automática de planos corretivos com rastreabilidade', basePrice: 1100, category: 'premium', avgLawsuitCost: 50000, riskReduction: 0.70, riskContext: 'PGR sem plano de ação gera multa de até R$ 12,6 mil, dobrando em reincidência.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'multiempresa', label: 'Gestão Multi-empresa', description: 'Gerencie diversas empresas em um único painel centralizado', basePrice: 1800, category: 'premium', avgLawsuitCost: 80000, riskReduction: 0.60, riskContext: 'Cada filial é fiscalizada independentemente. Multas multiplicam a exposição.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'suporte', label: 'Suporte Prioritário e Personalização', description: 'Atendimento dedicado, treinamentos e configurações sob medida', basePrice: 1500, category: 'premium', avgLawsuitCost: 25000, riskReduction: 0.45, riskContext: 'Treinamentos obrigatórios não realizados geram autuações.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
 ];
 
-const categoryLabels: Record<string, { label: string }> = {
-  essential: { label: 'Proteção Essencial' },
-  advanced: { label: 'Monitoramento Avançado' },
-  premium: { label: 'Cobertura Total' },
+const categoryLabels: Record<string, { label: string; description: string; step: number }> = {
+  essential: { label: 'Proteção Essencial', description: 'Base de conformidade legal obrigatória para toda empresa com CLT', step: 1 },
+  advanced: { label: 'Monitoramento Avançado', description: 'Gestão proativa de riscos com indicadores e automação', step: 2 },
+  premium: { label: 'Cobertura Total', description: 'Proteção jurídica completa com rastreabilidade máxima', step: 3 },
 };
 
 const protectionBenefits = [
@@ -230,6 +231,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [cnpjLoading, setCnpjLoading] = useState(false);
   const [cnpjData, setCnpjData] = useState<any>(null);
   const [cnpjError, setCnpjError] = useState('');
+  const [activeCat, setActiveCat] = useState<'essential' | 'advanced' | 'premium'>('essential');
 
   const industryProfile = industryProfiles[industry] || null;
 
@@ -468,7 +470,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 
             {/* STEP 2 */}
             {step === 2 && (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {industryProfile && (
                   <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
                     <p className="text-sm font-medium text-gray-900">
@@ -493,60 +495,126 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                   </div>
                 </div>
 
-                {(['essential', 'advanced', 'premium'] as const).map(cat => (
-                  <div key={cat}>
-                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold border border-gray-200 text-gray-600 bg-gray-50 mb-3">
-                      {categoryLabels[cat].label}
-                    </span>
-                    <div className="space-y-2">
-                      {services.filter(s => s.category === cat).map(service => {
-                        const isSelected = selected.has(service.id);
-                        return (
-                          <div key={service.id}>
-                            <button
-                              onClick={() => toggle(service.id)}
-                              className={`w-full p-4 rounded-xl border text-left transition-all ${isSelected ? 'border-gray-400 bg-gray-50' : 'border-gray-100 bg-white hover:border-gray-200'}`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium text-gray-900 text-sm">{service.label}</p>
-                                  <p className="text-xs text-gray-500">{service.description}</p>
-                                </div>
-                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isSelected ? 'border-gray-700 bg-gray-700' : 'border-gray-300'}`}>
-                                  {isSelected && <span className="text-white text-xs">✓</span>}
-                                </div>
-                              </div>
-                            </button>
-                            <AnimatePresence>
-                              {isSelected && (
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: 'auto', opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  className="overflow-hidden"
-                                >
-                                  <div className="p-3 ml-4 border-l-2 border-gray-200 mt-1 mb-2">
-                                     <p className="text-xs text-gray-600">{service.riskContext}</p>
-                                     <div className="flex gap-4 mt-2">
-                                       <div>
-                                         <p className="text-[10px] text-gray-400">Custo médio{industryProfile ? ' no setor' : ''}</p>
-                                         <p className="text-sm font-bold text-gray-800">R$ {Math.round(service.avgLawsuitCost * riskMult).toLocaleString('pt-BR')}</p>
-                                       </div>
-                                       <div>
-                                         <p className="text-[10px] text-gray-400">Redução com Ergon</p>
-                                         <p className="text-sm font-bold text-gray-800">até {Math.round(service.riskReduction * 100)}%</p>
-                                       </div>
-                                     </div>
-                                  </div>
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                        );
-                      })}
-                    </div>
+                {/* Category tabs */}
+                <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+                  {(['essential', 'advanced', 'premium'] as const).map((cat, i) => {
+                    const catServices = services.filter(s => s.category === cat);
+                    const selectedCount = catServices.filter(s => selected.has(s.id)).length;
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => setActiveCat(cat)}
+                        className={`flex-1 py-2.5 px-2 rounded-lg text-xs font-semibold transition-all relative ${activeCat === cat ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                      >
+                        <span className="block">{i + 1}. {categoryLabels[cat].label}</span>
+                        {selectedCount > 0 && (
+                          <span className="absolute -top-1 -right-1 w-4 h-4 bg-gray-700 text-white text-[9px] rounded-full flex items-center justify-center">{selectedCount}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Active category card */}
+                <motion.div
+                  key={activeCat}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="rounded-xl border border-gray-200 overflow-hidden"
+                >
+                  <div className={`p-4 ${activeCat === 'essential' ? 'bg-blue-50/50 border-b border-blue-100' : activeCat === 'advanced' ? 'bg-amber-50/50 border-b border-amber-100' : 'bg-emerald-50/50 border-b border-emerald-100'}`}>
+                    <p className="text-sm font-bold text-gray-900">{categoryLabels[activeCat].label}</p>
+                    <p className="text-xs text-gray-600 mt-0.5">{categoryLabels[activeCat].description}</p>
                   </div>
-                ))}
+
+                  <div className="divide-y divide-gray-100">
+                    {services.filter(s => s.category === activeCat).map(service => {
+                      const isSelected = selected.has(service.id);
+                      return (
+                        <div key={service.id} className="p-4">
+                          <button
+                            onClick={() => toggle(service.id)}
+                            className="w-full text-left"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1 pr-3">
+                                <p className="font-medium text-gray-900 text-sm">{service.label}</p>
+                                <p className="text-xs text-gray-500 mt-0.5">{service.description}</p>
+                              </div>
+                              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${isSelected ? 'border-gray-700 bg-gray-700' : 'border-gray-300'}`}>
+                                {isSelected && <span className="text-white text-xs">✓</span>}
+                              </div>
+                            </div>
+                          </button>
+                          <AnimatePresence>
+                            {isSelected && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                  <p className="text-xs text-gray-600">{service.riskContext}</p>
+                                  <div className="flex gap-4 mt-2">
+                                    <div>
+                                      <p className="text-[10px] text-gray-400">Custo médio{industryProfile ? ' no setor' : ''}</p>
+                                      <p className="text-sm font-bold text-gray-800">R$ {Math.round(service.avgLawsuitCost * riskMult).toLocaleString('pt-BR')}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[10px] text-gray-400">Redução com Ergon</p>
+                                      <p className="text-sm font-bold text-gray-800">até {Math.round(service.riskReduction * 100)}%</p>
+                                    </div>
+                                  </div>
+                                  <a
+                                    href={service.jurisprudencia}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 mt-2 text-[10px] text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                                  >
+                                    📄 Ver jurisprudência e base legal →
+                                  </a>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+
+                {/* Legal report badge */}
+                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-blue-700 text-sm font-bold">⚖</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Relatório Jurídico Incluso</p>
+                    <p className="text-xs text-blue-700 mt-0.5">
+                      Em caso de processo judicial, fornecemos relatório técnico-jurídico completo com toda a documentação e evidências coletadas pelo sistema como parte da defesa da empresa.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Navigation between categories */}
+                <div className="flex justify-between items-center pt-2">
+                  <button
+                    onClick={() => setActiveCat(activeCat === 'advanced' ? 'essential' : activeCat === 'premium' ? 'advanced' : 'essential')}
+                    disabled={activeCat === 'essential'}
+                    className="text-xs font-medium text-gray-500 hover:text-gray-700 disabled:opacity-30 transition-colors"
+                  >
+                    ← Categoria anterior
+                  </button>
+                  <button
+                    onClick={() => setActiveCat(activeCat === 'essential' ? 'advanced' : activeCat === 'advanced' ? 'premium' : 'premium')}
+                    disabled={activeCat === 'premium'}
+                    className="text-xs font-medium text-gray-500 hover:text-gray-700 disabled:opacity-30 transition-colors"
+                  >
+                    Próxima categoria →
+                  </button>
+                </div>
 
                 {selectedServices.length > 0 && (
                   <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
