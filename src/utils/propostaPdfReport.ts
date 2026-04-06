@@ -27,7 +27,6 @@ interface PropostaData {
   exposicaoSemSistema: number;
   economiaPotencial: number;
   avgReduction: number;
-  logoUrl?: string;
 }
 
 function fmt(v: number) {
