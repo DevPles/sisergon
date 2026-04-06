@@ -15,7 +15,6 @@ const RiscosPsicossociaisList = () => {
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editId, setEditId] = useState<string | undefined>(undefined);
-  const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
