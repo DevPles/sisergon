@@ -470,15 +470,43 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 
             {/* STEP 2 */}
             {step === 2 && (
-              <div className="space-y-5">
+              <div className="space-y-4">
                 {industryProfile && (
-                  <div className="p-3 bg-gray-50 rounded-xl border border-gray-200">
-                    <p className="text-sm font-medium text-gray-900">
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm font-medium text-gray-900 leading-snug">
                       Empresas de {industryProfile.label} têm condenação média de R$ {industryProfile.avgCondemnation.toLocaleString('pt-BR')}
                     </p>
                     <p className="text-xs text-gray-500 mt-0.5">Selecione os serviços para reduzir sua exposição</p>
                   </div>
                 )}
+
+                {/* Category stepper */}
+                <div className="flex items-center gap-0">
+                  {(['essential', 'advanced', 'premium'] as const).map((cat, i) => {
+                    const cats = ['essential', 'advanced', 'premium'] as const;
+                    const currentIdx = cats.indexOf(activeCat);
+                    const isDone = i < currentIdx;
+                    const isCurrent = i === currentIdx;
+                    const catServices = services.filter(s => s.category === cat);
+                    const selectedCount = catServices.filter(s => selected.has(s.id)).length;
+                    return (
+                      <div key={cat} className="flex items-center flex-1">
+                        <div className="flex flex-col items-center flex-1">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isCurrent ? 'bg-gray-800 text-white ring-2 ring-gray-800/20' : isDone ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-400'}`}>
+                            {isDone ? '✓' : i + 1}
+                          </div>
+                          <p className={`text-[10px] mt-1 text-center leading-tight font-medium ${isCurrent ? 'text-gray-900' : isDone ? 'text-gray-600' : 'text-gray-400'}`}>
+                            {categoryLabels[cat].label}
+                          </p>
+                          {selectedCount > 0 && (
+                            <span className="text-[9px] text-gray-500 mt-0.5">{selectedCount} selecionado{selectedCount > 1 ? 's' : ''}</span>
+                          )}
+                        </div>
+                        {i < 2 && <div className={`h-px flex-1 mx-1 mt-[-16px] ${i < currentIdx ? 'bg-gray-800' : 'bg-gray-200'}`} />}
+                      </div>
+                    );
+                  })}
+                </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -495,33 +523,14 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                   </div>
                 </div>
 
-                {/* Category tabs */}
-                <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
-                  {(['essential', 'advanced', 'premium'] as const).map((cat, i) => {
-                    const catServices = services.filter(s => s.category === cat);
-                    const selectedCount = catServices.filter(s => selected.has(s.id)).length;
-                    return (
-                      <button
-                        key={cat}
-                        onClick={() => setActiveCat(cat)}
-                        className={`flex-1 py-2.5 px-2 rounded-lg text-xs font-semibold transition-all relative ${activeCat === cat ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                      >
-                        <span className="block">{i + 1}. {categoryLabels[cat].label}</span>
-                        {selectedCount > 0 && (
-                          <span className="absolute -top-1 -right-1 w-4 h-4 bg-gray-700 text-white text-[9px] rounded-full flex items-center justify-center">{selectedCount}</span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Active category card */}
+                {/* Active category services */}
                 <motion.div
                   key={activeCat}
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="rounded-xl border border-gray-200 overflow-hidden"
+                  exit={{ opacity: 0, x: -30 }}
+                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                  className="rounded-lg border border-gray-200 overflow-hidden"
                 >
                   <div className={`p-4 ${activeCat === 'essential' ? 'bg-blue-50/50 border-b border-blue-100' : activeCat === 'advanced' ? 'bg-amber-50/50 border-b border-amber-100' : 'bg-emerald-50/50 border-b border-emerald-100'}`}>
                     <p className="text-sm font-bold text-gray-900">{categoryLabels[activeCat].label}</p>
@@ -585,48 +594,30 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                   </div>
                 </motion.div>
 
-                {/* Legal report badge */}
-                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                  <div>
+                {/* Legal report badge — only on last category */}
+                {activeCat === 'premium' && (
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-sm font-semibold text-blue-900">Relatório Jurídico Incluso</p>
                     <p className="text-xs text-blue-700 mt-0.5">
                       Em caso de processo judicial, fornecemos relatório técnico-jurídico completo com toda a documentação e evidências coletadas pelo sistema como parte da defesa da empresa.
                     </p>
                   </div>
-                </div>
-
-                {/* Navigation between categories */}
-                <div className="flex justify-between items-center pt-2">
-                  <button
-                    onClick={() => setActiveCat(activeCat === 'advanced' ? 'essential' : activeCat === 'premium' ? 'advanced' : 'essential')}
-                    disabled={activeCat === 'essential'}
-                    className="text-xs font-medium text-gray-500 hover:text-gray-700 disabled:opacity-30 transition-colors"
-                  >
-                    ← Categoria anterior
-                  </button>
-                  <button
-                    onClick={() => setActiveCat(activeCat === 'essential' ? 'advanced' : activeCat === 'advanced' ? 'premium' : 'premium')}
-                    disabled={activeCat === 'premium'}
-                    className="text-xs font-medium text-gray-500 hover:text-gray-700 disabled:opacity-30 transition-colors"
-                  >
-                    Próxima categoria →
-                  </button>
-                </div>
+                )}
 
                 {selectedServices.length > 0 && (
-                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-                    <p className="text-sm font-semibold text-gray-900 mb-3">Impacto da sua proteção</p>
-                    <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Impacto da sua proteção</p>
+                    <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="text-xs text-gray-500">Exposição total sem sistema</p>
-                        <p className="text-xl font-bold text-gray-900">R$ {totalRiskExposure.toLocaleString('pt-BR')}</p>
+                        <p className="text-base font-bold text-gray-900">R$ {totalRiskExposure.toLocaleString('pt-BR')}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">Economia potencial com Ergon</p>
-                        <p className="text-xl font-bold text-gray-900">R$ {potentialSavings.toLocaleString('pt-BR')}</p>
+                        <p className="text-base font-bold text-gray-900">R$ {potentialSavings.toLocaleString('pt-BR')}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-3">
+                    <p className="text-xs text-gray-500 mt-2">
                       Com {selectedServices.length} {selectedServices.length === 1 ? 'serviço' : 'serviços'}, redução média de {Math.round(avgReduction * 100)}% dos riscos.
                     </p>
                   </div>
@@ -823,17 +814,37 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
           {!submitted && (
             <div className="px-7 py-5 border-t border-gray-100 flex justify-between items-center">
               {step > 1 ? (
-                <button onClick={() => setStep(s => s - 1)} className="px-7 py-3 bg-gray-800 text-white rounded-xl text-sm font-semibold hover:bg-gray-900 transition-colors">
+                <button
+                  onClick={() => {
+                    if (step === 2 && activeCat !== 'essential') {
+                      setActiveCat(activeCat === 'premium' ? 'advanced' : 'essential');
+                    } else {
+                      setStep(s => s - 1);
+                      if (step === 3) setActiveCat('premium');
+                    }
+                  }}
+                  className="px-7 py-3 bg-gray-800 text-white rounded-xl text-sm font-semibold hover:bg-gray-900 transition-colors"
+                >
                   ← Voltar
                 </button>
               ) : <div />}
               {step < 4 && (
                 <button
-                  onClick={() => setStep(s => s + 1)}
+                  onClick={() => {
+                    if (step === 2 && activeCat !== 'premium') {
+                      setActiveCat(activeCat === 'essential' ? 'advanced' : 'premium');
+                    } else {
+                      setStep(s => s + 1);
+                    }
+                  }}
                   disabled={step === 1 && !canAdvanceStep1}
                   className="px-6 py-2.5 bg-gray-800 text-white rounded-lg text-sm font-semibold hover:bg-gray-900 disabled:opacity-40 transition-all duration-150 flex items-center gap-1.5 shadow-sm"
                 >
-                  Próximo <span className="text-white/70">→</span>
+                  {step === 2 && activeCat !== 'premium' ? (
+                    <>Próxima etapa <span className="text-white/70">→</span></>
+                  ) : (
+                    <>Próximo <span className="text-white/70">→</span></>
+                  )}
                 </button>
               )}
             </div>
