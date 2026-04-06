@@ -554,20 +554,22 @@ const CadastrosPage = () => {
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-6">
+      <Card className="overflow-hidden">
+        <CardContent className="p-0 sm:p-2">
           <Tabs defaultValue="empresas" onValueChange={(v) => setActiveTab(v)}>
-            <div className="px-6 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <TabsList>
-                <TabsTrigger value="empresas">Empresas ({empresas?.length ?? 0})</TabsTrigger>
-                <TabsTrigger value="colaboradores">Colaboradores ({colaboradores?.length ?? 0})</TabsTrigger>
-                <TabsTrigger value="templates">Formulários</TabsTrigger>
-                <TabsTrigger value="faturamento">Faturamento</TabsTrigger>
-              </TabsList>
+            <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col gap-4">
+              <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+                <TabsList className="inline-flex w-auto min-w-full sm:w-auto">
+                  <TabsTrigger value="empresas" className="text-xs sm:text-sm whitespace-nowrap">Empresas ({empresas?.length ?? 0})</TabsTrigger>
+                  <TabsTrigger value="colaboradores" className="text-xs sm:text-sm whitespace-nowrap">Colaboradores ({colaboradores?.length ?? 0})</TabsTrigger>
+                  <TabsTrigger value="templates" className="text-xs sm:text-sm whitespace-nowrap">Formulários</TabsTrigger>
+                  <TabsTrigger value="faturamento" className="text-xs sm:text-sm whitespace-nowrap">Faturamento</TabsTrigger>
+                </TabsList>
+              </div>
               {activeTab === 'faturamento' && (
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <Select value={faturamentoEmpresa} onValueChange={setFaturamentoEmpresa}>
-                    <SelectTrigger className="w-72"><SelectValue placeholder="Selecione a empresa..." /></SelectTrigger>
+                    <SelectTrigger className="w-full sm:w-72"><SelectValue placeholder="Selecione a empresa..." /></SelectTrigger>
                     <SelectContent>
                       {empresas?.map(e => (
                         <SelectItem key={e.id} value={e.id}>{e.razao_social}{e.nome_fantasia ? ` (${e.nome_fantasia})` : ''}</SelectItem>
@@ -577,9 +579,9 @@ const CadastrosPage = () => {
                 </div>
               )}
               {activeTab === 'templates' && (
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <Select value={templateEmpresa} onValueChange={setTemplateEmpresa}>
-                    <SelectTrigger className="w-56"><SelectValue placeholder="Todas / Global" /></SelectTrigger>
+                    <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="Todas / Global" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="__global__">Global (Padrão)</SelectItem>
                       {empresas?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
@@ -594,17 +596,17 @@ const CadastrosPage = () => {
                 </div>
               )}
               {!['faturamento', 'templates'].includes(activeTab) && (
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 {activeTab === 'empresas' ? (
                   <>
-                    <Input placeholder="Buscar empresa..." value={empresaSearch} onChange={(e) => setEmpresaSearch(e.target.value)} className="w-64" />
+                    <Input placeholder="Buscar empresa..." value={empresaSearch} onChange={(e) => setEmpresaSearch(e.target.value)} className="w-full sm:w-64" />
                     <Button onClick={() => setShowEmpresaForm(true)} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap">
                       Nova Empresa
                     </Button>
                   </>
                 ) : (
                   <>
-                    <Input placeholder="Buscar colaborador..." value={colabSearch} onChange={(e) => setColabSearch(e.target.value)} className="w-64" />
+                    <Input placeholder="Buscar colaborador..." value={colabSearch} onChange={(e) => setColabSearch(e.target.value)} className="w-full sm:w-64" />
                     <Button onClick={() => setShowColabForm(true)} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap">
                       Novo Colaborador
                     </Button>
@@ -615,13 +617,14 @@ const CadastrosPage = () => {
             </div>
 
             <TabsContent value="empresas" className="mt-0">
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Razão Social</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead>Cidade/UF</TableHead>
-                    <TableHead>Grau de Risco</TableHead>
+                    <TableHead className="hidden sm:table-cell">CNPJ</TableHead>
+                    <TableHead className="hidden md:table-cell">Cidade/UF</TableHead>
+                    <TableHead className="hidden sm:table-cell">GR</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
@@ -634,32 +637,34 @@ const CadastrosPage = () => {
                   ) : empresas?.map((emp) => (
                     <TableRow key={emp.id} className="cursor-pointer" onClick={() => navigate(`/empresas/${emp.id}`)}>
                       <TableCell>
-                        <p className="font-medium">{emp.razao_social}</p>
-                        {emp.nome_fantasia && <p className="text-sm text-muted-foreground">{emp.nome_fantasia}</p>}
+                        <p className="font-medium text-sm">{emp.razao_social}</p>
+                        {emp.nome_fantasia && <p className="text-xs text-muted-foreground">{emp.nome_fantasia}</p>}
                       </TableCell>
-                      <TableCell className="font-mono text-sm">{emp.cnpj || '—'}</TableCell>
-                      <TableCell>{emp.endereco_cidade && emp.endereco_uf ? `${emp.endereco_cidade}/${emp.endereco_uf}` : '—'}</TableCell>
-                      <TableCell>{emp.grau_risco ? <Badge variant={emp.grau_risco >= 3 ? 'destructive' : 'default'}>GR {emp.grau_risco}</Badge> : '—'}</TableCell>
+                      <TableCell className="hidden sm:table-cell font-mono text-sm">{emp.cnpj || '—'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{emp.endereco_cidade && emp.endereco_uf ? `${emp.endereco_cidade}/${emp.endereco_uf}` : '—'}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{emp.grau_risco ? <Badge variant={emp.grau_risco >= 3 ? 'destructive' : 'default'}>GR {emp.grau_risco}</Badge> : '—'}</TableCell>
                       <TableCell><Badge variant={emp.ativa ? 'default' : 'secondary'}>{emp.ativa ? 'Ativa' : 'Inativa'}</Badge></TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="sm" onClick={() => setEditingEmpresaId(emp.id)}>Editar</Button>
-                          <Button variant="ghost" size="sm" onClick={() => deleteEmpresa.mutate(emp.id)} className="text-destructive hover:text-destructive">Excluir</Button>
+                        <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setEditingEmpresaId(emp.id)}>Editar</Button>
+                          <Button variant="ghost" size="sm" className="text-xs px-2 text-destructive hover:text-destructive" onClick={() => deleteEmpresa.mutate(emp.id)}>Excluir</Button>
                         </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </TabsContent>
 
             <TabsContent value="colaboradores" className="mt-0">
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Nome</TableHead>
-                    <TableHead>Matrícula</TableHead>
-                    <TableHead>Empresa</TableHead>
+                    <TableHead className="hidden sm:table-cell">Matrícula</TableHead>
+                    <TableHead className="hidden md:table-cell">Empresa</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
@@ -671,20 +676,21 @@ const CadastrosPage = () => {
                     <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Nenhum colaborador cadastrado</TableCell></TableRow>
                   ) : colaboradores?.map((col) => (
                     <TableRow key={col.id}>
-                      <TableCell className="font-medium">{col.nome_completo}</TableCell>
-                      <TableCell>{col.matricula || '—'}</TableCell>
-                      <TableCell>{(col.empresas as any)?.razao_social || '—'}</TableCell>
+                      <TableCell className="font-medium text-sm">{col.nome_completo}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{col.matricula || '—'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{(col.empresas as any)?.razao_social || '—'}</TableCell>
                       <TableCell><Badge variant={col.status === 'ativo' ? 'default' : 'secondary'}>{col.status}</Badge></TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => setEditingColabId(col.id)}>Editar</Button>
-                          <Button variant="ghost" size="sm" onClick={() => deleteColab.mutate(col.id)} className="text-destructive hover:text-destructive">Excluir</Button>
+                        <div className="flex justify-end gap-1">
+                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setEditingColabId(col.id)}>Editar</Button>
+                          <Button variant="ghost" size="sm" className="text-xs px-2 text-destructive hover:text-destructive" onClick={() => deleteColab.mutate(col.id)}>Excluir</Button>
                         </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </TabsContent>
 
             <TabsContent value="templates" className="mt-0 p-6">
