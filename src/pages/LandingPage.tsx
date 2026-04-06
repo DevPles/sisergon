@@ -765,14 +765,14 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 const LandingPage = () => {
   const navigate = useNavigate();
   const [quoteOpen, setQuoteOpen] = useState(false);
-  const heroImages = [heroImg1, heroImg2, heroImg3];
+  const heroVideos = ['/videos/hero-1.mp4', '/videos/hero-2.mp4', '/videos/hero-3.mp4'];
   const [heroIdx, setHeroIdx] = useState(0);
 
-  // Auto-rotate hero
-  useState(() => {
+  // Auto-rotate hero every 5 seconds
+  useEffect(() => {
     const id = setInterval(() => setHeroIdx(i => (i + 1) % 3), 5000);
     return () => clearInterval(id);
-  });
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
