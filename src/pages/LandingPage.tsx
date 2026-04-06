@@ -722,13 +722,23 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                               contato: contactForm.nome,
                               email: contactForm.email,
                               telefone: contactForm.telefone,
-                              servicos: selectedServices.map(s => s.label),
+                              porte: companyType ? (services.length ? companyType : companyType) : '',
+                              ramo: industryProfile?.label || '',
+                              servicosDetalhados: selectedServices.map(s => ({
+                                label: s.label,
+                                description: s.description,
+                                riskContext: s.riskContext,
+                                riskReduction: s.riskReduction,
+                                avgLawsuitCost: s.avgLawsuitCost,
+                                category: s.category,
+                              })),
                               colaboradores,
                               periodo: contractOption.label,
                               valorMensal: monthlyWithDiscount,
                               totalContrato: totalContract,
                               exposicaoSemSistema: totalRiskExposure,
                               economiaPotencial: potentialSavings,
+                              avgReduction,
                             });
                           }}
                           className="px-5 py-3 border border-gray-200 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors flex items-center gap-2"
