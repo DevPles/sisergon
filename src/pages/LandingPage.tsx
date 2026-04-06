@@ -136,21 +136,21 @@ interface ServiceOption {
 }
 
 const services: ServiceOption[] = [
-  { id: 'aep', label: 'Avaliação Ergonômica Preliminar (AEP)', description: 'Identificação inicial de riscos ergonômicos no ambiente de trabalho', basePrice: 800, category: 'essential', avgLawsuitCost: 60000, riskReduction: 0.60, riskContext: 'Condenações por LER/DORT no TST chegam a R$ 60 mil por caso.' },
-  { id: 'aet', label: 'Análise Ergonômica do Trabalho (AET)', description: 'Análise aprofundada com recomendações técnicas detalhadas', basePrice: 1500, category: 'essential', avgLawsuitCost: 80000, riskReduction: 0.75, riskContext: 'Perícias sem laudo técnico geram condenações entre R$ 50 mil e R$ 100 mil.' },
-  { id: 'pcmso', label: 'Gestão PCMSO Integrada', description: 'Controle de exames médicos, ASOs e cronogramas de saúde', basePrice: 1200, category: 'essential', avgLawsuitCost: 25000, riskReduction: 0.70, riskContext: 'Empresas autuadas por SST pagaram em média R$ 18,4 mil em multas em 2025.' },
-  { id: 'psicossocial', label: 'Avaliação de Riscos Psicossociais', description: 'Mapeamento de fatores como estresse, assédio e carga mental', basePrice: 2000, category: 'advanced', avgLawsuitCost: 100000, riskReduction: 0.65, riskContext: 'Ações por burnout cresceram 14,5% e somam R$ 3,75 bilhões em impacto.' },
-  { id: 'dashboard', label: 'Dashboard Executivo e Indicadores', description: 'Painel visual com KPIs, tendências e relatórios para gestão', basePrice: 900, category: 'advanced', avgLawsuitCost: 25000, riskReduction: 0.50, riskContext: 'Grandes empresas reincidentes pagam até R$ 25 mil por autuação.' },
-  { id: 'alertas', label: 'Alertas e Notificações Inteligentes', description: 'Avisos automáticos de vencimentos, prazos e ações pendentes', basePrice: 600, category: 'advanced', avgLawsuitCost: 18000, riskReduction: 0.55, riskContext: 'Multas por documentos vencidos chegam a R$ 12,6 mil para grandes empresas.' },
-  { id: 'planos_acao', label: 'Planos de Ação Automatizados', description: 'Geração automática de planos corretivos com rastreabilidade', basePrice: 1100, category: 'premium', avgLawsuitCost: 50000, riskReduction: 0.70, riskContext: 'PGR sem plano de ação gera multa de até R$ 12,6 mil, dobrando em reincidência.' },
-  { id: 'multiempresa', label: 'Gestão Multi-empresa', description: 'Gerencie diversas empresas em um único painel centralizado', basePrice: 1800, category: 'premium', avgLawsuitCost: 80000, riskReduction: 0.60, riskContext: 'Cada filial é fiscalizada independentemente. Multas multiplicam a exposição.' },
-  { id: 'suporte', label: 'Suporte Prioritário e Personalização', description: 'Atendimento dedicado, treinamentos e configurações sob medida', basePrice: 1500, category: 'premium', avgLawsuitCost: 25000, riskReduction: 0.45, riskContext: 'Treinamentos obrigatórios não realizados geram autuações.' },
+  { id: 'aep', label: 'Avaliação Ergonômica Preliminar (AEP)', description: 'Identificação inicial de riscos ergonômicos no ambiente de trabalho', basePrice: 800, category: 'essential', avgLawsuitCost: 60000, riskReduction: 0.60, riskContext: 'Condenações por LER/DORT no TST chegam a R$ 60 mil por caso.', jurisprudencia: 'https://jurisprudencia.tst.jus.br/' },
+  { id: 'aet', label: 'Análise Ergonômica do Trabalho (AET)', description: 'Análise aprofundada com recomendações técnicas detalhadas', basePrice: 1500, category: 'essential', avgLawsuitCost: 80000, riskReduction: 0.75, riskContext: 'Perícias sem laudo técnico geram condenações entre R$ 50 mil e R$ 100 mil.', jurisprudencia: 'https://jurisprudencia.tst.jus.br/' },
+  { id: 'pcmso', label: 'Gestão PCMSO Integrada', description: 'Controle de exames médicos, ASOs e cronogramas de saúde', basePrice: 1200, category: 'essential', avgLawsuitCost: 25000, riskReduction: 0.70, riskContext: 'Empresas autuadas por SST pagaram em média R$ 18,4 mil em multas em 2025.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'psicossocial', label: 'Avaliação de Riscos Psicossociais', description: 'Mapeamento de fatores como estresse, assédio e carga mental', basePrice: 2000, category: 'advanced', avgLawsuitCost: 100000, riskReduction: 0.65, riskContext: 'Ações por burnout cresceram 14,5% e somam R$ 3,75 bilhões em impacto.', jurisprudencia: 'https://jurisprudencia.tst.jus.br/' },
+  { id: 'dashboard', label: 'Dashboard Executivo e Indicadores', description: 'Painel visual com KPIs, tendências e relatórios para gestão', basePrice: 900, category: 'advanced', avgLawsuitCost: 25000, riskReduction: 0.50, riskContext: 'Grandes empresas reincidentes pagam até R$ 25 mil por autuação.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'alertas', label: 'Alertas e Notificações Inteligentes', description: 'Avisos automáticos de vencimentos, prazos e ações pendentes', basePrice: 600, category: 'advanced', avgLawsuitCost: 18000, riskReduction: 0.55, riskContext: 'Multas por documentos vencidos chegam a R$ 12,6 mil para grandes empresas.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'planos_acao', label: 'Planos de Ação Automatizados', description: 'Geração automática de planos corretivos com rastreabilidade', basePrice: 1100, category: 'premium', avgLawsuitCost: 50000, riskReduction: 0.70, riskContext: 'PGR sem plano de ação gera multa de até R$ 12,6 mil, dobrando em reincidência.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'multiempresa', label: 'Gestão Multi-empresa', description: 'Gerencie diversas empresas em um único painel centralizado', basePrice: 1800, category: 'premium', avgLawsuitCost: 80000, riskReduction: 0.60, riskContext: 'Cada filial é fiscalizada independentemente. Multas multiplicam a exposição.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
+  { id: 'suporte', label: 'Suporte Prioritário e Personalização', description: 'Atendimento dedicado, treinamentos e configurações sob medida', basePrice: 1500, category: 'premium', avgLawsuitCost: 25000, riskReduction: 0.45, riskContext: 'Treinamentos obrigatórios não realizados geram autuações.', jurisprudencia: 'https://www.gov.br/trabalho-e-emprego/pt-br' },
 ];
 
-const categoryLabels: Record<string, { label: string }> = {
-  essential: { label: 'Proteção Essencial' },
-  advanced: { label: 'Monitoramento Avançado' },
-  premium: { label: 'Cobertura Total' },
+const categoryLabels: Record<string, { label: string; description: string; step: number }> = {
+  essential: { label: 'Proteção Essencial', description: 'Base de conformidade legal obrigatória para toda empresa com CLT', step: 1 },
+  advanced: { label: 'Monitoramento Avançado', description: 'Gestão proativa de riscos com indicadores e automação', step: 2 },
+  premium: { label: 'Cobertura Total', description: 'Proteção jurídica completa com rastreabilidade máxima', step: 3 },
 };
 
 const protectionBenefits = [
