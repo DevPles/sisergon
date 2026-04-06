@@ -579,9 +579,9 @@ const CadastrosPage = () => {
                 </div>
               )}
               {activeTab === 'templates' && (
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <Select value={templateEmpresa} onValueChange={setTemplateEmpresa}>
-                    <SelectTrigger className="w-56"><SelectValue placeholder="Todas / Global" /></SelectTrigger>
+                    <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="Todas / Global" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="__global__">Global (Padrão)</SelectItem>
                       {empresas?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
