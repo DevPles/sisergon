@@ -68,7 +68,7 @@ export function drawFooter(doc: jsPDF, pg: number, total: number, docType: strin
   doc.text(`ERGON — ${docType} — Documento confidencial`, M, ph - 9);
   doc.text(`Página ${pg} de ${total}`, pw - M, ph - 9, { align: 'right' });
   doc.setFontSize(5);
-  doc.text('www.ergon.com.br', pw / 2, ph - 9, { align: 'center' });
+  doc.text('www.sisergon.com', pw / 2, ph - 9, { align: 'center' });
   doc.setTextColor(...C.text);
 }
 
