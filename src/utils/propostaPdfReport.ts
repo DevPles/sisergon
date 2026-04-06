@@ -241,26 +241,21 @@ export async function generatePropostaPdf(data: PropostaData) {
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...C.muted);
-  doc.text('Esta proposta tem validade de 30 dias a partir da data de emissão.', pw / 2, y + 6.5, { align: 'center' });
-  y += 16;
+  doc.text('Esta proposta tem validade de 15 dias a partir da data de emissão.', pw / 2, y + 6.5, { align: 'center' });
+  y += 20;
 
   // ─── ASSINATURAS ───
-  y = needsNewPage(doc, y, 35);
+  y = needsNewPage(doc, y, 40);
   doc.setDrawColor(...C.navy);
   doc.setLineWidth(0.4);
-  doc.line(M + 5, y, M + 70, y);
-  doc.line(pw - M - 70, y, pw - M - 5, y);
-  y += 4;
+  doc.line(M + 5, y, M + 75, y);
+  doc.line(pw - M - 75, y, pw - M - 5, y);
+  y += 5;
   doc.setFontSize(7.5);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...C.muted);
   doc.text('ERGON — Responsável Comercial', M + 5, y);
-  doc.text('Cliente — Responsável', pw - M - 70, y);
-  y += 4;
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...C.text);
-  doc.text('_________________________', M + 5, y);
-  doc.text(data.contato || '_________________________', pw - M - 70, y);
+  doc.text(`Cliente — ${data.contato || 'Responsável'}`, pw - M - 75, y);
 
   // ─── FOOTERS ───
   const totalPages = doc.getNumberOfPages();
