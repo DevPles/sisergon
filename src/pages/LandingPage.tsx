@@ -52,9 +52,10 @@ function ParallaxBg({ src, speed = 0.3, overlay, isVideo = false }: { src: strin
 
   return (
     <div ref={ref} className="absolute inset-0 overflow-hidden">
-      <motion.div style={{ y }} className="absolute inset-0 h-[130%] -top-[15%]">
-        {isVideo ? (
+      {isVideo ? (
+        <div className="absolute inset-0">
           <video
+            key={src}
             src={src}
             autoPlay
             muted
@@ -62,14 +63,17 @@ function ParallaxBg({ src, speed = 0.3, overlay, isVideo = false }: { src: strin
             playsInline
             className="absolute inset-0 w-full h-full object-cover"
           />
-        ) : (
+          <div className={`absolute inset-0 ${overlay}`} />
+        </div>
+      ) : (
+        <motion.div style={{ y }} className="absolute inset-0 h-[130%] -top-[15%]">
           <div
             style={{ backgroundImage: `url(${src})` }}
             className="absolute inset-0 bg-cover bg-center"
           />
-        )}
-        <div className={`absolute inset-0 ${overlay}`} />
-      </motion.div>
+          <div className={`absolute inset-0 ${overlay}`} />
+        </motion.div>
+      )}
     </div>
   );
 }
