@@ -173,6 +173,9 @@ const UserForm = ({ empresas, user, onClose }: UserFormProps) => {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [resettingPw, setResettingPw] = useState(false);
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
