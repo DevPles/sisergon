@@ -586,10 +586,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                 </motion.div>
 
                 {/* Legal report badge */}
-                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-blue-700 text-sm font-bold">⚖</span>
-                  </div>
+                <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
                   <div>
                     <p className="text-sm font-semibold text-blue-900">Relatório Jurídico Incluso</p>
                     <p className="text-xs text-blue-700 mt-0.5">
