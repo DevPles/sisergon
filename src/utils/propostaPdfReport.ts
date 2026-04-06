@@ -38,29 +38,38 @@ export async function generatePropostaPdf(data: PropostaData) {
   const doc = new jsPDF('p', 'mm', 'a4');
   const pw = doc.internal.pageSize.getWidth();
 
-  // ─── COVER HEADER ───
-  doc.setFillColor(...C.navy);
+  // ─── COVER HEADER (white bg, blue text) ───
+  doc.setFillColor(...C.white);
   doc.rect(0, 0, pw, 50, 'F');
 
-  // Logo Ergon (brand)
+  // Logo Ergon (brand) — proportional, not stretched
   const brandLogo = await loadBrandLogo();
   if (brandLogo) {
-    try { doc.addImage(brandLogo, 'PNG', M, 10, 40, 28); } catch { /* */ }
+    try {
+      const img = new Image();
+      img.src = brandLogo;
+      await new Promise<void>((res) => { img.onload = () => res(); img.onerror = () => res(); });
+      const aspect = img.naturalWidth / (img.naturalHeight || 1);
+      const logoH = 14;
+      const logoW = logoH * aspect;
+      doc.addImage(brandLogo, 'PNG', M, 8, logoW, logoH);
+    } catch { /* */ }
   }
 
   doc.setFontSize(22);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...C.white);
-  doc.text('PROPOSTA COMERCIAL', pw - M, 22, { align: 'right' });
+  doc.setTextColor(...C.navy);
+  doc.text('PROPOSTA COMERCIAL', pw - M, 18, { align: 'right' });
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text('ERGON — Gestão Ergonômica e Saúde Ocupacional', pw - M, 30, { align: 'right' });
+  doc.setTextColor(...C.muted);
+  doc.text('ERGON — Gestão Ergonômica e Saúde Ocupacional', pw - M, 26, { align: 'right' });
   doc.setFontSize(8);
-  doc.text(`Emitida em ${new Date().toLocaleDateString('pt-BR')}`, pw - M, 38, { align: 'right' });
+  doc.text(`Emitida em ${new Date().toLocaleDateString('pt-BR')}`, pw - M, 34, { align: 'right' });
 
-  doc.setDrawColor(...C.border);
-  doc.setLineWidth(0.3);
-  doc.line(M, 54, pw - M, 54);
+  doc.setDrawColor(...C.navy);
+  doc.setLineWidth(0.5);
+  doc.line(M, 48, pw - M, 48);
   doc.setTextColor(...C.text);
   let y = 60;
 
