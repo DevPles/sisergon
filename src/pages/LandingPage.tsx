@@ -799,7 +799,7 @@ const LandingPage = () => {
       {/* Nav */}
       <nav className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <img src={logoErgon} alt="Ergon" className="h-9" />
+          <img src={logoErgon} alt="Ergon" className="h-8 w-auto object-contain" />
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/login')}
@@ -924,8 +924,8 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="border-t border-gray-100 py-8 px-6">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <img src={logoErgon} alt="Ergon" className="h-8" />
-          <p className="text-xs text-gray-400">© 2024 Ergon — Gestão Ergonômica e Saúde Ocupacional</p>
+          <img src={logoErgon} alt="Ergon" className="h-8 w-auto object-contain" />
+          <p className="text-xs text-gray-400">© 2024 Ergon — sisergon.com</p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-400">Desenvolvido por</span>
             <img src={logoPrs} alt="Sistemas PRS" className="h-7" />
