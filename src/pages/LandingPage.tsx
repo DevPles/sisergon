@@ -802,12 +802,6 @@ const LandingPage = () => {
           <img src={logoErgon} alt="Ergon" className="h-9" />
           <div className="flex items-center gap-3">
             <button
-              onClick={() => setQuoteOpen(true)}
-              className="px-5 py-2.5 bg-teal-500 text-white rounded-full text-sm font-semibold hover:bg-teal-600 shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 hover:scale-105 active:scale-[0.97] transition-all duration-200"
-            >
-              Simular orçamento
-            </button>
-            <button
               onClick={() => navigate('/login')}
               className="px-5 py-2.5 border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 hover:scale-105 active:scale-[0.97] transition-all duration-200"
             >
