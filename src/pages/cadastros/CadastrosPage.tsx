@@ -617,13 +617,14 @@ const CadastrosPage = () => {
             </div>
 
             <TabsContent value="empresas" className="mt-0">
+              <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Razão Social</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead>Cidade/UF</TableHead>
-                    <TableHead>Grau de Risco</TableHead>
+                    <TableHead className="hidden sm:table-cell">CNPJ</TableHead>
+                    <TableHead className="hidden md:table-cell">Cidade/UF</TableHead>
+                    <TableHead className="hidden sm:table-cell">GR</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
@@ -636,23 +637,24 @@ const CadastrosPage = () => {
                   ) : empresas?.map((emp) => (
                     <TableRow key={emp.id} className="cursor-pointer" onClick={() => navigate(`/empresas/${emp.id}`)}>
                       <TableCell>
-                        <p className="font-medium">{emp.razao_social}</p>
-                        {emp.nome_fantasia && <p className="text-sm text-muted-foreground">{emp.nome_fantasia}</p>}
+                        <p className="font-medium text-sm">{emp.razao_social}</p>
+                        {emp.nome_fantasia && <p className="text-xs text-muted-foreground">{emp.nome_fantasia}</p>}
                       </TableCell>
-                      <TableCell className="font-mono text-sm">{emp.cnpj || '—'}</TableCell>
-                      <TableCell>{emp.endereco_cidade && emp.endereco_uf ? `${emp.endereco_cidade}/${emp.endereco_uf}` : '—'}</TableCell>
-                      <TableCell>{emp.grau_risco ? <Badge variant={emp.grau_risco >= 3 ? 'destructive' : 'default'}>GR {emp.grau_risco}</Badge> : '—'}</TableCell>
+                      <TableCell className="hidden sm:table-cell font-mono text-sm">{emp.cnpj || '—'}</TableCell>
+                      <TableCell className="hidden md:table-cell">{emp.endereco_cidade && emp.endereco_uf ? `${emp.endereco_cidade}/${emp.endereco_uf}` : '—'}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{emp.grau_risco ? <Badge variant={emp.grau_risco >= 3 ? 'destructive' : 'default'}>GR {emp.grau_risco}</Badge> : '—'}</TableCell>
                       <TableCell><Badge variant={emp.ativa ? 'default' : 'secondary'}>{emp.ativa ? 'Ativa' : 'Inativa'}</Badge></TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="sm" onClick={() => setEditingEmpresaId(emp.id)}>Editar</Button>
-                          <Button variant="ghost" size="sm" onClick={() => deleteEmpresa.mutate(emp.id)} className="text-destructive hover:text-destructive">Excluir</Button>
+                        <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setEditingEmpresaId(emp.id)}>Editar</Button>
+                          <Button variant="ghost" size="sm" className="text-xs px-2 text-destructive hover:text-destructive" onClick={() => deleteEmpresa.mutate(emp.id)}>Excluir</Button>
                         </div>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+              </div>
             </TabsContent>
 
             <TabsContent value="colaboradores" className="mt-0">
