@@ -8,7 +8,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import ARPFormFields from './components/ARPFormFields';
 
@@ -16,7 +15,6 @@ const RiscosPsicossociaisList = () => {
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editId, setEditId] = useState<string | undefined>(undefined);
-  const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -69,7 +67,6 @@ const RiscosPsicossociaisList = () => {
           <Input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full sm:max-w-[220px]" />
           <span className="text-sm text-muted-foreground whitespace-nowrap">{assessments?.length ?? 0} registros</span>
           <div className="flex gap-2">
-            <Button variant="outline" className="flex-1 sm:flex-none text-xs sm:text-sm" onClick={() => navigate('/riscos-psicossociais/likert')}>Questionário Likert</Button>
             <Button className="flex-1 sm:flex-none text-xs sm:text-sm" onClick={openNew}>Nova Avaliação</Button>
           </div>
         </div>
