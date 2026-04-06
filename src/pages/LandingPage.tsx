@@ -51,9 +51,9 @@ function ParallaxBg({ src, speed = 0.3, overlay, isVideo = false }: { src: strin
   const y = useTransform(scrollYProgress, [0, 1], [`-${speed * 100}%`, `${speed * 100}%`]);
 
   return (
-    <div ref={ref} className="absolute inset-0 overflow-hidden">
+    <div ref={ref} className="absolute inset-0 overflow-hidden bg-gray-900">
       {isVideo ? (
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gray-900">
           <video
             key={src}
             src={src}
@@ -61,6 +61,7 @@ function ParallaxBg({ src, speed = 0.3, overlay, isVideo = false }: { src: strin
             muted
             loop
             playsInline
+            preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className={`absolute inset-0 ${overlay}`} />
