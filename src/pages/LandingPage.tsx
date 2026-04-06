@@ -715,7 +715,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                         </button>
                         <button
                           type="button"
-                          onClick={() => {
+                          onClick={async () => {
                             const { generatePropostaPdf } = await import('@/utils/propostaPdfReport');
                             generatePropostaPdf({
                               empresa: contactForm.empresa,
