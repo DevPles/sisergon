@@ -44,8 +44,8 @@ function ScrollText({
   );
 }
 
-/* ── Parallax background ── */
-function ParallaxBg({ src, speed = 0.3, overlay }: { src: string; speed?: number; overlay: string }) {
+/* ── Parallax background (image or video) ── */
+function ParallaxBg({ src, speed = 0.3, overlay, isVideo = false }: { src: string; speed?: number; overlay: string; isVideo?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [`-${speed * 100}%`, `${speed * 100}%`]);
@@ -53,10 +53,21 @@ function ParallaxBg({ src, speed = 0.3, overlay }: { src: string; speed?: number
   return (
     <div ref={ref} className="absolute inset-0 overflow-hidden">
       <motion.div style={{ y }} className="absolute inset-0 h-[130%] -top-[15%]">
-        <div
-          style={{ backgroundImage: `url(${src})` }}
-          className="absolute inset-0 bg-cover bg-center"
-        />
+        {isVideo ? (
+          <video
+            src={src}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div
+            style={{ backgroundImage: `url(${src})` }}
+            className="absolute inset-0 bg-cover bg-center"
+          />
+        )}
         <div className={`absolute inset-0 ${overlay}`} />
       </motion.div>
     </div>
@@ -754,14 +765,14 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 const LandingPage = () => {
   const navigate = useNavigate();
   const [quoteOpen, setQuoteOpen] = useState(false);
-  const heroImages = [heroImg1, heroImg2, heroImg3];
+  const heroVideos = ['/videos/hero-1.mp4', '/videos/hero-2.mp4', '/videos/hero-3.mp4'];
   const [heroIdx, setHeroIdx] = useState(0);
 
-  // Auto-rotate hero
-  useState(() => {
+  // Auto-rotate hero every 5 seconds
+  useEffect(() => {
     const id = setInterval(() => setHeroIdx(i => (i + 1) % 3), 5000);
     return () => clearInterval(id);
-  });
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 overflow-x-hidden">
@@ -788,7 +799,7 @@ const LandingPage = () => {
 
       {/* Hero */}
       <section className="relative min-h-[80vh] flex items-center overflow-hidden">
-        <ParallaxBg src={heroImages[heroIdx]} speed={0.2} overlay="bg-gradient-to-r from-gray-900/85 via-gray-900/60 to-transparent" />
+        <ParallaxBg src={heroVideos[heroIdx]} speed={0.2} overlay="bg-gradient-to-r from-gray-900/85 via-gray-900/60 to-transparent" isVideo />
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-24">
           <ScrollText direction="up" className="max-w-xl">
             
@@ -816,7 +827,7 @@ const LandingPage = () => {
         </div>
         {/* Hero image dots */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2">
-          {heroImages.map((_, i) => (
+          {heroVideos.map((_, i) => (
             <button
               key={i}
               onClick={() => setHeroIdx(i)}
