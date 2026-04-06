@@ -123,6 +123,7 @@ export async function generatePropostaPdf(data: PropostaData) {
 
     y = needsNewPage(doc, y, 25);
     y = subHeader(doc, categoryLabels[cat] || cat, y);
+    y += 3; // spacing between category label and first service
 
     for (const svc of items) {
       y = needsNewPage(doc, y, 22);
