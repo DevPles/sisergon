@@ -554,8 +554,8 @@ const CadastrosPage = () => {
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-6">
+      <Card className="overflow-hidden">
+        <CardContent className="p-0 sm:p-2">
           <Tabs defaultValue="empresas" onValueChange={(v) => setActiveTab(v)}>
             <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col gap-4">
               <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
