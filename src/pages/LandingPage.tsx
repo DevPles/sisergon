@@ -231,6 +231,7 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [cnpjLoading, setCnpjLoading] = useState(false);
   const [cnpjData, setCnpjData] = useState<any>(null);
   const [cnpjError, setCnpjError] = useState('');
+  const [activeCat, setActiveCat] = useState<'essential' | 'advanced' | 'premium'>('essential');
 
   const industryProfile = industryProfiles[industry] || null;
 
