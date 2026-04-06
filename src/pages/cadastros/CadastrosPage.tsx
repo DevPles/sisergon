@@ -606,7 +606,7 @@ const CadastrosPage = () => {
                   </>
                 ) : (
                   <>
-                    <Input placeholder="Buscar colaborador..." value={colabSearch} onChange={(e) => setColabSearch(e.target.value)} className="w-64" />
+                    <Input placeholder="Buscar colaborador..." value={colabSearch} onChange={(e) => setColabSearch(e.target.value)} className="w-full sm:w-64" />
                     <Button onClick={() => setShowColabForm(true)} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap">
                       Novo Colaborador
                     </Button>
