@@ -558,14 +558,12 @@ const CadastrosPage = () => {
         <CardContent className="p-0 sm:p-2">
           <Tabs defaultValue="empresas" onValueChange={(v) => setActiveTab(v)}>
             <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col gap-4">
-              <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
-                <TabsList className="inline-flex w-auto min-w-full sm:w-auto">
-                  <TabsTrigger value="empresas" className="text-xs sm:text-sm whitespace-nowrap">Empresas ({empresas?.length ?? 0})</TabsTrigger>
-                  <TabsTrigger value="colaboradores" className="text-xs sm:text-sm whitespace-nowrap">Colaboradores ({colaboradores?.length ?? 0})</TabsTrigger>
-                  <TabsTrigger value="templates" className="text-xs sm:text-sm whitespace-nowrap">Formulários</TabsTrigger>
-                  <TabsTrigger value="faturamento" className="text-xs sm:text-sm whitespace-nowrap">Faturamento</TabsTrigger>
-                </TabsList>
-              </div>
+              <TabsList className="flex flex-col sm:flex-row w-full sm:w-auto h-auto gap-1 sm:gap-0">
+                <TabsTrigger value="empresas" className="text-xs sm:text-sm w-full sm:w-auto">Empresas ({empresas?.length ?? 0})</TabsTrigger>
+                <TabsTrigger value="colaboradores" className="text-xs sm:text-sm w-full sm:w-auto">Colaboradores ({colaboradores?.length ?? 0})</TabsTrigger>
+                <TabsTrigger value="templates" className="text-xs sm:text-sm w-full sm:w-auto">Formulários</TabsTrigger>
+                <TabsTrigger value="faturamento" className="text-xs sm:text-sm w-full sm:w-auto">Faturamento</TabsTrigger>
+              </TabsList>
               {activeTab === 'faturamento' && (
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <Select value={faturamentoEmpresa} onValueChange={setFaturamentoEmpresa}>
