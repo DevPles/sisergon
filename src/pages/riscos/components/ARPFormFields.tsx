@@ -511,10 +511,10 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   };
 
   const getPhaseLabel = () => {
-    if (currentStep === 0) return { icon: '📋', label: 'Identificação' };
-    if (currentStep <= arpPages) return { icon: '🔍', label: 'Avaliação Técnica (ARP)' };
-    if (currentStep < reviewStep) return { icon: '📊', label: 'Questionário Likert' };
-    return { icon: '✅', label: 'Revisão Final' };
+    if (currentStep === 0) return { label: 'Identificação' };
+    if (currentStep <= arpPages) return { label: 'Avaliação Técnica (ARP)' };
+    if (currentStep < reviewStep) return { label: 'Questionário Likert' };
+    return { label: 'Revisão Final' };
   };
 
   const answeredCount = Object.keys(values).length;
