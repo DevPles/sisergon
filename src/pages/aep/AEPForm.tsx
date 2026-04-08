@@ -10,13 +10,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+
 import { useToast } from '@/hooks/use-toast';
 import { generateAepPdf } from '@/utils/aepPdfReport';
 import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding';
 import { format } from 'date-fns';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
-import { ChevronLeft, ChevronRight, Check, CircleDot, Circle } from 'lucide-react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import AutoSaveBadge from '@/components/AutoSaveBadge';
@@ -577,46 +577,16 @@ const AEPForm = () => {
       {dynamicTemplate && dynamicQuestions.length > 0 && (
         <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5">
           <p className="text-xs text-muted-foreground">
-            📋 Usando formulário personalizado: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
+            Usando formulário personalizado: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
           </p>
         </div>
       )}
 
-      {/* Stepper progress */}
+      {/* Step indicator */}
       <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-medium text-muted-foreground">
-            Bloco {activeStep + 1} de {activeBlocks.length}
-          </p>
-          <p className="text-sm text-muted-foreground">{progressPercent}% concluído</p>
-        </div>
-        <Progress value={progressPercent} className="h-2" />
-        <div className="flex gap-1.5 mt-3 flex-wrap">
-          {activeBlocks.map((block, idx) => {
-            const complete = isBlockComplete(idx);
-            const unlocked = idx <= unlockedUpTo;
-            const isCurrent = idx === activeStep;
-            return (
-              <button
-                key={block.domain}
-                onClick={() => unlocked && setActiveStep(idx)}
-                disabled={!unlocked}
-                className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border transition-all ${
-                  isCurrent
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : complete
-                    ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
-                    : unlocked
-                    ? 'bg-muted text-muted-foreground border-border hover:bg-accent'
-                    : 'bg-muted/50 text-muted-foreground/40 border-transparent cursor-not-allowed'
-                }`}
-              >
-                {complete ? <Check className="h-3 w-3" /> : isCurrent ? <CircleDot className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
-                {block.domain.slice(0, 4).toUpperCase()}
-              </button>
-            );
-          })}
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Bloco {activeStep + 1} de {activeBlocks.length}
+        </p>
       </div>
 
       {/* Active block */}
@@ -694,10 +664,10 @@ const AEPForm = () => {
                 onClick={() => setActiveStep((s) => Math.max(0, s - 1))}
                 disabled={activeStep === 0}
               >
-                <ChevronLeft className="h-4 w-4 mr-1" /> Anterior
+                Anterior
               </Button>
               <p className="text-xs text-muted-foreground">
-                {isBlockComplete(activeStep) ? '✓ Bloco completo' : 'Responda todas as perguntas para avançar'}
+                {isBlockComplete(activeStep) ? 'Bloco completo' : 'Responda todas as perguntas para avançar'}
               </p>
               <Button
                 variant="outline"
@@ -705,7 +675,7 @@ const AEPForm = () => {
                 onClick={() => setActiveStep((s) => Math.min(activeBlocks.length - 1, s + 1))}
                 disabled={activeStep >= activeBlocks.length - 1 || !isBlockComplete(activeStep)}
               >
-                Próximo <ChevronRight className="h-4 w-4 ml-1" />
+                Próximo
               </Button>
             </div>
           </motion.div>
