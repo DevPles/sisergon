@@ -693,8 +693,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
 
                   {block.id === 'violencia' && (
                     <div className="mb-4 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
-                      <p className="text-xs text-destructive font-medium flex items-center gap-1">
-                        <AlertTriangle className="h-3 w-3" /> Bloco sensível — respostas ≥ 3 geram alerta automático
+                      <p className="text-xs text-destructive font-medium">
+                        Bloco sensível — respostas ≥ 3 geram alerta automático
                       </p>
                     </div>
                   )}
