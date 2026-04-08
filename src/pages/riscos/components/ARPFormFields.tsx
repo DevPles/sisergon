@@ -749,63 +749,67 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
           <motion.div key="review" {...fadeIn}>
             {/* Violence alert banner */}
             {hasViolenceAlert && (
-              <div className="mb-4 p-4 rounded-xl border border-destructive/50 bg-destructive/5 flex items-start gap-3">
-                
-                <div>
+              <Card className="mb-4 border-destructive/50 bg-destructive/5">
+                <CardContent className="p-4">
                   <p className="text-sm font-semibold text-destructive">Alerta Imediato — Violência/Assédio</p>
-                  <p className="text-xs text-muted-foreground">Respostas no bloco de Violência indicam exposição significativa. Notificação automática será enviada ao finalizar.</p>
-                </div>
-              </div>
+                  <p className="text-xs text-muted-foreground mt-1">Respostas no bloco de Violência indicam exposição significativa. Notificação automática será enviada ao finalizar.</p>
+                </CardContent>
+              </Card>
             )}
 
             {/* ARP Review */}
-            <div className="mb-4 rounded-xl border border-border bg-background p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-base font-semibold text-foreground">ARP — Fatores Psicossociais</h3>
-                <Badge variant={classVariant(classification)} className="text-xs">{totalScore.toFixed(1)} — {classification}</Badge>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-                {activeQuestions.map((_q: string, i: number) => (
-                  <div key={i} className="flex items-center gap-2 p-1.5 rounded bg-muted/50">
-                    <span className="text-xs text-muted-foreground w-5">{i + 1})</span>
-                    <Badge variant={
-                      (values[i] ?? 0) === 0 ? 'secondary' :
-                      (values[i] ?? 0) === 1 ? 'secondary' :
-                      (values[i] ?? 0) === 2 ? 'default' : 'destructive'
-                    } className="text-xs">
-                      {values[i] ?? 0}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Card className="mb-4">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base">ARP — Fatores Psicossociais</CardTitle>
+                  <Badge variant={classVariant(classification)} className="text-xs">{totalScore.toFixed(1)} — {classification}</Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+                  {activeQuestions.map((_q: string, i: number) => (
+                    <div key={i} className="flex items-center gap-2 p-1.5 rounded bg-muted/50">
+                      <span className="text-xs text-muted-foreground w-5">{i + 1})</span>
+                      <Badge variant={
+                        (values[i] ?? 0) === 0 ? 'secondary' :
+                        (values[i] ?? 0) === 1 ? 'secondary' :
+                        (values[i] ?? 0) === 2 ? 'default' : 'destructive'
+                      } className="text-xs">
+                        {values[i] ?? 0}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Likert Review */}
             {likertAnsweredCount > 0 && (
-              <div className="mb-4 rounded-xl border border-border bg-background p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <h3 className="text-base font-semibold text-foreground">Questionário Likert</h3>
-                  <Badge variant={classVariant(likertScores.classification)} className="text-xs">
-                    {likertScores.total}/{likertScores.maxTotal} — {classLabelMap[likertScores.classification]}
-                  </Badge>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {LIKERT_BLOCKS.map(b => {
-                    const s = likertScores.blockScores[b.id];
-                    if (!s) return null;
-                    const isHigh = s.pct >= 70;
-                    return (
-                      <div key={b.id} className={`flex justify-between items-center p-2.5 rounded-lg ${isHigh ? 'bg-destructive/10 border border-destructive/30' : 'bg-muted/50'}`}>
-                        <span className="text-sm">{b.label}</span>
-                        <div className="flex items-center gap-2">
+              <Card className="mb-4">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Questionário Likert</CardTitle>
+                    <Badge variant={classVariant(likertScores.classification)} className="text-xs">
+                      {likertScores.total}/{likertScores.maxTotal} — {classLabelMap[likertScores.classification]}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {LIKERT_BLOCKS.map(b => {
+                      const s = likertScores.blockScores[b.id];
+                      if (!s) return null;
+                      const isHigh = s.pct >= 70;
+                      return (
+                        <div key={b.id} className={`flex justify-between items-center p-2.5 rounded-lg ${isHigh ? 'bg-destructive/10 border border-destructive/30' : 'bg-muted/50'}`}>
+                          <span className="text-sm">{b.label}</span>
                           <span className="font-mono font-medium text-sm">{s.pct}%</span>
-                          {isHigh && <span className="text-destructive text-xs">⚠</span>}
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
             )}
 
             <div className="flex flex-wrap gap-3 pb-4">
