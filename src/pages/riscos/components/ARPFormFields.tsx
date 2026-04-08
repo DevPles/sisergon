@@ -556,8 +556,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         )}
 
         {hasViolenceAlert && (
-          <Badge variant="destructive" className="text-xs px-3 py-1 flex items-center gap-1">
-            <AlertTriangle className="h-3 w-3" /> Alerta violência
+          <Badge variant="destructive" className="text-xs px-3 py-1">
+            Alerta violência
           </Badge>
         )}
       </div>
