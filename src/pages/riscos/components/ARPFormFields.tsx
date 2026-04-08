@@ -638,33 +638,35 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         {/* Steps 1..arpPages: ARP Questions */}
         {currentStep >= 1 && currentStep <= arpPages && (
           <motion.div key={`arp-page-${currentStep}`} {...fadeIn}>
-            <div className="mb-4 rounded-xl border border-border bg-background p-6">
-              <h3 className="text-base font-semibold text-foreground mb-3">
-                Fatores Psicossociais — Página {currentStep} de {arpPages}
-              </h3>
-              <div className="space-y-5">
-                {(() => {
-                  const pageIdx = currentStep - 1;
-                  const start = pageIdx * QUESTIONS_PER_PAGE;
-                  const end = Math.min(start + QUESTIONS_PER_PAGE, activeQuestions.length);
-                  return activeQuestions.slice(start, end).map((q: string, idx: number) => {
-                    const i = start + idx;
-                    return (
-                      <div key={i} className="border-b pb-4 last:border-b-0 last:pb-0">
-                        <p className="text-sm font-medium mb-3">{i + 1}) {q}</p>
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          {SCORE_LABELS.map((label, val) => (
-                            <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
-                              className="min-w-[110px]" onClick={() => handleValueChange(i, val)}>{label}</Button>
-                          ))}
+            <Card className="mb-4">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Fatores Psicossociais — Página {currentStep} de {arpPages}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {(() => {
+                    const pageIdx = currentStep - 1;
+                    const start = pageIdx * QUESTIONS_PER_PAGE;
+                    const end = Math.min(start + QUESTIONS_PER_PAGE, activeQuestions.length);
+                    return activeQuestions.slice(start, end).map((q: string, idx: number) => {
+                      const i = start + idx;
+                      return (
+                        <div key={i} className="border-b pb-3 last:border-b-0 last:pb-0">
+                          <p className="text-sm font-medium text-foreground mb-2">{i + 1}) {q}</p>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {SCORE_LABELS.map((label, val) => (
+                              <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
+                                className="min-w-[110px]" onClick={() => handleValueChange(i, val)}>{label}</Button>
+                            ))}
+                          </div>
+                          <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={e => setComments(prev => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
                         </div>
-                        <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={e => setComments(prev => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-            </div>
+                      );
+                    });
+                  })()}
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="flex justify-between pb-4">
               <Button variant="outline" onClick={goBack}>
