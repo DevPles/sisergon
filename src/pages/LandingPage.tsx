@@ -471,33 +471,6 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                   </div>
                 )}
 
-                {/* Category stepper */}
-                <div className="flex items-center gap-0">
-                  {(['essential', 'advanced', 'premium'] as const).map((cat, i) => {
-                    const cats = ['essential', 'advanced', 'premium'] as const;
-                    const currentIdx = cats.indexOf(activeCat);
-                    const isDone = i < currentIdx;
-                    const isCurrent = i === currentIdx;
-                    const catServices = services.filter(s => s.category === cat);
-                    const selectedCount = catServices.filter(s => selected.has(s.id)).length;
-                    return (
-                      <div key={cat} className="flex items-center flex-1">
-                        <div className="flex flex-col items-center flex-1">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${isCurrent ? 'bg-gray-800 text-white ring-2 ring-gray-800/20' : isDone ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                            {isDone ? '✓' : i + 1}
-                          </div>
-                          <p className={`text-[10px] mt-1 text-center leading-tight font-medium ${isCurrent ? 'text-gray-900' : isDone ? 'text-gray-600' : 'text-gray-400'}`}>
-                            {categoryLabels[cat].label}
-                          </p>
-                          {selectedCount > 0 && (
-                            <span className="text-[9px] text-gray-500 mt-0.5">{selectedCount} selecionado{selectedCount > 1 ? 's' : ''}</span>
-                          )}
-                        </div>
-                        {i < 2 && <div className={`h-px flex-1 mx-1 mt-[-16px] ${i < currentIdx ? 'bg-gray-800' : 'bg-gray-200'}`} />}
-                      </div>
-                    );
-                  })}
-                </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
