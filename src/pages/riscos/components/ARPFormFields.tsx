@@ -757,7 +757,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             {/* ARP Review */}
             <div className="mb-4 rounded-xl border border-border bg-background p-6">
               <div className="flex items-center gap-2 mb-3">
-                <Shield className="h-4 w-4 text-primary" />
                 <h3 className="text-base font-semibold text-foreground">ARP — Fatores Psicossociais</h3>
                 <Badge variant={classVariant(classification)} className="text-xs">{totalScore.toFixed(1)} — {classification}</Badge>
               </div>
