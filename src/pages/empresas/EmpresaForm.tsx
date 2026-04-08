@@ -173,10 +173,10 @@ const EmpresaForm = ({ empresaId, onClose, onSaved }: Props) => {
 
       await supabase.from('audit_logs').insert({
         user_id: user?.id,
-        entity_type: 'empresa',
+        entity: 'empresa',
         entity_id: empresaResultId || undefined,
         action: isEdit ? 'update' : 'create',
-        new_data: payload as any,
+        details: payload as any,
       });
     },
     onSuccess: () => {

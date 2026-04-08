@@ -40,11 +40,9 @@ const DocumentosPage = () => {
       if (!editingItem) return;
       const { error } = await supabase.from('documentos').update({
         titulo: editingItem.titulo,
-        tipo_documento: editingItem.tipo_documento,
-        data_emissao: editingItem.data_emissao || null,
+        tipo: (editingItem as any).tipo_documento || editingItem.tipo,
         validade: editingItem.validade || null,
-        proximo_vencimento: editingItem.proximo_vencimento || null,
-      }).eq('id', editingItem.id);
+      } as any).eq('id', editingItem.id);
       if (error) throw error;
     },
     onSuccess: () => { toast({ title: 'Documento atualizado' }); setEditingItem(null); queryClient.invalidateQueries({ queryKey: ['documentos'] }); },

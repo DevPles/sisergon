@@ -173,10 +173,10 @@ const ColaboradorForm = ({ colaboradorId, onClose, onSaved }: Props) => {
 
       await supabase.from('audit_logs').insert({
         user_id: user?.id,
-        entity_type: 'colaborador',
+        entity: 'colaborador',
         entity_id: colaboradorId || undefined,
         action: isEdit ? 'update' : 'create',
-        new_data: payload as any,
+        details: payload as any,
       });
     },
     onSuccess: () => {
