@@ -638,33 +638,35 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         {/* Steps 1..arpPages: ARP Questions */}
         {currentStep >= 1 && currentStep <= arpPages && (
           <motion.div key={`arp-page-${currentStep}`} {...fadeIn}>
-            <div className="mb-4 rounded-xl border border-border bg-background p-6">
-              <h3 className="text-base font-semibold text-foreground mb-3">
-                Fatores Psicossociais — Página {currentStep} de {arpPages}
-              </h3>
-              <div className="space-y-5">
-                {(() => {
-                  const pageIdx = currentStep - 1;
-                  const start = pageIdx * QUESTIONS_PER_PAGE;
-                  const end = Math.min(start + QUESTIONS_PER_PAGE, activeQuestions.length);
-                  return activeQuestions.slice(start, end).map((q: string, idx: number) => {
-                    const i = start + idx;
-                    return (
-                      <div key={i} className="border-b pb-4 last:border-b-0 last:pb-0">
-                        <p className="text-sm font-medium mb-3">{i + 1}) {q}</p>
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          {SCORE_LABELS.map((label, val) => (
-                            <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
-                              className="min-w-[110px]" onClick={() => handleValueChange(i, val)}>{label}</Button>
-                          ))}
+            <Card className="mb-4">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Fatores Psicossociais — Página {currentStep} de {arpPages}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {(() => {
+                    const pageIdx = currentStep - 1;
+                    const start = pageIdx * QUESTIONS_PER_PAGE;
+                    const end = Math.min(start + QUESTIONS_PER_PAGE, activeQuestions.length);
+                    return activeQuestions.slice(start, end).map((q: string, idx: number) => {
+                      const i = start + idx;
+                      return (
+                        <div key={i} className="border-b pb-3 last:border-b-0 last:pb-0">
+                          <p className="text-sm font-medium text-foreground mb-2">{i + 1}) {q}</p>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            {SCORE_LABELS.map((label, val) => (
+                              <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
+                                className="min-w-[110px]" onClick={() => handleValueChange(i, val)}>{label}</Button>
+                            ))}
+                          </div>
+                          <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={e => setComments(prev => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
                         </div>
-                        <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={e => setComments(prev => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-            </div>
+                      );
+                    });
+                  })()}
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="flex justify-between pb-4">
               <Button variant="outline" onClick={goBack}>
@@ -684,48 +686,50 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
               const blockIdx = currentStep - likertStartStep;
               const block = LIKERT_BLOCKS[blockIdx];
               return (
-                <div className="mb-4 rounded-xl border border-border bg-background p-6">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-base font-semibold text-foreground">{block.label}</h3>
-                    <Badge variant="secondary" className="text-[10px]">Likert {blockIdx + 1}/{likertBlockCount}</Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-4">{block.description}</p>
-
-                  {block.id === 'violencia' && (
-                    <div className="mb-4 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
-                      <p className="text-xs text-destructive font-medium">
-                        Bloco sensível — respostas ≥ 3 geram alerta automático
-                      </p>
+                <Card className="mb-4">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base">{block.label}</CardTitle>
+                      <Badge variant="secondary" className="text-[10px]">Likert {blockIdx + 1}/{likertBlockCount}</Badge>
                     </div>
-                  )}
+                    <p className="text-xs text-muted-foreground">{block.description}</p>
+                  </CardHeader>
+                  <CardContent>
+                    {block.id === 'violencia' && (
+                      <div className="mb-4 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+                        <p className="text-xs text-destructive font-medium">
+                          Bloco sensível — respostas ≥ 3 geram alerta automático
+                        </p>
+                      </div>
+                    )}
 
-                  <div className="space-y-5">
-                    {block.questions.map((q, qi) => {
-                      const key = `${block.id}-${qi}`;
-                      const selected = likertAnswers[key];
-                      return (
-                        <div key={qi} className="border-b pb-4 last:border-b-0 last:pb-0">
-                          <p className="text-sm font-medium mb-2">{qi + 1}. {q}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {LIKERT_OPTIONS.map(opt => (
-                              <button
-                                key={opt.value}
-                                onClick={() => handleLikertAnswer(key, opt.value)}
-                                className={`px-3 py-1.5 rounded-lg text-xs border transition-colors ${
-                                  selected === opt.value
-                                    ? 'bg-primary text-primary-foreground border-primary'
-                                    : 'bg-background text-foreground border-border hover:bg-muted'
-                                }`}
-                              >
-                                {opt.value} — {opt.label}
-                              </button>
-                            ))}
+                    <div className="space-y-4">
+                      {block.questions.map((q, qi) => {
+                        const key = `${block.id}-${qi}`;
+                        const selected = likertAnswers[key];
+                        return (
+                          <div key={qi} className="border-b pb-3 last:border-b-0 last:pb-0">
+                            <p className="text-sm font-medium text-foreground mb-2">{qi + 1}) {q}</p>
+                            <div className="flex flex-wrap gap-2">
+                              {LIKERT_OPTIONS.map(opt => (
+                                <Button
+                                  key={opt.value}
+                                  type="button"
+                                  variant={selected === opt.value ? 'default' : 'outline'}
+                                  size="sm"
+                                  className="min-w-[110px]"
+                                  onClick={() => handleLikertAnswer(key, opt.value)}
+                                >
+                                  {opt.value} — {opt.label}
+                                </Button>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
               );
             })()}
 
@@ -745,63 +749,67 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
           <motion.div key="review" {...fadeIn}>
             {/* Violence alert banner */}
             {hasViolenceAlert && (
-              <div className="mb-4 p-4 rounded-xl border border-destructive/50 bg-destructive/5 flex items-start gap-3">
-                
-                <div>
+              <Card className="mb-4 border-destructive/50 bg-destructive/5">
+                <CardContent className="p-4">
                   <p className="text-sm font-semibold text-destructive">Alerta Imediato — Violência/Assédio</p>
-                  <p className="text-xs text-muted-foreground">Respostas no bloco de Violência indicam exposição significativa. Notificação automática será enviada ao finalizar.</p>
-                </div>
-              </div>
+                  <p className="text-xs text-muted-foreground mt-1">Respostas no bloco de Violência indicam exposição significativa. Notificação automática será enviada ao finalizar.</p>
+                </CardContent>
+              </Card>
             )}
 
             {/* ARP Review */}
-            <div className="mb-4 rounded-xl border border-border bg-background p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-base font-semibold text-foreground">ARP — Fatores Psicossociais</h3>
-                <Badge variant={classVariant(classification)} className="text-xs">{totalScore.toFixed(1)} — {classification}</Badge>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-                {activeQuestions.map((_q: string, i: number) => (
-                  <div key={i} className="flex items-center gap-2 p-1.5 rounded bg-muted/50">
-                    <span className="text-xs text-muted-foreground w-5">{i + 1})</span>
-                    <Badge variant={
-                      (values[i] ?? 0) === 0 ? 'secondary' :
-                      (values[i] ?? 0) === 1 ? 'secondary' :
-                      (values[i] ?? 0) === 2 ? 'default' : 'destructive'
-                    } className="text-xs">
-                      {values[i] ?? 0}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Card className="mb-4">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base">ARP — Fatores Psicossociais</CardTitle>
+                  <Badge variant={classVariant(classification)} className="text-xs">{totalScore.toFixed(1)} — {classification}</Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+                  {activeQuestions.map((_q: string, i: number) => (
+                    <div key={i} className="flex items-center gap-2 p-1.5 rounded bg-muted/50">
+                      <span className="text-xs text-muted-foreground w-5">{i + 1})</span>
+                      <Badge variant={
+                        (values[i] ?? 0) === 0 ? 'secondary' :
+                        (values[i] ?? 0) === 1 ? 'secondary' :
+                        (values[i] ?? 0) === 2 ? 'default' : 'destructive'
+                      } className="text-xs">
+                        {values[i] ?? 0}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Likert Review */}
             {likertAnsweredCount > 0 && (
-              <div className="mb-4 rounded-xl border border-border bg-background p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <h3 className="text-base font-semibold text-foreground">Questionário Likert</h3>
-                  <Badge variant={classVariant(likertScores.classification)} className="text-xs">
-                    {likertScores.total}/{likertScores.maxTotal} — {classLabelMap[likertScores.classification]}
-                  </Badge>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {LIKERT_BLOCKS.map(b => {
-                    const s = likertScores.blockScores[b.id];
-                    if (!s) return null;
-                    const isHigh = s.pct >= 70;
-                    return (
-                      <div key={b.id} className={`flex justify-between items-center p-2.5 rounded-lg ${isHigh ? 'bg-destructive/10 border border-destructive/30' : 'bg-muted/50'}`}>
-                        <span className="text-sm">{b.label}</span>
-                        <div className="flex items-center gap-2">
+              <Card className="mb-4">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Questionário Likert</CardTitle>
+                    <Badge variant={classVariant(likertScores.classification)} className="text-xs">
+                      {likertScores.total}/{likertScores.maxTotal} — {classLabelMap[likertScores.classification]}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {LIKERT_BLOCKS.map(b => {
+                      const s = likertScores.blockScores[b.id];
+                      if (!s) return null;
+                      const isHigh = s.pct >= 70;
+                      return (
+                        <div key={b.id} className={`flex justify-between items-center p-2.5 rounded-lg ${isHigh ? 'bg-destructive/10 border border-destructive/30' : 'bg-muted/50'}`}>
+                          <span className="text-sm">{b.label}</span>
                           <span className="font-mono font-medium text-sm">{s.pct}%</span>
-                          {isHigh && <span className="text-destructive text-xs">⚠</span>}
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
             )}
 
             <div className="flex flex-wrap gap-3 pb-4">
