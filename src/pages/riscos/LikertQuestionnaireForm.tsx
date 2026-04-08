@@ -7,11 +7,10 @@ import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 import PageTransition from '@/components/PageTransition';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import AutoSaveBadge from '@/components/AutoSaveBadge';
@@ -21,6 +20,7 @@ const LIKERT_BLOCKS = [
   {
     id: 'demandas',
     label: 'Bloco 1 — Demandas do Trabalho',
+    shortLabel: 'Demandas',
     description: 'Avalia a carga de trabalho, pressão por prazos e exigências emocionais.',
     questions: [
       'Tenho que trabalhar muito rápido para dar conta das tarefas.',
@@ -33,6 +33,7 @@ const LIKERT_BLOCKS = [
   {
     id: 'controle',
     label: 'Bloco 2 — Controle sobre o Trabalho',
+    shortLabel: 'Controle',
     description: 'Avalia autonomia, participação em decisões e uso de habilidades.',
     questions: [
       'Tenho liberdade para decidir como realizar minhas tarefas.',
@@ -45,6 +46,7 @@ const LIKERT_BLOCKS = [
   {
     id: 'apoio',
     label: 'Bloco 3 — Apoio Social e Relações',
+    shortLabel: 'Apoio',
     description: 'Avalia suporte de colegas e liderança, comunicação e reconhecimento.',
     questions: [
       'Recebo apoio adequado dos meus colegas de trabalho.',
@@ -57,6 +59,7 @@ const LIKERT_BLOCKS = [
   {
     id: 'violencia',
     label: 'Bloco 4 — Violência e Assédio',
+    shortLabel: 'Violência',
     description: 'Avalia exposição a situações de violência, assédio e discriminação.',
     questions: [
       'Já fui alvo de gritos, xingamentos ou humilhação no trabalho.',
@@ -69,6 +72,7 @@ const LIKERT_BLOCKS = [
   {
     id: 'saude',
     label: 'Bloco 5 — Saúde e Bem-estar',
+    shortLabel: 'Saúde',
     description: 'Avalia impactos percebidos na saúde física e mental.',
     questions: [
       'Tenho dificuldade para dormir por preocupações com o trabalho.',
@@ -81,11 +85,11 @@ const LIKERT_BLOCKS = [
 ];
 
 const LIKERT_OPTIONS = [
-  { value: 1, label: '1 — Discordo totalmente' },
-  { value: 2, label: '2 — Discordo' },
-  { value: 3, label: '3 — Neutro' },
-  { value: 4, label: '4 — Concordo' },
-  { value: 5, label: '5 — Concordo totalmente' },
+  { value: 1, label: 'Discordo totalmente' },
+  { value: 2, label: 'Discordo' },
+  { value: 3, label: 'Neutro' },
+  { value: 4, label: 'Concordo' },
+  { value: 5, label: 'Concordo totalmente' },
 ];
 
 const classifyLikert = (score: number, total: number): string => {
@@ -123,7 +127,6 @@ const LikertQuestionnaireForm = () => {
     debounceMs: 10000,
   });
 
-  // Recover on mount
   useEffect(() => {
     if (hasSavedData()) {
       const saved = recover();
@@ -166,7 +169,6 @@ const LikertQuestionnaireForm = () => {
 
   const allComplete = LIKERT_BLOCKS.every((_, i) => isBlockComplete(i));
 
-  // Violence alert check
   const hasViolenceAlert = useMemo(() => {
     const vBlock = LIKERT_BLOCKS.find(b => b.id === 'violencia');
     if (!vBlock) return false;
@@ -181,7 +183,6 @@ const LikertQuestionnaireForm = () => {
       let bScore = 0;
       const max = b.questions.length * 5;
       b.questions.forEach((_, qi) => { bScore += answers[`${b.id}-${qi}`] ?? 0; });
-      // For "controle" and "apoio", lower score = higher risk (invert)
       const isInverted = b.id === 'controle' || b.id === 'apoio';
       const adjusted = isInverted ? max - bScore : bScore;
       blockScores[b.id] = { score: adjusted, max, pct: Math.round((adjusted / max) * 100) };
@@ -219,7 +220,6 @@ const LikertQuestionnaireForm = () => {
       } as any);
       if (error) throw error;
 
-      // Alert notification if violence
       if (hasViolenceAlert && user?.id) {
         await supabase.from('notifications').insert({
           user_id: user.id,
@@ -245,79 +245,120 @@ const LikertQuestionnaireForm = () => {
 
   return (
     <PageTransition>
-      <div className="space-y-6 max-w-3xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-bold">Questionário Psicossocial</h1>
+              <h1 className="text-2xl font-bold">Questionário Psicossocial</h1>
               <AutoSaveBadge lastSaved={lastSaved} recovered={recovered} />
             </div>
-            <p className="text-muted-foreground text-sm">Escala Likert — 5 blocos, avaliação anônima</p>
+            <p className="text-muted-foreground">Escala Likert — 5 blocos, avaliação anônima</p>
           </div>
           <Button variant="outline" onClick={() => navigate('/riscos-psicossociais')}>Voltar</Button>
         </div>
 
+        {/* Score summary card */}
+        <Card className="mb-6 border-2 border-primary/20">
+          <CardContent className="p-6">
+            <div className="flex flex-wrap items-center gap-6">
+              <div>
+                <p className="text-sm text-muted-foreground">Score Total</p>
+                <p className="text-4xl font-bold text-foreground">{scores.total}/{scores.maxTotal}</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Classificação</p>
+                <Badge variant={classBadge[scores.classification]} className="text-base px-4 py-1 mt-1">
+                  {classLabel[scores.classification]}
+                </Badge>
+              </div>
+              {hasViolenceAlert && (
+                <div className="ml-auto">
+                  <Badge variant="destructive" className="text-sm px-4 py-1">⚠ Alerta Violência</Badge>
+                </div>
+              )}
+              <div className="flex flex-wrap gap-3 ml-auto">
+                {LIKERT_BLOCKS.map(b => {
+                  const s = scores.blockScores[b.id];
+                  return (
+                    <div key={b.id} className="text-center">
+                      <p className="text-xs text-muted-foreground">{b.shortLabel}</p>
+                      <p className="text-sm font-semibold">{s?.pct ?? 0}%</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Identification */}
+        <Card className="mb-6">
+          <CardHeader><CardTitle>Identificação</CardTitle></CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Empresa *</Label>
+                <Select value={empresaId} onValueChange={v => { setEmpresaId(v); setSetorId('all'); }}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>{empresas.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Setor (opcional)</Label>
+                <Select value={setorId} onValueChange={setSetorId}>
+                  <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {setores.map(s => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Stepper progress */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-medium text-muted-foreground">
+              Bloco {activeBlock + 1} de {LIKERT_BLOCKS.length}
+            </p>
+            <p className="text-sm text-muted-foreground">{progressPct}% concluído</p>
+          </div>
+          <Progress value={progressPct} className="h-2" />
+          <div className="flex gap-1.5 mt-3 flex-wrap">
+            {LIKERT_BLOCKS.map((b, i) => {
+              const complete = isBlockComplete(i);
+              const isCurrent = i === activeBlock;
+              return (
+                <button
+                  key={b.id}
+                  onClick={() => setActiveBlock(i)}
+                  className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
+                    isCurrent
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : complete
+                      ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
+                      : 'bg-muted text-muted-foreground border-border hover:bg-accent'
+                  }`}
+                >
+                  {complete && '✓ '}{b.shortLabel}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Violence alert */}
         {hasViolenceAlert && (
-          <Card className="border-destructive/50 bg-destructive/5">
-            <CardContent className="flex items-center gap-3 p-4">
-              <AlertTriangle className="h-5 w-5 text-destructive shrink-0" />
-              <div>
-                <p className="text-sm font-semibold text-destructive">Alerta imediato de violência/assédio</p>
-                <p className="text-xs text-muted-foreground">Respostas no bloco de Violência indicam exposição significativa (≥ 3).</p>
-              </div>
+          <Card className="mb-4 border-destructive/50 bg-destructive/5">
+            <CardContent className="p-4">
+              <p className="text-sm font-semibold text-destructive">⚠ Alerta imediato de violência/assédio</p>
+              <p className="text-xs text-muted-foreground mt-1">Respostas no bloco de Violência indicam exposição significativa (≥ 3).</p>
             </CardContent>
           </Card>
         )}
-
-        {/* Company & sector selection */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <Label>Empresa</Label>
-            <Select value={empresaId} onValueChange={v => { setEmpresaId(v); setSetorId('all'); }}>
-              <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-              <SelectContent>{empresas.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Setor (opcional)</Label>
-            <Select value={setorId} onValueChange={setSetorId}>
-              <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                {setores.map(s => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Progress */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>{answeredCount}/{totalQuestions} respondidas</span>
-            <span>{progressPct}%</span>
-          </div>
-          <Progress value={progressPct} />
-        </div>
-
-        {/* Block navigation pills */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
-          {LIKERT_BLOCKS.map((b, i) => (
-            <button
-              key={b.id}
-              onClick={() => setActiveBlock(i)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors border ${
-                activeBlock === i
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : isBlockComplete(i)
-                  ? 'bg-muted text-foreground border-border'
-                  : 'bg-background text-muted-foreground border-border hover:bg-muted'
-              }`}
-            >
-              {isBlockComplete(i) && '✓ '}{b.id === 'demandas' ? 'Demandas' : b.id === 'controle' ? 'Controle' : b.id === 'apoio' ? 'Apoio' : b.id === 'violencia' ? 'Violência' : 'Saúde'}
-            </button>
-          ))}
-        </div>
 
         {/* Active block */}
         <AnimatePresence mode="wait">
@@ -326,54 +367,57 @@ const LikertQuestionnaireForm = () => {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.2 }}
           >
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">{block.label}</CardTitle>
+            <Card className="mb-6">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base">{block.label}</CardTitle>
+                  <Badge variant="outline" className="text-xs">
+                    {block.questions.filter((_, qi) => answers[`${block.id}-${qi}`] !== undefined).length}/{block.questions.length} respondidas
+                  </Badge>
+                </div>
                 <p className="text-xs text-muted-foreground">{block.description}</p>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {block.questions.map((q, qi) => {
-                  const key = `${block.id}-${qi}`;
-                  const selected = answers[key];
-                  return (
-                    <div key={qi} className="space-y-2">
-                      <p className="text-sm font-medium">{qi + 1}. {q}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {LIKERT_OPTIONS.map(opt => (
-                          <button
-                            key={opt.value}
-                            onClick={() => handleAnswer(key, opt.value)}
-                            className={`px-3 py-1.5 rounded-lg text-xs border transition-colors ${
-                              selected === opt.value
-                                ? 'bg-primary text-primary-foreground border-primary'
-                                : 'bg-background text-foreground border-border hover:bg-muted'
-                            }`}
-                          >
-                            {opt.value}
-                          </button>
-                        ))}
+              <CardContent>
+                <div className="space-y-4">
+                  {block.questions.map((q, qi) => {
+                    const key = `${block.id}-${qi}`;
+                    const selected = answers[key];
+                    return (
+                      <div key={qi} className="border-b pb-3 last:border-b-0 last:pb-0">
+                        <p className="text-sm font-medium text-foreground mb-2">{qi + 1}) {q}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {LIKERT_OPTIONS.map(opt => (
+                            <Button
+                              key={opt.value}
+                              type="button"
+                              variant={selected === opt.value ? 'default' : 'outline'}
+                              size="sm"
+                              className="min-w-[110px]"
+                              onClick={() => handleAnswer(key, opt.value)}
+                            >
+                              {opt.value} — {opt.label}
+                            </Button>
+                          ))}
+                        </div>
                       </div>
-                      {selected !== undefined && (
-                        <p className="text-[10px] text-muted-foreground">{LIKERT_OPTIONS.find(o => o.value === selected)?.label}</p>
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </CardContent>
             </Card>
           </motion.div>
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-6">
           <Button variant="outline" disabled={activeBlock === 0} onClick={() => setActiveBlock(p => p - 1)}>
-            <ChevronLeft className="h-4 w-4 mr-1" /> Anterior
+            ← Anterior
           </Button>
           {activeBlock < LIKERT_BLOCKS.length - 1 ? (
             <Button onClick={() => setActiveBlock(p => p + 1)}>
-              Próximo <ChevronRight className="h-4 w-4 ml-1" />
+              Próximo →
             </Button>
           ) : (
             <Button disabled={!allComplete || !empresaId || saving} onClick={handleSave}>
@@ -384,7 +428,7 @@ const LikertQuestionnaireForm = () => {
 
         {/* Score summary (visible when complete) */}
         {allComplete && (
-          <Card>
+          <Card className="mb-6">
             <CardHeader><CardTitle className="text-base">Resultado</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3">
@@ -397,8 +441,8 @@ const LikertQuestionnaireForm = () => {
                 {LIKERT_BLOCKS.map(b => {
                   const s = scores.blockScores[b.id];
                   return s ? (
-                    <div key={b.id} className="flex justify-between p-2 rounded bg-muted/50">
-                      <span>{b.id === 'demandas' ? 'Demandas' : b.id === 'controle' ? 'Controle' : b.id === 'apoio' ? 'Apoio' : b.id === 'violencia' ? 'Violência' : 'Saúde'}</span>
+                    <div key={b.id} className={`flex justify-between p-2.5 rounded-lg ${s.pct >= 70 ? 'bg-destructive/10 border border-destructive/30' : 'bg-muted/50'}`}>
+                      <span>{b.shortLabel}</span>
                       <span className="font-mono font-medium">{s.pct}%</span>
                     </div>
                   ) : null;
