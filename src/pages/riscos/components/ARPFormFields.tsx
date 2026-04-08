@@ -629,7 +629,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
 
             <div className="flex justify-end pb-4">
               <Button onClick={() => setCurrentStep(1)} disabled={!empresaId}>
-                Próximo <ChevronRight className="ml-1 h-4 w-4" />
+                Próximo →
               </Button>
             </div>
           </motion.div>
