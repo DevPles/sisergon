@@ -746,7 +746,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             {/* Violence alert banner */}
             {hasViolenceAlert && (
               <div className="mb-4 p-4 rounded-xl border border-destructive/50 bg-destructive/5 flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                
                 <div>
                   <p className="text-sm font-semibold text-destructive">Alerta Imediato — Violência/Assédio</p>
                   <p className="text-xs text-muted-foreground">Respostas no bloco de Violência indicam exposição significativa. Notificação automática será enviada ao finalizar.</p>
