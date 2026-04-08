@@ -577,7 +577,7 @@ const AEPForm = () => {
       {dynamicTemplate && dynamicQuestions.length > 0 && (
         <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5">
           <p className="text-xs text-muted-foreground">
-            📋 Usando formulário personalizado: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
+            Usando formulário personalizado: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
           </p>
         </div>
       )}
