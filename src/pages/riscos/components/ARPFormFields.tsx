@@ -566,7 +566,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
       <div className="mb-4">
         <div className="flex items-center justify-between mb-1.5">
           <p className="text-xs font-medium text-muted-foreground">
-            {phase.icon} {phase.label} — {getStepLabel()}
+            {phase.label} — {getStepLabel()}
           </p>
           <p className="text-xs text-muted-foreground">{progressPercent}%</p>
         </div>
