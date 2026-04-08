@@ -795,7 +795,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                         <span className="text-sm">{b.label}</span>
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-medium text-sm">{s.pct}%</span>
-                          {isHigh && <AlertTriangle className="h-3 w-3 text-destructive" />}
+                          {isHigh && <span className="text-destructive text-xs">⚠</span>}
                         </div>
                       </div>
                     );
