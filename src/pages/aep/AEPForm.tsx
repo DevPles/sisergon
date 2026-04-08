@@ -678,8 +678,7 @@ const AEPForm = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setActiveStep((s) => Math.max(0, s - 1))}
-                disabled={activeStep === 0}
+                onClick={() => setActiveStep((s) => Math.max(-1, s - 1))}
               >
                 Anterior
               </Button>
