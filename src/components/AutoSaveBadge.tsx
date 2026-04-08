@@ -11,8 +11,8 @@ const AutoSaveBadge = ({ lastSaved, recovered }: AutoSaveBadgeProps) => {
   return (
     <Badge variant="outline" className="text-[10px] font-normal text-muted-foreground border-muted animate-fade-in">
       {recovered
-        ? '🔄 Rascunho recuperado'
-        : `💾 Salvo ${lastSaved?.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+        ? 'Rascunho recuperado'
+        : `Salvo ${lastSaved?.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
       }
     </Badge>
   );
