@@ -544,7 +544,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
           <>
             <div className="w-px h-8 bg-border" />
             <div className="flex items-center gap-2">
-              <Brain className="h-4 w-4 text-primary" />
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Likert</p>
                 <p className="text-2xl font-bold text-foreground">{likertScores.total}/{likertScores.maxTotal}</p>
