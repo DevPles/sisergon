@@ -686,7 +686,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
               return (
                 <div className="mb-4 rounded-xl border border-border bg-background p-6">
                   <div className="flex items-center gap-2 mb-1">
-                    <Brain className="h-4 w-4 text-primary" />
                     <h3 className="text-base font-semibold text-foreground">{block.label}</h3>
                     <Badge variant="secondary" className="text-[10px]">Likert {blockIdx + 1}/{likertBlockCount}</Badge>
                   </div>
