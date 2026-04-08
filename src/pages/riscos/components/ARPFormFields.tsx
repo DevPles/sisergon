@@ -780,7 +780,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             {likertAnsweredCount > 0 && (
               <div className="mb-4 rounded-xl border border-border bg-background p-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <Brain className="h-4 w-4 text-primary" />
                   <h3 className="text-base font-semibold text-foreground">Questionário Likert</h3>
                   <Badge variant={classVariant(likertScores.classification)} className="text-xs">
                     {likertScores.total}/{likertScores.maxTotal} — {classLabelMap[likertScores.classification]}
