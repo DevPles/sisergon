@@ -361,15 +361,6 @@ function QuoteModal({ open, onClose }: { open: boolean; onClose: () => void }) {
             </button>
           </div>
 
-          {/* Step progress bar */}
-          <div className="px-7 pb-4">
-            <div className="flex items-center gap-1.5">
-              {[1, 2, 3, 4].map(s => (
-                <div key={s} className={`h-1 flex-1 rounded-full transition-all duration-300 ${s <= step ? 'bg-gray-800' : 'bg-gray-100'}`} />
-              ))}
-            </div>
-            <p className="text-[11px] text-gray-400 mt-2 tracking-wide uppercase">Etapa {step} de 4</p>
-          </div>
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto px-7 pb-6">
