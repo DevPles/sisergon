@@ -489,105 +489,122 @@ const AEPForm = () => {
         <Button variant="outline" onClick={() => navigate('/aep')}>Voltar</Button>
       </div>
 
-      {/* Score summary card */}
-      <Card className="mb-6 border-2 border-primary/20">
-        <CardContent className="p-6">
-          <div className="flex flex-wrap items-center gap-6">
-            <div>
-              <p className="text-sm text-muted-foreground">Score Total</p>
-              <p className="text-4xl font-bold text-foreground">{totalScore.toFixed(1)}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Classificação</p>
-              <Badge variant={riskBadgeColor} className="text-base px-4 py-1 mt-1">
-                {classification.charAt(0).toUpperCase() + classification.slice(1)}
-              </Badge>
-            </div>
-            {totalScore >= 67 && (
-              <div className="ml-auto">
-                <Badge variant="destructive" className="text-sm px-4 py-1">Necessidade de AET</Badge>
+      {/* Progressive flow: Identification is step -1 */}
+      <AnimatePresence mode="wait">
+        {activeStep === -1 && (
+          <motion.div
+            key="identification"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -30 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Score summary card */}
+            <Card className="mb-6 border-2 border-primary/20">
+              <CardContent className="p-6">
+                <div className="flex flex-wrap items-center gap-6">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Score Total</p>
+                    <p className="text-4xl font-bold text-foreground">{totalScore.toFixed(1)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Classificação</p>
+                    <Badge variant={riskBadgeColor} className="text-base px-4 py-1 mt-1">
+                      {classification.charAt(0).toUpperCase() + classification.slice(1)}
+                    </Badge>
+                  </div>
+                  {totalScore >= 67 && (
+                    <div className="ml-auto">
+                      <Badge variant="destructive" className="text-sm px-4 py-1">Necessidade de AET</Badge>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="mb-6">
+              <CardHeader><CardTitle>Identificação</CardTitle></CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título da avaliação</Label>
+                    <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: AEP Setor Produção" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Empresa *</Label>
+                    <Select value={empresaId} onValueChange={setEmpresaId}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>
+                        {empresas?.map((e) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Unidade</Label>
+                    <Select value={unidadeId} onValueChange={setUnidadeId}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>
+                        {unidades?.map((u) => <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Setor</Label>
+                    <Select value={setorId} onValueChange={setSetorId}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>
+                        {setores?.map((s) => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Cargo</Label>
+                    <Select value={cargoId} onValueChange={setCargoId}>
+                      <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                      <SelectContent>
+                        {cargos?.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Descrição / Observações gerais</Label>
+                    <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Descreva a atividade, tarefa, frequência, ciclo de trabalho..." />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Dynamic template indicator */}
+            {dynamicTemplate && dynamicQuestions.length > 0 && (
+              <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5">
+                <p className="text-xs text-muted-foreground">
+                  Usando formulário personalizado: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
+                </p>
               </div>
             )}
-            <div className="flex flex-wrap gap-3 ml-auto">
-              {activeBlocks.map((block) => (
-                <div key={block.domain} className="text-center">
-                  <p className="text-xs text-muted-foreground">{block.domain.slice(0, 4).toUpperCase()}</p>
-                  <p className="text-sm font-semibold">{blockScores[block.domain]?.toFixed(1) ?? '0.0'}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Identification block */}
-      <Card className="mb-6">
-        <CardHeader><CardTitle>Identificação</CardTitle></CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Título da avaliação</Label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: AEP Setor Produção" />
+            <div className="flex items-center justify-end mb-6">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveStep(0)}
+                disabled={!empresaId}
+              >
+                Próximo
+              </Button>
             </div>
-            <div className="space-y-2">
-              <Label>Empresa *</Label>
-              <Select value={empresaId} onValueChange={setEmpresaId}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>
-                  {empresas?.map((e) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Unidade</Label>
-              <Select value={unidadeId} onValueChange={setUnidadeId}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>
-                  {unidades?.map((u) => <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Setor</Label>
-              <Select value={setorId} onValueChange={setSetorId}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>
-                  {setores?.map((s) => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Cargo</Label>
-              <Select value={cargoId} onValueChange={setCargoId}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>
-                  {cargos?.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label>Descrição / Observações gerais</Label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} placeholder="Descreva a atividade, tarefa, frequência, ciclo de trabalho..." />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Dynamic template indicator */}
-      {dynamicTemplate && dynamicQuestions.length > 0 && (
-        <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5">
-          <p className="text-xs text-muted-foreground">
-            Usando formulário personalizado: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
+      {/* Step indicator for blocks */}
+      {activeStep >= 0 && (
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground">
+            Bloco {activeStep + 1} de {activeBlocks.length}
           </p>
         </div>
       )}
-
-      {/* Step indicator */}
-      <div className="mb-4">
-        <p className="text-sm text-muted-foreground">
-          Bloco {activeStep + 1} de {activeBlocks.length}
-        </p>
-      </div>
 
       {/* Active block */}
       <AnimatePresence mode="wait">
