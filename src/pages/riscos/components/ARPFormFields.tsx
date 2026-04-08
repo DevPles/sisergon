@@ -734,7 +734,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                 ← Anterior
               </Button>
               <Button onClick={() => setCurrentStep(s => s + 1)} disabled={!isCurrentPageComplete}>
-                {currentStep === reviewStep - 1 ? 'Ver Revisão' : 'Próximo'} <ChevronRight className="ml-1 h-4 w-4" />
+                {currentStep === reviewStep - 1 ? 'Ver Revisão' : 'Próximo'} →
               </Button>
             </div>
           </motion.div>
