@@ -135,7 +135,7 @@ const AEPForm = () => {
   const [values, setValues] = useState<Record<string, number>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(-1); // -1 = identification step
 
   // Auto-save draft (only for new assessments)
   const formData = useMemo(() => ({ title, empresaId, unidadeId, setorId, cargoId, description, values, comments, activeStep }), [title, empresaId, unidadeId, setorId, cargoId, description, values, comments, activeStep]);
