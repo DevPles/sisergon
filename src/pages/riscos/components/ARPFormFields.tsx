@@ -622,7 +622,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             {dynamicTemplate && dynamicQuestions.length > 0 && (
               <div className="mb-3 p-2 rounded-lg border border-primary/20 bg-primary/5">
                 <p className="text-xs text-muted-foreground">
-                  📋 Formulário: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
+                  Formulário: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
                 </p>
               </div>
             )}
