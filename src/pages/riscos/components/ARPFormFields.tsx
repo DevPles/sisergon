@@ -530,7 +530,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
       {/* Combined Score Header */}
       <div className="mb-4 rounded-xl bg-muted/50 border border-border p-4 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
-          <Shield className="h-4 w-4 text-primary" />
           <div>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wide">ARP Score</p>
             <p className="text-2xl font-bold text-foreground">{totalScore.toFixed(1)}</p>
