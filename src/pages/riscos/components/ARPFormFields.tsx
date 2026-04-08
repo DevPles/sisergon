@@ -511,10 +511,10 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   };
 
   const getPhaseLabel = () => {
-    if (currentStep === 0) return { icon: '📋', label: 'Identificação' };
-    if (currentStep <= arpPages) return { icon: '🔍', label: 'Avaliação Técnica (ARP)' };
-    if (currentStep < reviewStep) return { icon: '📊', label: 'Questionário Likert' };
-    return { icon: '✅', label: 'Revisão Final' };
+    if (currentStep === 0) return { label: 'Identificação' };
+    if (currentStep <= arpPages) return { label: 'Avaliação Técnica (ARP)' };
+    if (currentStep < reviewStep) return { label: 'Questionário Likert' };
+    return { label: 'Revisão Final' };
   };
 
   const answeredCount = Object.keys(values).length;
@@ -566,7 +566,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
       <div className="mb-4">
         <div className="flex items-center justify-between mb-1.5">
           <p className="text-xs font-medium text-muted-foreground">
-            {phase.icon} {phase.label} — {getStepLabel()}
+            {phase.label} — {getStepLabel()}
           </p>
           <p className="text-xs text-muted-foreground">{progressPercent}%</p>
         </div>
@@ -622,7 +622,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             {dynamicTemplate && dynamicQuestions.length > 0 && (
               <div className="mb-3 p-2 rounded-lg border border-primary/20 bg-primary/5">
                 <p className="text-xs text-muted-foreground">
-                  📋 Formulário: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
+                  Formulário: <strong>{dynamicTemplate.nome}</strong> (v{dynamicTemplate.versao})
                 </p>
               </div>
             )}
