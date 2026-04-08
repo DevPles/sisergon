@@ -582,41 +582,11 @@ const AEPForm = () => {
         </div>
       )}
 
-      {/* Stepper progress */}
+      {/* Step indicator */}
       <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-medium text-muted-foreground">
-            Bloco {activeStep + 1} de {activeBlocks.length}
-          </p>
-          <p className="text-sm text-muted-foreground">{progressPercent}% concluído</p>
-        </div>
-        <Progress value={progressPercent} className="h-2" />
-        <div className="flex gap-1.5 mt-3 flex-wrap">
-          {activeBlocks.map((block, idx) => {
-            const complete = isBlockComplete(idx);
-            const unlocked = idx <= unlockedUpTo;
-            const isCurrent = idx === activeStep;
-            return (
-              <button
-                key={block.domain}
-                onClick={() => unlocked && setActiveStep(idx)}
-                disabled={!unlocked}
-                className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border transition-all ${
-                  isCurrent
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : complete
-                    ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
-                    : unlocked
-                    ? 'bg-muted text-muted-foreground border-border hover:bg-accent'
-                    : 'bg-muted/50 text-muted-foreground/40 border-transparent cursor-not-allowed'
-                }`}
-              >
-                {complete ? <Check className="h-3 w-3" /> : isCurrent ? <CircleDot className="h-3 w-3" /> : <Circle className="h-3 w-3" />}
-                {block.domain.slice(0, 4).toUpperCase()}
-              </button>
-            );
-          })}
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Bloco {activeStep + 1} de {activeBlocks.length}
+        </p>
       </div>
 
       {/* Active block */}
