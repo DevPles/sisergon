@@ -684,48 +684,50 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
               const blockIdx = currentStep - likertStartStep;
               const block = LIKERT_BLOCKS[blockIdx];
               return (
-                <div className="mb-4 rounded-xl border border-border bg-background p-6">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-base font-semibold text-foreground">{block.label}</h3>
-                    <Badge variant="secondary" className="text-[10px]">Likert {blockIdx + 1}/{likertBlockCount}</Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-4">{block.description}</p>
-
-                  {block.id === 'violencia' && (
-                    <div className="mb-4 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
-                      <p className="text-xs text-destructive font-medium">
-                        Bloco sensível — respostas ≥ 3 geram alerta automático
-                      </p>
+                <Card className="mb-4">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base">{block.label}</CardTitle>
+                      <Badge variant="secondary" className="text-[10px]">Likert {blockIdx + 1}/{likertBlockCount}</Badge>
                     </div>
-                  )}
+                    <p className="text-xs text-muted-foreground">{block.description}</p>
+                  </CardHeader>
+                  <CardContent>
+                    {block.id === 'violencia' && (
+                      <div className="mb-4 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
+                        <p className="text-xs text-destructive font-medium">
+                          Bloco sensível — respostas ≥ 3 geram alerta automático
+                        </p>
+                      </div>
+                    )}
 
-                  <div className="space-y-5">
-                    {block.questions.map((q, qi) => {
-                      const key = `${block.id}-${qi}`;
-                      const selected = likertAnswers[key];
-                      return (
-                        <div key={qi} className="border-b pb-4 last:border-b-0 last:pb-0">
-                          <p className="text-sm font-medium mb-2">{qi + 1}. {q}</p>
-                          <div className="flex flex-wrap gap-2">
-                            {LIKERT_OPTIONS.map(opt => (
-                              <button
-                                key={opt.value}
-                                onClick={() => handleLikertAnswer(key, opt.value)}
-                                className={`px-3 py-1.5 rounded-lg text-xs border transition-colors ${
-                                  selected === opt.value
-                                    ? 'bg-primary text-primary-foreground border-primary'
-                                    : 'bg-background text-foreground border-border hover:bg-muted'
-                                }`}
-                              >
-                                {opt.value} — {opt.label}
-                              </button>
-                            ))}
+                    <div className="space-y-4">
+                      {block.questions.map((q, qi) => {
+                        const key = `${block.id}-${qi}`;
+                        const selected = likertAnswers[key];
+                        return (
+                          <div key={qi} className="border-b pb-3 last:border-b-0 last:pb-0">
+                            <p className="text-sm font-medium text-foreground mb-2">{qi + 1}) {q}</p>
+                            <div className="flex flex-wrap gap-2">
+                              {LIKERT_OPTIONS.map(opt => (
+                                <Button
+                                  key={opt.value}
+                                  type="button"
+                                  variant={selected === opt.value ? 'default' : 'outline'}
+                                  size="sm"
+                                  className="min-w-[110px]"
+                                  onClick={() => handleLikertAnswer(key, opt.value)}
+                                >
+                                  {opt.value} — {opt.label}
+                                </Button>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
               );
             })()}
 
