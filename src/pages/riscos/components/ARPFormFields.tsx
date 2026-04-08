@@ -16,7 +16,7 @@ import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, AlertTriangle, Shield, Brain } from 'lucide-react';
+
 
 /* ─── ARP Questions ─── */
 const ARP_QUESTIONS = [
