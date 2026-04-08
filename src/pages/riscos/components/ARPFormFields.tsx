@@ -16,7 +16,7 @@ import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, AlertTriangle, Shield, Brain } from 'lucide-react';
+
 
 /* ─── ARP Questions ─── */
 const ARP_QUESTIONS = [
@@ -530,7 +530,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
       {/* Combined Score Header */}
       <div className="mb-4 rounded-xl bg-muted/50 border border-border p-4 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
-          <Shield className="h-4 w-4 text-primary" />
           <div>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wide">ARP Score</p>
             <p className="text-2xl font-bold text-foreground">{totalScore.toFixed(1)}</p>
@@ -545,7 +544,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
           <>
             <div className="w-px h-8 bg-border" />
             <div className="flex items-center gap-2">
-              <Brain className="h-4 w-4 text-primary" />
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Likert</p>
                 <p className="text-2xl font-bold text-foreground">{likertScores.total}/{likertScores.maxTotal}</p>
@@ -558,8 +556,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         )}
 
         {hasViolenceAlert && (
-          <Badge variant="destructive" className="text-xs px-3 py-1 flex items-center gap-1">
-            <AlertTriangle className="h-3 w-3" /> Alerta violência
+          <Badge variant="destructive" className="text-xs px-3 py-1">
+            Alerta violência
           </Badge>
         )}
       </div>
@@ -631,7 +629,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
 
             <div className="flex justify-end pb-4">
               <Button onClick={() => setCurrentStep(1)} disabled={!empresaId}>
-                Próximo <ChevronRight className="ml-1 h-4 w-4" />
+                Próximo →
               </Button>
             </div>
           </motion.div>
@@ -670,10 +668,10 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
 
             <div className="flex justify-between pb-4">
               <Button variant="outline" onClick={goBack}>
-                <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+                ← Anterior
               </Button>
               <Button onClick={() => setCurrentStep(s => s + 1)} disabled={!isCurrentPageComplete}>
-                Próximo <ChevronRight className="ml-1 h-4 w-4" />
+                Próximo →
               </Button>
             </div>
           </motion.div>
@@ -688,7 +686,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
               return (
                 <div className="mb-4 rounded-xl border border-border bg-background p-6">
                   <div className="flex items-center gap-2 mb-1">
-                    <Brain className="h-4 w-4 text-primary" />
                     <h3 className="text-base font-semibold text-foreground">{block.label}</h3>
                     <Badge variant="secondary" className="text-[10px]">Likert {blockIdx + 1}/{likertBlockCount}</Badge>
                   </div>
@@ -696,8 +693,8 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
 
                   {block.id === 'violencia' && (
                     <div className="mb-4 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
-                      <p className="text-xs text-destructive font-medium flex items-center gap-1">
-                        <AlertTriangle className="h-3 w-3" /> Bloco sensível — respostas ≥ 3 geram alerta automático
+                      <p className="text-xs text-destructive font-medium">
+                        Bloco sensível — respostas ≥ 3 geram alerta automático
                       </p>
                     </div>
                   )}
@@ -734,10 +731,10 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
 
             <div className="flex justify-between pb-4">
               <Button variant="outline" onClick={goBack}>
-                <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+                ← Anterior
               </Button>
               <Button onClick={() => setCurrentStep(s => s + 1)} disabled={!isCurrentPageComplete}>
-                {currentStep === reviewStep - 1 ? 'Ver Revisão' : 'Próximo'} <ChevronRight className="ml-1 h-4 w-4" />
+                {currentStep === reviewStep - 1 ? 'Ver Revisão' : 'Próximo'} →
               </Button>
             </div>
           </motion.div>
@@ -749,7 +746,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             {/* Violence alert banner */}
             {hasViolenceAlert && (
               <div className="mb-4 p-4 rounded-xl border border-destructive/50 bg-destructive/5 flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                
                 <div>
                   <p className="text-sm font-semibold text-destructive">Alerta Imediato — Violência/Assédio</p>
                   <p className="text-xs text-muted-foreground">Respostas no bloco de Violência indicam exposição significativa. Notificação automática será enviada ao finalizar.</p>
@@ -760,7 +757,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             {/* ARP Review */}
             <div className="mb-4 rounded-xl border border-border bg-background p-6">
               <div className="flex items-center gap-2 mb-3">
-                <Shield className="h-4 w-4 text-primary" />
                 <h3 className="text-base font-semibold text-foreground">ARP — Fatores Psicossociais</h3>
                 <Badge variant={classVariant(classification)} className="text-xs">{totalScore.toFixed(1)} — {classification}</Badge>
               </div>
@@ -784,7 +780,6 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
             {likertAnsweredCount > 0 && (
               <div className="mb-4 rounded-xl border border-border bg-background p-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <Brain className="h-4 w-4 text-primary" />
                   <h3 className="text-base font-semibold text-foreground">Questionário Likert</h3>
                   <Badge variant={classVariant(likertScores.classification)} className="text-xs">
                     {likertScores.total}/{likertScores.maxTotal} — {classLabelMap[likertScores.classification]}
@@ -800,7 +795,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                         <span className="text-sm">{b.label}</span>
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-medium text-sm">{s.pct}%</span>
-                          {isHigh && <AlertTriangle className="h-3 w-3 text-destructive" />}
+                          {isHigh && <span className="text-destructive text-xs">⚠</span>}
                         </div>
                       </div>
                     );
@@ -811,7 +806,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
 
             <div className="flex flex-wrap gap-3 pb-4">
               <Button variant="outline" onClick={goBack}>
-                <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+                ← Anterior
               </Button>
               {onCancel && <Button variant="outline" onClick={onCancel}>Cancelar</Button>}
               <Button variant="secondary" onClick={() => handleSave(false)} disabled={saving}>Salvar Rascunho</Button>
