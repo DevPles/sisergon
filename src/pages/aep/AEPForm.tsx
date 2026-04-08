@@ -664,10 +664,10 @@ const AEPForm = () => {
                 onClick={() => setActiveStep((s) => Math.max(0, s - 1))}
                 disabled={activeStep === 0}
               >
-                <ChevronLeft className="h-4 w-4 mr-1" /> Anterior
+                Anterior
               </Button>
               <p className="text-xs text-muted-foreground">
-                {isBlockComplete(activeStep) ? '✓ Bloco completo' : 'Responda todas as perguntas para avançar'}
+                {isBlockComplete(activeStep) ? 'Bloco completo' : 'Responda todas as perguntas para avançar'}
               </p>
               <Button
                 variant="outline"
@@ -675,7 +675,7 @@ const AEPForm = () => {
                 onClick={() => setActiveStep((s) => Math.min(activeBlocks.length - 1, s + 1))}
                 disabled={activeStep >= activeBlocks.length - 1 || !isBlockComplete(activeStep)}
               >
-                Próximo <ChevronRight className="h-4 w-4 ml-1" />
+                Próximo
               </Button>
             </div>
           </motion.div>
