@@ -96,32 +96,9 @@ const UsuariosTab = ({ externalSearch, externalRoleFilter, onInviteClick }: Usua
 
   return (
     <div className="space-y-4">
-      {!externalSearch && (
-        <div className="flex flex-wrap items-center gap-3">
-          <Input placeholder="Buscar por nome ou e-mail..." value={searchState} onChange={(e) => setSearchState(e.target.value)} className="max-w-sm" />
-          <Select value={roleFilterState} onValueChange={setRoleFilterState}>
-            <SelectTrigger className="w-[200px]"><SelectValue placeholder="Todos os perfis" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os perfis</SelectItem>
-              <SelectItem value="admin_master">Administrador Master</SelectItem>
-              <SelectItem value="consultor">Consultor</SelectItem>
-              <SelectItem value="empresa_admin">Empresa Admin</SelectItem>
-              <SelectItem value="empresa_gestor">Empresa Gestor</SelectItem>
-              <SelectItem value="colaborador">Colaborador</SelectItem>
-            </SelectContent>
-          </Select>
-          <span className="text-sm text-muted-foreground whitespace-nowrap">{totalUsers} usuários ({activeUsers} ativos)</span>
-          <Button onClick={() => setView('invite')} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap ml-auto">
-            Convidar Usuário
-          </Button>
-        </div>
-      )}
-
-      {externalSearch !== undefined && (
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">{totalUsers} usuários ({activeUsers} ativos)</span>
-        </div>
-      )}
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm text-muted-foreground whitespace-nowrap">{totalUsers} usuários ({activeUsers} ativos)</span>
+      </div>
 
       <Table>
         <TableHeader>
