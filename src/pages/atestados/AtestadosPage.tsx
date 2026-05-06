@@ -87,6 +87,7 @@ const AtestadosPage = () => {
   const [empresaFilter, setEmpresaFilter] = useState('all');
   const [unidadeFilter, setUnidadeFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeAtestadoTab, setActiveAtestadoTab] = useState('lista');
   const [showNew, setShowNew] = useState(false);
   const [selected, setSelected] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
