@@ -65,28 +65,36 @@ const EmpresasList = () => {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Empresas</h1>
-          <p className="text-muted-foreground">Cadastro e gestão de empresas clientes</p>
-        </div>
-        <Button onClick={() => setShowForm(true)}>Nova Empresa</Button>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-foreground">Empresas</h1>
+        <p className="text-muted-foreground">Cadastro e gestão de empresas clientes</p>
       </div>
 
-      <Card>
-        <CardHeader className="pb-4">
-          <div className="flex items-center gap-4">
-            <Input
-              placeholder="Buscar por razão social, nome fantasia ou CNPJ..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="max-w-md"
-            />
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              {empresas?.length ?? 0} registros
-            </span>
+      <Card className="overflow-hidden">
+        <div className="p-4 sm:p-6 bg-muted/30 border-b border-border/50">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+            <div className="flex flex-1 items-center gap-3 min-w-0">
+              <div className="relative flex-1 max-w-md">
+                <Input
+                  placeholder="Buscar por razão social, nome fantasia ou CNPJ..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="h-11 bg-background"
+                />
+              </div>
+              <span className="hidden md:inline-block text-sm text-muted-foreground whitespace-nowrap bg-background px-3 py-1 rounded-full border border-border/50">
+                {empresas?.length ?? 0} registros
+              </span>
+            </div>
+            
+            <Button 
+              onClick={() => setShowForm(true)}
+              className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
+            >
+              Nova Empresa
+            </Button>
           </div>
-        </CardHeader>
+        </div>
         <CardContent className="p-0 overflow-x-auto">
           <Table>
             <TableHeader>
