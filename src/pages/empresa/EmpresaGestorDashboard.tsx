@@ -3,6 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { KpiCard } from '@/components/KpiCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
@@ -78,9 +79,9 @@ const EmpresaGestorDashboard = () => {
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Colaboradores</p><p className="text-3xl font-bold">{counts?.colaboradores ?? 0}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Laudos Emitidos</p><p className="text-3xl font-bold">{counts?.laudos ?? 0}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Planos Pendentes</p><p className="text-3xl font-bold text-amber-600">{counts?.planosPendentes ?? 0}</p></CardContent></Card>
+        <KpiCard label="Colaboradores" value={counts?.colaboradores ?? 0} />
+        <KpiCard label="Laudos Emitidos" value={counts?.laudos ?? 0} />
+        <KpiCard label="Planos Pendentes" value={counts?.planosPendentes ?? 0} variant={counts?.planosPendentes ? 'danger' : 'default'} />
       </div>
 
       {/* Navegação */}
