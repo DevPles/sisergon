@@ -145,6 +145,8 @@
     box-shadow: 9px 9px 18px #a4afc2, -9px -9px 18px #ffffff;
     border: none;
     transition: all 0.2s;
+    position: relative;
+    z-index: 2;
   }
   .neu-btn-primary:hover {
     box-shadow: 12px 12px 24px #a4afc2, -12px -12px 24px #ffffff;
