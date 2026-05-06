@@ -461,6 +461,17 @@ const AtestadosPage = () => {
               {empresas.map((e: any) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Select value={activeAtestadoTab} onValueChange={(v) => setActiveAtestadoTab(v)}>
+            <SelectTrigger className="h-10 w-full sm:w-44 rounded-full border border-border/40 bg-muted/20 text-sm font-medium">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="lista">Cadastrados</SelectItem>
+              <SelectItem value="timeline">Timeline</SelectItem>
+              <SelectItem value="alertas">Alertas{cidAlerts.length > 0 ? ` (${cidAlerts.length})` : ''}</SelectItem>
+              <SelectItem value="retorno">Retorno</SelectItem>
+            </SelectContent>
+          </Select>
           {empresaFilter !== 'all' && unidades.length > 0 && (
             <Select value={unidadeFilter} onValueChange={setUnidadeFilter}>
               <SelectTrigger className="w-full sm:w-44"><SelectValue placeholder="Todas unidades" /></SelectTrigger>
@@ -573,20 +584,6 @@ const AtestadosPage = () => {
       )}
 
       <Tabs value={activeAtestadoTab} onValueChange={(v) => setActiveAtestadoTab(v)}>
-        <div className="mb-4">
-          <Select value={activeAtestadoTab} onValueChange={(v) => setActiveAtestadoTab(v)}>
-            <SelectTrigger className="h-10 w-56 rounded-full border border-border/40 bg-muted/20 text-sm font-medium">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="lista">Cadastrados</SelectItem>
-              <SelectItem value="timeline">Timeline</SelectItem>
-              <SelectItem value="alertas">Alertas{cidAlerts.length > 0 ? ` (${cidAlerts.length})` : ''}</SelectItem>
-              <SelectItem value="retorno">Retorno</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* Tab: Lista */}
         <TabsContent value="lista">
           <Card>
