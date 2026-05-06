@@ -21,7 +21,6 @@ import RiscosPsicossociaisList from "./pages/riscos/RiscosPsicossociaisList";
 import ARPForm from "./pages/riscos/ARPForm";
 import ChecklistsList from "./pages/checklists/ChecklistsList";
 import ChecklistForm from "./pages/checklists/ChecklistForm";
-import TestAssignmentsPage from "./pages/checklists/TestAssignmentsPage";
 import DISCTestForm from "./pages/checklists/DISCTestForm";
 import PlanosAcaoList from "./pages/planos/PlanosAcaoList";
 import PlanoAcaoForm from "./pages/planos/PlanoAcaoForm";
@@ -137,9 +136,6 @@ const App = () => (
               } />
               <Route path="/checklists/:id" element={
                 <RoleGuard allowed={['admin_master', 'consultor', 'empresa_admin', 'empresa_gestor', 'colaborador']}><ChecklistForm /></RoleGuard>
-              } />
-              <Route path="/test-assignments" element={
-                <RoleGuard allowed={['admin_master', 'consultor', 'empresa_admin', 'empresa_gestor']}><TestAssignmentsPage /></RoleGuard>
               } />
               <Route path="/disc-test" element={
                 <RoleGuard allowed={['colaborador', 'admin_master', 'consultor']}><DISCTestForm /></RoleGuard>
