@@ -278,7 +278,7 @@ const AEPList = () => {
                         <Button variant="outline" size="sm" onClick={() => navigate(`/aep/${a.id}`)}>Editar</Button>
                         {a.status === 'finalizado' && (
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => {
                               void generatePdf(a);
