@@ -366,11 +366,11 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
           <h2 className="text-lg font-semibold">{isEdit ? 'Editar Colaborador' : 'Novo Colaborador'}</h2>
 
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Dados Pessoais</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-2 md:col-span-2"><Label>Nome Completo *</Label><Input value={form.nome_completo} onChange={(e) => set('nome_completo', e.target.value)} required /></div>
-            <div className="space-y-2"><Label>CPF</Label><Input value={form.cpf} onChange={(e) => set('cpf', e.target.value)} placeholder="000.000.000-00" /></div>
-            <div className="space-y-2"><Label>Data de Nascimento</Label><Input type="date" value={form.data_nascimento} onChange={(e) => set('data_nascimento', e.target.value)} /></div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-1"><Label>CPF</Label><Input value={form.cpf} onChange={(e) => set('cpf', e.target.value)} placeholder="000.000.000-00" /></div>
+            <div className="space-y-2 md:col-span-1"><Label>Data de Nascimento</Label><Input type="date" value={form.data_nascimento} onChange={(e) => set('data_nascimento', e.target.value)} /></div>
+            <div className="space-y-2 md:col-span-1">
               <Label>Sexo</Label>
               <Select value={form.sexo} onValueChange={(v) => set('sexo', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
