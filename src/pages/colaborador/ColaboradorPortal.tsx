@@ -70,7 +70,7 @@ const ColaboradorPortal = () => {
       if (!colaborador?.id) return [];
       const { data } = await supabase
         .from('test_assignment_instances')
-        .select('*')
+        .select('*, test_assignments(recorrencia)')
         .eq('colaborador_id', colaborador.id)
         .in('status', ['pendente', 'em_andamento'])
         .order('data_fim_periodo', { ascending: true });

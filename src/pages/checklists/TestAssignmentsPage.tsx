@@ -98,18 +98,54 @@ const TestAssignmentsPage = () => {
         created_by: user?.id,
       };
 
-      if (scope === 'empresa') {
-        // One assignment for the whole company
-        const { error } = await supabase.from('test_assignments').insert({ ...base });
-        if (error) throw error;
-      } else if (scope === 'setor') {
+      const assignmentData = { ...base } as any;
+      if (scope === 'setor') {
         if (!setorId) throw new Error('Selecione o setor');
-        const { error } = await supabase.from('test_assignments').insert({ ...base, setor_id: setorId });
-        if (error) throw error;
-      } else {
+        assignmentData.setor_id = setorId;
+      } else if (scope === 'individual') {
         if (!colaboradorId) throw new Error('Selecione o colaborador');
-        const { error } = await supabase.from('test_assignments').insert({ ...base, colaborador_id: colaboradorId });
-        if (error) throw error;
+        assignmentData.colaborador_id = colaboradorId;
+      }
+
+      const { data: newAssignment, error } = await supabase
+        .from('test_assignments')
+        .insert(assignmentData)
+        .select()
+        .single();
+      if (error) throw error;
+
+      // Determine which colaboradores to create instances for
+      let targetColabs: { id: string }[] = [];
+      if (scope === 'individual' && colaboradorId) {
+        targetColabs = [{ id: colaboradorId }];
+      } else {
+        let q = supabase.from('colaboradores').select('id').eq('empresa_id', empresaId).eq('status', 'ativo');
+        if (scope === 'setor' && setorId) q = q.eq('setor_id', setorId);
+        const { data: colabs } = await q;
+        targetColabs = colabs || [];
+      }
+
+      // Create instances immediately for current period
+      if (targetColabs.length > 0) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const limiteDay = Number(diaLimite);
+        const dataInicio = new Date(year, month, 1).toISOString().split('T')[0];
+        const dataFim = new Date(year, month, Math.min(limiteDay, 28)).toISOString().split('T')[0];
+
+        const instances = targetColabs.map(c => ({
+          assignment_id: newAssignment.id,
+          colaborador_id: c.id,
+          empresa_id: empresaId,
+          tipo_teste: tipoTeste,
+          data_inicio_periodo: dataInicio,
+          data_fim_periodo: dataFim,
+          status: 'pendente',
+        }));
+
+        const { error: instErr } = await supabase.from('test_assignment_instances').insert(instances);
+        if (instErr) console.error('Erro ao criar instâncias:', instErr);
       }
     },
     onSuccess: () => {
