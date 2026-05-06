@@ -616,8 +616,8 @@ const AtestadosPage = () => {
                       <TableCell className="hidden sm:table-cell" onClick={e => e.stopPropagation()}>
                         {a.arquivo_url ? (
                           <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => viewFile(a.arquivo_url)} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => downloadFile(a.arquivo_url)} title="Baixar"><Download className="h-3.5 w-3.5" /></Button>
+                            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => viewFile(a.arquivo_url)} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
+                            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => downloadFile(a.arquivo_url)} title="Baixar"><Download className="h-3.5 w-3.5" /></Button>
                           </div>
                         ) : <span className="text-xs text-muted-foreground">—</span>}
                       </TableCell>
@@ -770,9 +770,9 @@ const AtestadosPage = () => {
                       </div>
                     )}
                     <div className="flex gap-2">
-                      {acao.evidencia_url && <Button variant="ghost" size="sm" className="text-xs gap-1" onClick={() => viewFile(acao.evidencia_url, 'afastamento-evidencias')}><Eye className="h-3 w-3" />Evidência</Button>}
-                      {acao.evidencia_pericia_url && <Button variant="ghost" size="sm" className="text-xs gap-1" onClick={() => viewFile(acao.evidencia_pericia_url, 'afastamento-evidencias')}><Eye className="h-3 w-3" />Perícia</Button>}
-                      {acao.evidencia_retorno_url && <Button variant="ghost" size="sm" className="text-xs gap-1" onClick={() => viewFile(acao.evidencia_retorno_url, 'afastamento-evidencias')}><Eye className="h-3 w-3" />Retorno</Button>}
+                      {acao.evidencia_url && <Button variant="outline" size="sm" className="text-xs gap-1" onClick={() => viewFile(acao.evidencia_url, 'afastamento-evidencias')}><Eye className="h-3 w-3" />Evidência</Button>}
+                      {acao.evidencia_pericia_url && <Button variant="outline" size="sm" className="text-xs gap-1" onClick={() => viewFile(acao.evidencia_pericia_url, 'afastamento-evidencias')}><Eye className="h-3 w-3" />Perícia</Button>}
+                      {acao.evidencia_retorno_url && <Button variant="outline" size="sm" className="text-xs gap-1" onClick={() => viewFile(acao.evidencia_retorno_url, 'afastamento-evidencias')}><Eye className="h-3 w-3" />Retorno</Button>}
                     </div>
                   </CardContent>
                 </Card>
@@ -989,7 +989,7 @@ const AtestadosPage = () => {
               ) : <p className="text-xs text-muted-foreground italic">Nenhum arquivo anexado</p>}
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" size="sm" onClick={() => openEdit(selected)}>Editar</Button>
-                <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(selected.id)}>Excluir</Button>
+                <Button variant="outline" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(selected.id)}>Excluir</Button>
               </div>
             </div>
           )}
@@ -1026,7 +1026,7 @@ const AtestadosPage = () => {
                   <div className="flex items-center gap-2 mt-1 mb-2">
                     <FileText className="h-4 w-4 text-primary" />
                     <span className="text-xs text-muted-foreground">Arquivo já anexado</span>
-                    <Button variant="ghost" size="sm" className="h-6 text-xs gap-1" onClick={() => viewFile(editingItem.arquivo_url)}><Eye className="h-3 w-3" /> Ver</Button>
+                    <Button variant="outline" size="sm" className="h-6 text-xs gap-1" onClick={() => viewFile(editingItem.arquivo_url)}><Eye className="h-3 w-3" /> Ver</Button>
                   </div>
                 )}
                 <label className="flex items-center gap-2 cursor-pointer border border-dashed border-muted-foreground/30 rounded-lg p-3 hover:bg-muted/50 transition-colors">

@@ -542,13 +542,13 @@ const TestesTab = () => {
                     <TableCell><Badge variant={t.status === 'ativo' ? 'default' : 'secondary'}>{t.status}</Badge></TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="sm" onClick={() => setEditingTest({ id: t.id, nome: t.nome, tipo: t.tipo })}>
+                        <Button variant="outline" size="sm" onClick={() => setEditingTest({ id: t.id, nome: t.nome, tipo: t.tipo })}>
                           Perguntas
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => setApplyingTestId(t.id)} title="Aplicar">
+                        <Button variant="outline" size="sm" onClick={() => setApplyingTestId(t.id)} title="Aplicar">
                           ▶
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteTest.mutate(t.id)} className="text-destructive">
+                        <Button variant="outline" size="sm" onClick={() => deleteTest.mutate(t.id)} className="text-destructive">
                           ✕
                         </Button>
                       </div>

@@ -179,7 +179,7 @@ const MeuPerfil = () => {
                     <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} />
                   </Button>
                   {avatarUrl && (
-                    <Button variant="ghost" size="sm" onClick={() => setAvatarUrl('')} className="text-destructive">
+                    <Button variant="outline" size="sm" onClick={() => setAvatarUrl('')} className="text-destructive">
                       Remover
                     </Button>
                   )}

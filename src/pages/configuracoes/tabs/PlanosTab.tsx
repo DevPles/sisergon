@@ -114,13 +114,13 @@ const PlanosTab = () => {
                         </div>
                       </div>
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingId(p.id)}>
-Editar
+                        <Button variant="outline" size="sm" onClick={() => setEditingId(p.id)}>
+                          Editar
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => {
+                        <Button variant="outline" size="sm" className="text-destructive" onClick={() => {
                           if (confirm('Excluir este plano?')) deleteMutation.mutate(p.id);
                         }}>
-Excluir
+                          Excluir
                         </Button>
                       </div>
                     </div>
@@ -406,8 +406,8 @@ const PlanoForm = ({ planoId, onClose, onSaved }: { planoId: string | null; onCl
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Módulos Inclusos</h3>
               <div className="flex gap-2">
-                <Button type="button" variant="ghost" size="sm" onClick={selectAllModulos} className="text-xs">Selecionar Todos</Button>
-                <Button type="button" variant="ghost" size="sm" onClick={clearAllModulos} className="text-xs">Limpar</Button>
+                <Button type="button" variant="outline" size="sm" onClick={selectAllModulos} className="text-xs">Selecionar Todos</Button>
+                <Button type="button" variant="outline" size="sm" onClick={clearAllModulos} className="text-xs">Limpar</Button>
               </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

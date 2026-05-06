@@ -106,7 +106,7 @@ const DocumentosPage = () => {
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" size="sm" onClick={() => { setSelected(null); setEditingItem({ ...selected }); }}>Editar</Button>
-                <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(selected.id)}>Excluir</Button>
+                <Button variant="outline" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(selected.id)}>Excluir</Button>
               </div>
             </div>
           )}
