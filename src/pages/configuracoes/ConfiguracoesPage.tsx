@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState, useMemo } from 'react';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import EmpresasTab from './tabs/EmpresasTab';
 import UsuariosTab from './tabs/UsuariosTab';
@@ -16,6 +17,17 @@ const ConfiguracoesPage = () => {
   const [activeTab, setActiveTab] = useState('empresas');
   const [empresaSearch, setEmpresaSearch] = useState('');
 
+  const tabs = useMemo(() => [
+    { value: 'empresas', label: 'Empresas' },
+    { value: 'usuarios', label: 'Usuários' },
+    { value: 'consultores', label: 'Consultores' },
+    { value: 'planos', label: 'Planos e Contratos' },
+    { value: 'laudos', label: 'Laudos' },
+    { value: 'indicadores', label: 'Indicadores Globais' },
+    { value: 'dashboard', label: 'Dashboard Executivo' },
+    { value: 'config', label: 'Configurações Gerais' },
+  ], []);
+
   return (
     <div>
       <div className="mb-6">
@@ -25,18 +37,20 @@ const ConfiguracoesPage = () => {
 
       <Card>
         <CardContent className="p-0">
-          <Tabs defaultValue="empresas" onValueChange={setActiveTab}>
-            <div className="px-6 pt-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-              <TabsList className="w-auto justify-start flex flex-wrap border border-border/40 bg-muted/20 h-auto p-1">
-                <TabsTrigger value="empresas">Empresas</TabsTrigger>
-                <TabsTrigger value="usuarios">Usuários</TabsTrigger>
-                <TabsTrigger value="consultores">Consultores</TabsTrigger>
-                <TabsTrigger value="planos">Planos e Contratos</TabsTrigger>
-                <TabsTrigger value="laudos">Laudos</TabsTrigger>
-                <TabsTrigger value="indicadores">Indicadores Globais</TabsTrigger>
-                <TabsTrigger value="dashboard">Dashboard Executivo</TabsTrigger>
-                <TabsTrigger value="config">Configurações Gerais</TabsTrigger>
-              </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <div className="px-6 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <Select value={activeTab} onValueChange={setActiveTab}>
+                <SelectTrigger className="h-10 w-64 rounded-full border border-border/40 bg-muted/20 text-sm font-medium">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {tabs.map((tab) => (
+                    <SelectItem key={tab.value} value={tab.value}>
+                      {tab.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               
               {activeTab === 'empresas' && (
                 <div className="flex items-center gap-2 bg-muted/40 p-1 rounded-full border border-border/50 shadow-sm">
