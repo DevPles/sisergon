@@ -7,6 +7,14 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
+const TIPO_LABELS: Record<string, string> = {
+  disc: 'DISC',
+  psicossocial: 'Risco Psicossocial',
+  aep: 'AEP',
+  aet: 'AET',
+  checklist: 'Checklist Mensal',
+};
+
 const ColaboradorPortal = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -56,9 +64,26 @@ const ColaboradorPortal = () => {
     enabled: !!colaborador?.id,
   });
 
+  const { data: pendingTests } = useQuery({
+    queryKey: ['meus-testes-pendentes', colaborador?.id],
+    queryFn: async () => {
+      if (!colaborador?.id) return [];
+      const { data } = await supabase
+        .from('test_assignment_instances')
+        .select('*')
+        .eq('colaborador_id', colaborador.id)
+        .in('status', ['pendente', 'em_andamento'])
+        .order('data_fim_periodo', { ascending: true });
+      return data || [];
+    },
+    enabled: !!colaborador?.id,
+  });
+
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
   const hasCurrentChecklist = checklists?.some(c => c.month === currentMonth && c.year === currentYear);
+
+  const isOverdue = (dateStr: string) => new Date(dateStr) < new Date();
 
   return (
     <div>
@@ -96,6 +121,50 @@ const ColaboradorPortal = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Testes Pendentes */}
+      {pendingTests && pendingTests.length > 0 && (
+        <Card className="mb-6 border-orange-300">
+          <CardHeader>
+            <CardTitle>Testes Pendentes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {pendingTests.map((t: any) => {
+                const overdue = isOverdue(t.data_fim_periodo);
+                return (
+                  <div key={t.id} className={`flex items-center justify-between p-3 border rounded-lg ${overdue ? 'border-destructive bg-destructive/5' : ''}`}>
+                    <div>
+                      <p className="font-medium">{TIPO_LABELS[t.tipo_teste] || t.tipo_teste}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Prazo: {format(new Date(t.data_fim_periodo), 'dd/MM/yyyy')}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {overdue && <Badge variant="destructive">Vencido</Badge>}
+                      {t.tipo_teste === 'disc' && (
+                        <Button size="sm" onClick={() => navigate(`/disc-test/${t.id}`)}>
+                          Fazer Teste
+                        </Button>
+                      )}
+                      {t.tipo_teste === 'psicossocial' && (
+                        <Button size="sm" onClick={() => navigate('/riscos-psicossociais')}>
+                          Fazer Teste
+                        </Button>
+                      )}
+                      {(t.tipo_teste === 'checklist') && (
+                        <Button size="sm" onClick={() => navigate('/checklists/novo')}>
+                          Fazer Teste
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Checklist mensal */}
       <Card className="mb-6">
