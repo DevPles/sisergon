@@ -388,6 +388,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {TIPOS_TEMPLATE.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                    <SelectItem value="disc">DISC</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -865,6 +866,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
             )}
           </div>
           <Button onClick={openNew} className="self-end ml-auto">Novo Formulário</Button>
+          <Button variant="outline" onClick={() => window.location.href = '/test-assignments'} className="self-end">Atribuir Testes</Button>
         </div>
       )}
 
