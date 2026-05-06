@@ -571,7 +571,7 @@ const CadastrosPage = () => {
 
       <Card className="overflow-hidden">
         <CardContent className="p-0 sm:p-2">
-          <Tabs defaultValue="empresas" onValueChange={(v) => setActiveTab(v)}>
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)}>
             <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <Select value={activeTab} onValueChange={(v) => setActiveTab(v)}>
                 <SelectTrigger className="h-10 w-56 rounded-full border border-border/40 bg-muted/20 text-sm font-medium">
