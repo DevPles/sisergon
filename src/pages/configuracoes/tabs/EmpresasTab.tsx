@@ -14,12 +14,22 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const UF_LIST = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
 
-const EmpresasTab = () => {
+const EmpresasTab = ({ externalSearch }: { externalSearch?: string }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(externalSearch || '');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (externalSearch !== undefined) setSearch(externalSearch);
+  }, [externalSearch]);
+
+  useEffect(() => {
+    const handleOpenForm = () => setShowForm(true);
+    window.addEventListener('open-nova-empresa', handleOpenForm);
+    return () => window.removeEventListener('open-nova-empresa', handleOpenForm);
+  }, []);
 
   const { data: empresas, isLoading } = useQuery({
     queryKey: ['config-empresas', search],
