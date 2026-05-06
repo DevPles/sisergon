@@ -114,13 +114,13 @@ const PlanosTab = () => {
                         </div>
                       </div>
                       <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingId(p.id)}>
-Editar
+                        <Button variant="outline" size="sm" onClick={() => setEditingId(p.id)}>
+                          Editar
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => {
+                        <Button variant="outline" size="sm" className="text-destructive" onClick={() => {
                           if (confirm('Excluir este plano?')) deleteMutation.mutate(p.id);
                         }}>
-Excluir
+                          Excluir
                         </Button>
                       </div>
                     </div>
