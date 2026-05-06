@@ -1,0 +1,1 @@
+UPDATE auth.users SET email = 'opericlesmoreira@gmail.com', email_confirmed_at = now() WHERE id = '5291eef9-0bd3-4d6e-982c-50bc688e0fcf'
