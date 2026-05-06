@@ -673,49 +673,51 @@ const AEPForm = () => {
               </CardContent>
             </Card>
 
-            {/* Block navigation */}
-            <div className="flex items-center justify-between mb-6">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveStep((s) => Math.max(-1, s - 1))}
-              >
-                Anterior
-              </Button>
-              <p className="text-xs text-muted-foreground">
-                {isBlockComplete(activeStep) ? 'Bloco completo' : 'Responda todas as perguntas para avançar'}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveStep((s) => Math.min(activeBlocks.length - 1, s + 1))}
-                disabled={activeStep >= activeBlocks.length - 1 || !isBlockComplete(activeStep)}
-              >
-                Próximo
-              </Button>
+            {/* Combined Block navigation & Action buttons */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActiveStep((s) => Math.max(-1, s - 1))}
+                >
+                  Anterior
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate('/aep')}>Cancelar</Button>
+                <Button variant="secondary" size="sm" onClick={() => handleSave(false)} disabled={saving}>
+                  {saving ? 'Salvando...' : 'Salvar Rascunho'}
+                </Button>
+                <Button size="sm" onClick={() => handleSave(true)} disabled={saving}>
+                  {saving ? 'Finalizando...' : 'Finalizar AEP'}
+                </Button>
+                {isEdit && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleGeneratePdf}
+                  >
+                    Gerar Laudo PDF
+                  </Button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-4">
+                <p className="text-xs text-muted-foreground hidden sm:block">
+                  {isBlockComplete(activeStep) ? 'Bloco completo' : 'Responda todas as perguntas para avançar'}
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActiveStep((s) => Math.min(activeBlocks.length - 1, s + 1))}
+                  disabled={activeStep >= activeBlocks.length - 1 || !isBlockComplete(activeStep)}
+                >
+                  Próximo
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Action buttons */}
-      <div className="flex flex-wrap gap-4 mb-8">
-        <Button variant="outline" onClick={() => navigate('/aep')}>Cancelar</Button>
-        <Button variant="secondary" onClick={() => handleSave(false)} disabled={saving}>
-          {saving ? 'Salvando...' : 'Salvar Rascunho'}
-        </Button>
-        <Button onClick={() => handleSave(true)} disabled={saving}>
-          {saving ? 'Finalizando...' : 'Finalizar AEP'}
-        </Button>
-        {isEdit && (
-          <Button
-            variant="outline"
-            onClick={handleGeneratePdf}
-          >
-            Gerar Laudo PDF
-          </Button>
-        )}
-      </div>
     </div>
   );
 };
