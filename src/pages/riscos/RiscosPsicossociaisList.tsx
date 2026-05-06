@@ -114,7 +114,7 @@ const RiscosPsicossociaisList = () => {
 
       {/* Modal with full ARP form */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] p-6">
+        <DialogContent className="max-w-4xl max-h-[90vh] p-6 overflow-hidden">
           <DialogHeader>
             <DialogTitle>{editId ? 'Editar Avaliação Psicossocial' : 'Nova Avaliação Psicossocial'}</DialogTitle>
           </DialogHeader>
