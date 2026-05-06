@@ -18,7 +18,7 @@ import { format } from 'date-fns';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic, ImagePlus, X } from 'lucide-react';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import AutoSaveBadge from '@/components/AutoSaveBadge';
 
@@ -135,11 +135,12 @@ const AEPForm = () => {
   const [description, setDescription] = useState('');
   const [values, setValues] = useState<Record<string, number>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
+  const [photos, setPhotos] = useState<Record<string, string[]>>({});
   const [saving, setSaving] = useState(false);
   const [activeStep, setActiveStep] = useState(-1); // -1 = identification step
 
   // Auto-save draft (only for new assessments)
-  const formData = useMemo(() => ({ title, empresaId, unidadeId, setorId, cargoId, description, values, comments, activeStep }), [title, empresaId, unidadeId, setorId, cargoId, description, values, comments, activeStep]);
+  const formData = useMemo(() => ({ title, empresaId, unidadeId, setorId, cargoId, description, values, comments, photos, activeStep }), [title, empresaId, unidadeId, setorId, cargoId, description, values, comments, photos, activeStep]);
   const { lastSaved, recover, clear: clearDraft, hasSavedData, recovered } = useAutoSave({
     key: `aep-${id || 'nova'}`,
     data: formData,
@@ -161,6 +162,7 @@ const AEPForm = () => {
         setDescription(saved.description || '');
         setValues(saved.values || {});
         setComments(saved.comments || {});
+        setPhotos(saved.photos || {});
         setActiveStep(saved.activeStep || 0);
       }
     }
@@ -663,16 +665,17 @@ const AEPForm = () => {
                             ))}
                           </div>
                           {/* Observation input with mic */}
-                          <div className="relative flex-1">
-                            <Input
+                          <div className="relative flex-1 flex flex-col gap-2">
+                            <Textarea
                               placeholder="Observação (opcional)"
                               value={comments[key] || ''}
                               onChange={(e) => setComments((prev) => ({ ...prev, [key]: e.target.value }))}
-                              className="h-full min-h-[68px] pr-10 text-sm"
+                              className="min-h-[68px] pr-10 text-sm resize-none"
+                              rows={2}
                             />
                             <button
                               type="button"
-                              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground"
+                              className="absolute right-2 top-4 p-1.5 rounded-full hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground"
                               onClick={() => {
                                 const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
                                 if (!SpeechRecognition) {
@@ -700,6 +703,61 @@ const AEPForm = () => {
                             >
                               <Mic className="h-4 w-4" />
                             </button>
+                            {/* Photo thumbnails */}
+                            {photos[key]?.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5">
+                                {photos[key].map((src, pi) => (
+                                  <div key={pi} className="relative group w-14 h-14 rounded border border-border overflow-hidden">
+                                    <img src={src} alt={`Foto ${pi + 1}`} className="w-full h-full object-cover" />
+                                    <button
+                                      type="button"
+                                      className="absolute top-0 right-0 bg-destructive text-destructive-foreground rounded-bl p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onClick={() => setPhotos((prev) => ({
+                                        ...prev,
+                                        [key]: prev[key].filter((_, idx) => idx !== pi),
+                                      }))}
+                                      title="Excluir foto"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          {/* Upload photo button */}
+                          <div className="flex flex-col items-center justify-center shrink-0">
+                            <label
+                              className="flex flex-col items-center justify-center w-14 h-[68px] rounded border border-dashed border-border cursor-pointer hover:bg-muted/30 transition-colors text-muted-foreground hover:text-foreground"
+                              title="Anexar foto"
+                            >
+                              <ImagePlus className="h-5 w-5 mb-0.5" />
+                              <span className="text-[9px]">Foto</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                                onChange={(e) => {
+                                  const files = e.target.files;
+                                  if (!files) return;
+                                  Array.from(files).forEach((file) => {
+                                    const reader = new FileReader();
+                                    reader.onload = (ev) => {
+                                      const result = ev.target?.result as string;
+                                      if (result) {
+                                        setPhotos((prev) => ({
+                                          ...prev,
+                                          [key]: [...(prev[key] || []), result],
+                                        }));
+                                      }
+                                    };
+                                    reader.readAsDataURL(file);
+                                  });
+                                  e.target.value = '';
+                                }}
+                              />
+                            </label>
                           </div>
                         </div>
                       </div>
