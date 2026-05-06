@@ -557,8 +557,8 @@ const CadastrosPage = () => {
       <Card className="overflow-hidden">
         <CardContent className="p-0 sm:p-2">
           <Tabs defaultValue="empresas" onValueChange={(v) => setActiveTab(v)}>
-            <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col gap-4">
-              <TabsList className="flex flex-col sm:flex-row w-full sm:w-auto h-auto gap-1 sm:gap-0">
+            <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col items-start gap-4">
+              <TabsList className="flex flex-row w-auto h-auto gap-1 sm:gap-0 overflow-x-auto">
                 <TabsTrigger value="empresas" className="text-xs sm:text-sm w-full sm:w-auto">Empresas ({empresas?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="colaboradores" className="text-xs sm:text-sm w-full sm:w-auto">Colaboradores ({colaboradores?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="templates" className="text-xs sm:text-sm w-full sm:w-auto">Formulários</TabsTrigger>
@@ -594,23 +594,43 @@ const CadastrosPage = () => {
                 </div>
               )}
               {!['faturamento', 'templates'].includes(activeTab) && (
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                {activeTab === 'empresas' ? (
-                  <>
-                    <Input placeholder="Buscar empresa..." value={empresaSearch} onChange={(e) => setEmpresaSearch(e.target.value)} className="w-full sm:w-64" />
-                    <Button onClick={() => setShowEmpresaForm(true)} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap">
-                      Nova Empresa
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Input placeholder="Buscar colaborador..." value={colabSearch} onChange={(e) => setColabSearch(e.target.value)} className="w-full sm:w-64" />
-                    <Button onClick={() => setShowColabForm(true)} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap">
-                      Novo Colaborador
-                    </Button>
-                  </>
-                )}
-              </div>
+                <div className="flex items-center gap-3 w-full bg-muted/30 p-4 rounded-xl border border-border/50">
+                  {activeTab === 'empresas' ? (
+                    <>
+                      <div className="flex-1 max-w-sm">
+                        <Input 
+                          placeholder="Buscar empresa..." 
+                          value={empresaSearch} 
+                          onChange={(e) => setEmpresaSearch(e.target.value)} 
+                          className="h-11 bg-background" 
+                        />
+                      </div>
+                      <Button 
+                        onClick={() => setShowEmpresaForm(true)} 
+                        className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap ml-auto"
+                      >
+                        Nova Empresa
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex-1 max-w-sm">
+                        <Input 
+                          placeholder="Buscar colaborador..." 
+                          value={colabSearch} 
+                          onChange={(e) => setColabSearch(e.target.value)} 
+                          className="h-11 bg-background" 
+                        />
+                      </div>
+                      <Button 
+                        onClick={() => setShowColabForm(true)} 
+                        className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap ml-auto"
+                      >
+                        Novo Colaborador
+                      </Button>
+                    </>
+                  )}
+                </div>
               )}
             </div>
 
