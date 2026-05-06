@@ -133,24 +133,24 @@ const EmpresaFormInline = ({ empresaId, onClose, onSaved }: { empresaId: string 
 
           {/* Dados da Empresa */}
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Dados da Empresa</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2 md:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="space-y-2 md:col-span-4">
               <Label>Razão Social *</Label>
               <Input value={form.razao_social} onChange={(e) => set('razao_social', e.target.value)} required />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <Label>Nome Fantasia</Label>
               <Input value={form.nome_fantasia} onChange={(e) => set('nome_fantasia', e.target.value)} />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
               <Label>CNPJ</Label>
               <Input value={form.cnpj} onChange={(e) => set('cnpj', e.target.value)} placeholder="00.000.000/0000-00" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-3">
               <Label>CNAE</Label>
               <Input value={form.cnae} onChange={(e) => set('cnae', e.target.value)} />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-1">
               <Label>Grau de Risco</Label>
               <Select value={form.grau_risco} onValueChange={(v) => set('grau_risco', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
