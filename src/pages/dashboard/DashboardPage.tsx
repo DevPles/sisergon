@@ -691,7 +691,7 @@ const DashboardPage = () => {
                             Histórico
                           </Button>
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             className="text-xs px-2"
                             disabled={generatingPdf}
