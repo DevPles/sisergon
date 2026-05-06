@@ -87,6 +87,7 @@ const AtestadosPage = () => {
   const [empresaFilter, setEmpresaFilter] = useState('all');
   const [unidadeFilter, setUnidadeFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeAtestadoTab, setActiveAtestadoTab] = useState('lista');
   const [showNew, setShowNew] = useState(false);
   const [selected, setSelected] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -571,22 +572,20 @@ const AtestadosPage = () => {
         </Card>
       )}
 
-      <Tabs defaultValue="lista">
-        <TabsList className="w-full sm:w-auto flex overflow-x-auto">
-          <TabsTrigger value="lista" className="text-xs sm:text-sm">Cadastrados</TabsTrigger>
-          <TabsTrigger value="timeline" className="text-xs sm:text-sm">Timeline</TabsTrigger>
-          <TabsTrigger value="alertas" className="relative text-xs sm:text-sm">
-            Alertas
-            {cidAlerts.length > 0 && (
-              <span className="ml-1 inline-flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 text-[9px] sm:text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground">
-                {cidAlerts.length}
-              </span>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="retorno" className="text-xs sm:text-sm">
-            Retorno
-          </TabsTrigger>
-        </TabsList>
+      <Tabs value={activeAtestadoTab} onValueChange={(v) => setActiveAtestadoTab(v)}>
+        <div className="mb-4">
+          <Select value={activeAtestadoTab} onValueChange={(v) => setActiveAtestadoTab(v)}>
+            <SelectTrigger className="h-10 w-56 rounded-full border border-border/40 bg-muted/20 text-sm font-medium">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="lista">Cadastrados</SelectItem>
+              <SelectItem value="timeline">Timeline</SelectItem>
+              <SelectItem value="alertas">Alertas{cidAlerts.length > 0 ? ` (${cidAlerts.length})` : ''}</SelectItem>
+              <SelectItem value="retorno">Retorno</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Tab: Lista */}
         <TabsContent value="lista">
