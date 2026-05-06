@@ -26,6 +26,11 @@ const TIPOS_TEMPLATE = [
   { value: 'formulario_custom', label: 'Formulário Customizado' },
 ];
 
+const TIPOS_TEMPLATE_WITH_DISC = [
+  ...TIPOS_TEMPLATE,
+  { value: 'disc', label: 'DISC' },
+];
+
 /* ── Types ── */
 interface Option { texto: string; peso: number; }
 interface QuestionLocal {
