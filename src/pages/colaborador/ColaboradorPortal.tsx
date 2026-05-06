@@ -2,6 +2,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { KpiCard } from '@/components/KpiCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -69,32 +70,14 @@ const ColaboradorPortal = () => {
 
       {/* Info card */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Empresa</p>
-            <p className="font-semibold">{(colaborador?.empresas as any)?.razao_social || '—'}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Cargo</p>
-            <p className="font-semibold">{(colaborador?.cargos as any)?.nome || '—'}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Setor</p>
-            <p className="font-semibold">{(colaborador?.setores as any)?.nome || '—'}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Checklist do mês</p>
-            <Badge variant={hasCurrentChecklist ? 'default' : 'destructive'}>
-              {hasCurrentChecklist ? 'Respondido' : 'Pendente'}
-            </Badge>
-          </CardContent>
-        </Card>
+        <KpiCard label="Empresa" value={(colaborador?.empresas as any)?.razao_social || '—'} />
+        <KpiCard label="Cargo" value={(colaborador?.cargos as any)?.nome || '—'} />
+        <KpiCard label="Setor" value={(colaborador?.setores as any)?.nome || '—'} />
+        <KpiCard 
+          label="Checklist do mês" 
+          value={hasCurrentChecklist ? 'Respondido' : 'Pendente'} 
+          variant={hasCurrentChecklist ? 'success' : 'danger'} 
+        />
       </div>
 
       {/* Checklist mensal */}
