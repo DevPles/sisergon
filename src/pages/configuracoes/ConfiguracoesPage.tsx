@@ -15,9 +15,6 @@ import ConfigGeraisTab from './tabs/ConfigGeraisTab';
 const ConfiguracoesPage = () => {
   const [activeTab, setActiveTab] = useState('empresas');
   const [empresaSearch, setEmpresaSearch] = useState('');
-  
-  // Este estado será passado para o EmpresasTab ou usado para filtrar
-  // Mas o pedido é para colocar o FILTRO e BOTÃO na mesma linha do seletor.
 
   return (
     <div>
@@ -31,7 +28,7 @@ const ConfiguracoesPage = () => {
           <Tabs defaultValue="empresas" onValueChange={setActiveTab}>
             <div className="px-6 pt-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="overflow-x-auto pb-1">
-                <TabsList className="w-auto justify-start inline-flex">
+                <TabsList className="w-auto justify-start inline-flex border border-border/40 bg-muted/20">
                   <TabsTrigger value="empresas">Empresas</TabsTrigger>
                   <TabsTrigger value="usuarios">Usuários</TabsTrigger>
                   <TabsTrigger value="consultores">Consultores</TabsTrigger>
@@ -44,18 +41,17 @@ const ConfiguracoesPage = () => {
               </div>
               
               {activeTab === 'empresas' && (
-                <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-full border border-border/50">
+                <div className="flex items-center gap-2 bg-muted/40 p-1 rounded-full border border-border/50 shadow-sm">
                   <Input 
                     placeholder="Buscar empresa..." 
                     value={empresaSearch}
                     onChange={(e) => setEmpresaSearch(e.target.value)}
-                    className="h-9 w-40 sm:w-60 bg-background rounded-full border-none focus-visible:ring-1 focus-visible:ring-primary"
+                    className="h-8 w-40 sm:w-64 bg-transparent border-none focus-visible:ring-0 shadow-none text-sm"
                   />
                   <Button 
                     size="sm"
-                    className="h-9 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs whitespace-nowrap"
+                    className="h-8 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs font-medium whitespace-nowrap shadow-md transition-all active:scale-95"
                     onClick={() => {
-                      // Disparar evento para o componente filho ou usar estado global
                       window.dispatchEvent(new CustomEvent('open-nova-empresa'));
                     }}
                   >
@@ -64,42 +60,11 @@ const ConfiguracoesPage = () => {
                 </div>
               )}
             </div>
+            
             <div className="p-6">
               <TabsContent value="empresas" className="mt-0">
                 <EmpresasTab externalSearch={empresaSearch} />
               </TabsContent>
-  return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Configurações</h1>
-        <p className="text-muted-foreground">Central de controle e gestão do sistema</p>
-      </div>
-
-      <Card>
-        <CardContent className="p-0">
-          <Tabs defaultValue="empresas">
-            <div className="px-6 pt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-              <div className="overflow-x-auto">
-                <TabsList className="w-auto justify-start inline-flex">
-                  <TabsTrigger value="empresas">Empresas</TabsTrigger>
-                  <TabsTrigger value="usuarios">Usuários</TabsTrigger>
-                  <TabsTrigger value="consultores">Consultores</TabsTrigger>
-                  <TabsTrigger value="planos">Planos e Contratos</TabsTrigger>
-                  <TabsTrigger value="laudos">Laudos</TabsTrigger>
-                  <TabsTrigger value="indicadores">Indicadores Globais</TabsTrigger>
-                  <TabsTrigger value="dashboard">Dashboard Executivo</TabsTrigger>
-                  <TabsTrigger value="config">Configurações Gerais</TabsTrigger>
-                </TabsList>
-              </div>
-              
-              {/* Espaço para os filtros dinâmicos que virão dos componentes filhos via render prop ou similar, 
-                  mas para manter a simplicidade e atender o pedido diretamente: */}
-              <div id="tabs-actions-container" className="flex items-center gap-3">
-                {/* O conteúdo aqui será injetado ou controlado pelo estado da página */}
-              </div>
-            </div>
-            <div className="p-6">
-              <TabsContent value="empresas" className="mt-0"><EmpresasTab /></TabsContent>
               <TabsContent value="usuarios" className="mt-0"><UsuariosTab /></TabsContent>
               <TabsContent value="consultores" className="mt-0"><ConsultoresTab /></TabsContent>
               <TabsContent value="planos" className="mt-0"><PlanosTab /></TabsContent>
