@@ -616,8 +616,8 @@ const AtestadosPage = () => {
                       <TableCell className="hidden sm:table-cell" onClick={e => e.stopPropagation()}>
                         {a.arquivo_url ? (
                           <div className="flex gap-1">
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => viewFile(a.arquivo_url)} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => downloadFile(a.arquivo_url)} title="Baixar"><Download className="h-3.5 w-3.5" /></Button>
+                            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => viewFile(a.arquivo_url)} title="Visualizar"><Eye className="h-3.5 w-3.5" /></Button>
+                            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => downloadFile(a.arquivo_url)} title="Baixar"><Download className="h-3.5 w-3.5" /></Button>
                           </div>
                         ) : <span className="text-xs text-muted-foreground">—</span>}
                       </TableCell>
