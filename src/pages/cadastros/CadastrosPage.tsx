@@ -167,23 +167,38 @@ const EmpresaFormInline = ({ empresaId, onClose, onSaved }: { empresaId: string 
           <Separator />
 
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Endereço</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2 md:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div className="space-y-2 md:col-span-3">
+              <Label>CEP</Label>
+              <Input value={form.endereco_cep} onChange={(e) => set('endereco_cep', e.target.value)} placeholder="00000-000" />
+            </div>
+            <div className="space-y-2 md:col-span-7">
               <Label>Logradouro</Label>
               <Input value={form.endereco_logradouro} onChange={(e) => set('endereco_logradouro', e.target.value)} />
             </div>
-            <div className="space-y-2"><Label>Número</Label><Input value={form.endereco_numero} onChange={(e) => set('endereco_numero', e.target.value)} /></div>
-            <div className="space-y-2"><Label>Complemento</Label><Input value={form.endereco_complemento} onChange={(e) => set('endereco_complemento', e.target.value)} /></div>
-            <div className="space-y-2"><Label>Bairro</Label><Input value={form.endereco_bairro} onChange={(e) => set('endereco_bairro', e.target.value)} /></div>
-            <div className="space-y-2"><Label>Cidade</Label><Input value={form.endereco_cidade} onChange={(e) => set('endereco_cidade', e.target.value)} /></div>
-            <div className="space-y-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label>Número</Label>
+              <Input value={form.endereco_numero} onChange={(e) => set('endereco_numero', e.target.value)} />
+            </div>
+            <div className="space-y-2 md:col-span-4">
+              <Label>Bairro</Label>
+              <Input value={form.endereco_bairro} onChange={(e) => set('endereco_bairro', e.target.value)} />
+            </div>
+            <div className="space-y-2 md:col-span-4">
+              <Label>Cidade</Label>
+              <Input value={form.endereco_cidade} onChange={(e) => set('endereco_cidade', e.target.value)} />
+            </div>
+            <div className="space-y-2 md:col-span-2">
               <Label>UF</Label>
               <Select value={form.endereco_uf} onValueChange={(v) => set('endereco_uf', v)}>
                 <SelectTrigger><SelectValue placeholder="UF" /></SelectTrigger>
                 <SelectContent>{UF_LIST.map((uf) => <SelectItem key={uf} value={uf}>{uf}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-2"><Label>CEP</Label><Input value={form.endereco_cep} onChange={(e) => set('endereco_cep', e.target.value)} placeholder="00000-000" /></div>
+            <div className="space-y-2 md:col-span-2">
+              <Label>Complemento</Label>
+              <Input value={form.endereco_complemento} onChange={(e) => set('endereco_complemento', e.target.value)} />
+            </div>
           </div>
 
           <Separator />
