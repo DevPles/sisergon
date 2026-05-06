@@ -20,8 +20,8 @@ const ConfiguracoesPage = () => {
       <Card>
         <CardContent className="p-0">
           <Tabs defaultValue="empresas">
-            <div className="px-6 pt-6 overflow-x-auto">
-              <TabsList className="w-full justify-start">
+            <div className="px-6 pt-6 overflow-x-auto flex justify-start">
+              <TabsList className="w-auto justify-start inline-flex">
                 <TabsTrigger value="empresas">Empresas</TabsTrigger>
                 <TabsTrigger value="usuarios">Usuários</TabsTrigger>
                 <TabsTrigger value="consultores">Consultores</TabsTrigger>
