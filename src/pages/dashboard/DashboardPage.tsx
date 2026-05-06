@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { KpiCard } from '@/components/KpiCard';
 import { generateColaboradorDossiePdf, generateEmpresaDossiePdf } from '@/utils/dossiePdfReport';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -230,21 +231,6 @@ const DashboardPage = () => {
   });
 
   const historyColab = historyColabId ? dossieData.find(d => d.id === historyColabId) : null;
-
-  const KpiCard = ({ label, value, subtitle, variant }: any) => (
-    <Card className="relative overflow-hidden group hover:shadow-lg transition-shadow">
-      <CardContent className="p-5">
-        <div>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
-          <p className={`text-2xl font-bold mt-1 ${variant === 'danger' ? 'text-destructive' : variant === 'success' ? 'text-emerald-600' : 'text-foreground'}`}>
-            {value}
-          </p>
-          {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   const riskBadge = (classification: string) => {
     const map: Record<string, { label: string; variant: 'destructive' | 'secondary' | 'default' | 'outline' }> = {
       critico: { label: 'Crítico', variant: 'destructive' },
