@@ -148,12 +148,11 @@ const Home = () => {
             <AnimatedCard
               key={card.path}
               index={idx}
-              className="cursor-pointer group h-full flex flex-col p-4 sm:p-6 rounded-[18px] sm:rounded-[22px]"
+              className="cursor-pointer group h-full flex flex-col p-4 sm:p-6 rounded-[18px] sm:rounded-[22px] transition-all duration-300 hover:scale-[1.02]"
               style={{
                 background: '#dde2e8',
                 boxShadow: '9px 9px 18px #a4afc2, -9px -9px 18px #ffffff',
               }}
-              className="cursor-pointer group h-full flex flex-col p-4 sm:p-6 rounded-[18px] sm:rounded-[22px] transition-all duration-300 hover:bg-[#1E40AF] hover:scale-[1.02]"
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#1E40AF';
                 e.currentTarget.style.boxShadow = '12px 12px 24px #1E3A8A, -12px -12px 24px #ffffff00';
