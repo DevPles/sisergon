@@ -82,7 +82,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
   const { toast } = useToast();
 
   const [form, setForm] = useState({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
-  const [validadeDias, setValidadeDias] = useState('');
+  const [recorrencia, setRecorrencia] = useState('');
   const [usarLikert, setUsarLikert] = useState(false);
   const [selectedEmpresaId, setSelectedEmpresaId] = useState(initialEmpresaId || '__global__');
   const [stages, setStages] = useState<StageLocal[]>([]);
@@ -199,7 +199,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
   useEffect(() => {
     if (!open) {
       setForm({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
-      setValidadeDias('');
+      setRecorrencia('');
       setUsarLikert(false);
       setSelectedEmpresaId(initialEmpresaId || '__global__');
       setStages([]);
@@ -420,9 +420,19 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Validade (dias)</Label>
-                <Input type="number" value={validadeDias} onChange={e => setValidadeDias(e.target.value)} placeholder="Ex: 30" min={1} max={365} />
-                <p className="text-[10px] text-muted-foreground">Período para o colaborador completar o teste</p>
+                <Label className="text-xs text-muted-foreground">Recorrência</Label>
+                <Select value={recorrencia} onValueChange={setRecorrencia}>
+                  <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unico">Única vez</SelectItem>
+                    <SelectItem value="mensal">1× por mês</SelectItem>
+                    <SelectItem value="bimestral">1× a cada 2 meses</SelectItem>
+                    <SelectItem value="trimestral">4× por ano</SelectItem>
+                    <SelectItem value="semestral">2× por ano</SelectItem>
+                    <SelectItem value="anual">1× por ano</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[10px] text-muted-foreground">Frequência de aplicação do teste</p>
               </div>
               <div className="space-y-1.5 flex items-center gap-2 pt-5">
                 <Switch checked={usarLikert} onCheckedChange={setUsarLikert} />

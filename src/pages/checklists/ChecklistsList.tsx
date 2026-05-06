@@ -32,7 +32,6 @@ const ChecklistsList = () => {
         <div className="flex items-center gap-3">
           <Input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-[220px]" />
           <span className="text-sm text-muted-foreground whitespace-nowrap">{checklists?.length ?? 0} registros</span>
-          <Button variant="outline" onClick={() => navigate('/test-assignments')}>Atribuir Testes</Button>
           <Button onClick={() => navigate('/checklists/novo')}>Novo Checklist</Button>
         </div>
       </div>
