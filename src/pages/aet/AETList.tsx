@@ -181,7 +181,7 @@ const AETList = () => {
                         <Button variant="outline" size="sm" onClick={() => navigate(`/aet/${a.id}`)}>Editar</Button>
                         {a.status === 'finalizado' && (
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => {
                               void generatePdf(a);
