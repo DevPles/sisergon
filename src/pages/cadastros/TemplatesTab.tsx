@@ -26,6 +26,11 @@ const TIPOS_TEMPLATE = [
   { value: 'formulario_custom', label: 'Formulário Customizado' },
 ];
 
+const TIPOS_TEMPLATE_WITH_DISC = [
+  ...TIPOS_TEMPLATE,
+  { value: 'disc', label: 'DISC' },
+];
+
 /* ── Types ── */
 interface Option { texto: string; peso: number; }
 interface QuestionLocal {
@@ -77,6 +82,8 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
   const { toast } = useToast();
 
   const [form, setForm] = useState({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
+  const [validadeDias, setValidadeDias] = useState('');
+  const [usarLikert, setUsarLikert] = useState(false);
   const [selectedEmpresaId, setSelectedEmpresaId] = useState(initialEmpresaId || '__global__');
   const [stages, setStages] = useState<StageLocal[]>([]);
   const [behavioralQuestions, setBehavioralQuestions] = useState<BehavioralQuestion[]>([]);
@@ -192,6 +199,8 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
   useEffect(() => {
     if (!open) {
       setForm({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
+      setValidadeDias('');
+      setUsarLikert(false);
       setSelectedEmpresaId(initialEmpresaId || '__global__');
       setStages([]);
       setBehavioralQuestions([]);
@@ -379,6 +388,7 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {TIPOS_TEMPLATE.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                    <SelectItem value="disc">DISC</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -407,6 +417,17 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
                   <SelectItem value="rascunho">Rascunho</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Validade (dias)</Label>
+                <Input type="number" value={validadeDias} onChange={e => setValidadeDias(e.target.value)} placeholder="Ex: 30" min={1} max={365} />
+                <p className="text-[10px] text-muted-foreground">Período para o colaborador completar o teste</p>
+              </div>
+              <div className="space-y-1.5 flex items-center gap-2 pt-5">
+                <Switch checked={usarLikert} onCheckedChange={setUsarLikert} />
+                <Label className="text-xs text-muted-foreground cursor-pointer">Usar escala Likert</Label>
+              </div>
             </div>
           </TabsContent>
 
@@ -845,6 +866,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
             )}
           </div>
           <Button onClick={openNew} className="self-end ml-auto">Novo Formulário</Button>
+          <Button variant="outline" onClick={() => window.location.href = '/test-assignments'} className="self-end">Atribuir Testes</Button>
         </div>
       )}
 

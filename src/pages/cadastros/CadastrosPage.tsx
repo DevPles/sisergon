@@ -268,6 +268,9 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
     sexo: '', empresa_id: '', unidade_id: '', setor_id: '', cargo_id: '',
     data_admissao: '', jornada: '', turno: '', gestor_responsavel: '', status: 'ativo',
   });
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [criarUsuario, setCriarUsuario] = useState(false);
   const [userForm, setUserForm] = useState({ full_name: '', email: '', avatar_url: '' });
   const [linkedUserId, setLinkedUserId] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -290,6 +293,12 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
   const { data: cargosData } = useQuery({
     queryKey: ['cargos-select', form.empresa_id],
     queryFn: async () => { if (!form.empresa_id) return []; const { data } = await supabase.from('cargos').select('id, nome').eq('empresa_id', form.empresa_id).order('nome'); return data ?? []; },
+    enabled: !!form.empresa_id,
+  });
+
+  const { data: gestoresData } = useQuery({
+    queryKey: ['gestores-select', form.empresa_id],
+    queryFn: async () => { if (!form.empresa_id) return []; const { data } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', form.empresa_id).eq('status', 'ativo').order('nome_completo'); return data ?? []; },
     enabled: !!form.empresa_id,
   });
 
@@ -333,8 +342,27 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
   const mutation = useMutation({
     mutationFn: async () => {
       const payload = { ...form, data_nascimento: form.data_nascimento || null, data_admissao: form.data_admissao || null, unidade_id: form.unidade_id || null, setor_id: form.setor_id || null, cargo_id: form.cargo_id || null, sexo: form.sexo || null };
-      if (isEdit) { const { error } = await supabase.from('colaboradores').update(payload).eq('id', colaboradorId); if (error) throw error; }
-      else { const { error } = await supabase.from('colaboradores').insert(payload); if (error) throw error; }
+      if (isEdit) {
+        const { error } = await supabase.from('colaboradores').update(payload).eq('id', colaboradorId);
+        if (error) throw error;
+      } else {
+        const { data: newColab, error } = await supabase.from('colaboradores').insert(payload).select('id').single();
+        if (error) throw error;
+        if (criarUsuario && email) {
+          try {
+            const res = await supabase.functions.invoke('invite-user', {
+              body: { email, full_name: form.nome_completo, role: 'colaborador', empresa_id: form.empresa_id || null, password: senha || undefined },
+            });
+            if (res.error) throw new Error(res.error.message || 'Erro ao criar usuário');
+            const userId = res.data?.user_id;
+            if (userId && newColab?.id) {
+              await supabase.from('colaboradores').update({ user_id: userId } as any).eq('id', newColab.id);
+            }
+          } catch (err: any) {
+            toast({ title: 'Colaborador criado, mas erro ao criar conta', description: err.message, variant: 'destructive' });
+          }
+        }
+      }
       if (avatarFile && linkedUserId) {
         const ext = avatarFile.name.split('.').pop();
         const path = `colaborador-${linkedUserId}/avatar.${ext}`;
@@ -428,13 +456,41 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
                 <SelectContent><SelectItem value="Diurno">Diurno</SelectItem><SelectItem value="Noturno">Noturno</SelectItem><SelectItem value="Revezamento">Revezamento</SelectItem></SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 md:col-span-3"><Label>Gestor Responsável</Label><Input value={form.gestor_responsavel} onChange={(e) => set('gestor_responsavel', e.target.value)} /></div>
+            <div className="space-y-2 md:col-span-3">
+              <Label>Gestor Responsável</Label>
+              <Select value={form.gestor_responsavel} onValueChange={(v) => set('gestor_responsavel', v)}>
+                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <SelectContent>
+                  {gestoresData?.filter(g => g.id !== colaboradorId).map((g) => <SelectItem key={g.id} value={g.nome_completo}>{g.nome_completo}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+
+          <Separator />
+          <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Acesso do Colaborador</p>
+
+          {!isEdit && !linkedUserId && (
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div className="space-y-2 md:col-span-5">
+                <Label>E-mail</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@empresa.com" />
+              </div>
+              <div className="space-y-2 md:col-span-4">
+                <Label>Senha (opcional)</Label>
+                <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Deixe vazio para gerar automática" />
+              </div>
+              <div className="flex items-end md:col-span-3">
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" checked={criarUsuario} onChange={(e) => setCriarUsuario(e.target.checked)} id="criar-usuario" className="rounded border-border" />
+                  <Label htmlFor="criar-usuario" className="text-sm cursor-pointer">Criar conta de acesso</Label>
+                </div>
+              </div>
+            </div>
+          )}
 
           {isEdit && linkedUserId && (
             <>
-              <Separator />
-              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Perfil de Usuário Vinculado</p>
               <div className="flex items-start gap-6">
                 <div className="flex flex-col items-center gap-2">
                   <div className="relative group">
@@ -463,6 +519,38 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
                 </div>
               </div>
             </>
+          )}
+
+          {isEdit && !linkedUserId && (
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div className="space-y-2 md:col-span-5">
+                <Label>E-mail</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@empresa.com" />
+              </div>
+              <div className="space-y-2 md:col-span-4">
+                <Label>Senha (opcional)</Label>
+                <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Deixe vazio para gerar automática" />
+              </div>
+              <div className="flex items-end md:col-span-3">
+                <Button type="button" variant="outline" onClick={async () => {
+                  if (!email) { toast({ title: 'Informe o e-mail', variant: 'destructive' }); return; }
+                  try {
+                    const res = await supabase.functions.invoke('invite-user', {
+                      body: { email, full_name: form.nome_completo, role: 'colaborador', empresa_id: form.empresa_id || null, password: senha || undefined },
+                    });
+                    if (res.error) throw new Error(res.error.message || 'Erro ao criar usuário');
+                    const userId = res.data?.user_id;
+                    if (userId && colaboradorId) {
+                      await supabase.from('colaboradores').update({ user_id: userId } as any).eq('id', colaboradorId);
+                      setLinkedUserId(userId);
+                    }
+                    toast({ title: 'Conta de acesso criada!' });
+                  } catch (err: any) { toast({ title: 'Erro', description: err.message, variant: 'destructive' }); }
+                }} className="rounded-full shadow-[0_4px_14px_0_hsl(var(--border)/0.4)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200">
+                  Criar Conta de Acesso
+                </Button>
+              </div>
+            </div>
           )}
 
           <Separator />
@@ -609,6 +697,13 @@ const CadastrosPage = () => {
                       className="h-9 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs whitespace-nowrap shadow-sm"
                     >
                       Novo Formulário
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => navigate('/test-assignments')}
+                      className="h-9 px-4 rounded-full text-xs whitespace-nowrap shadow-sm"
+                    >
+                      Atribuir Testes
                     </Button>
                   </div>
                 )}

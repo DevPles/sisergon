@@ -70,6 +70,16 @@ const ColaboradorForm = ({ colaboradorId, onClose, onSaved }: Props) => {
     enabled: !!form.empresa_id,
   });
 
+  const { data: gestoresData } = useQuery({
+    queryKey: ['gestores-select', form.empresa_id],
+    queryFn: async () => {
+      if (!form.empresa_id) return [];
+      const { data } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', form.empresa_id).eq('status', 'ativo').order('nome_completo');
+      return data ?? [];
+    },
+    enabled: !!form.empresa_id,
+  });
+
   const { data: existing } = useQuery({
     queryKey: ['colaborador', colaboradorId],
     queryFn: async () => {
@@ -304,7 +314,12 @@ const ColaboradorForm = ({ colaboradorId, onClose, onSaved }: Props) => {
               </div>
               <div className="space-y-2">
                 <Label>Gestor Responsável</Label>
-                <Input value={form.gestor_responsavel} onChange={(e) => set('gestor_responsavel', e.target.value)} />
+                <Select value={form.gestor_responsavel} onValueChange={(v) => set('gestor_responsavel', v)}>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectContent>
+                    {gestoresData?.filter(g => g.id !== colaboradorId).map((g) => <SelectItem key={g.id} value={g.nome_completo}>{g.nome_completo}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Status</Label>
