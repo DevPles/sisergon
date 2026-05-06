@@ -3,7 +3,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { KpiCard } from '@/components/KpiCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -107,10 +106,10 @@ const ConsultorDashboard = () => {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <KpiCard label="Empresas Vinculadas" value={counts?.empresas ?? 0} />
-        <KpiCard label="Avaliações Realizadas" value={counts?.avaliacoes ?? 0} />
-        <KpiCard label="Laudos Emitidos" value={counts?.laudos ?? 0} />
-        <KpiCard label="Planos Pendentes" value={counts?.planos ?? 0} variant={counts?.planos ? 'danger' : 'default'} />
+        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Empresas Vinculadas</p><p className="text-3xl font-bold">{counts?.empresas ?? 0}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Avaliações Realizadas</p><p className="text-3xl font-bold">{counts?.avaliacoes ?? 0}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Laudos Emitidos</p><p className="text-3xl font-bold">{counts?.laudos ?? 0}</p></CardContent></Card>
+        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Planos Pendentes</p><p className="text-3xl font-bold text-amber-600">{counts?.planos ?? 0}</p></CardContent></Card>
       </div>
 
       {/* Quick actions */}
