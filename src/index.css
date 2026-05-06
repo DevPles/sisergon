@@ -155,6 +155,12 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     border: none;
   }
+  .neu-modal .neu-card {
+    box-shadow: inset 4px 4px 8px #a4afc2, inset -4px -4px 8px #ffffff;
+  }
+  .neu-modal .neu-card:hover {
+    box-shadow: inset 4px 4px 8px #a4afc2, inset -4px -4px 8px #ffffff;
+  }
 }
 
 /* ── Mobile optimizations ── */
