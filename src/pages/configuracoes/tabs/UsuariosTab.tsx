@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,7 +34,13 @@ interface UsuariosTabProps {
   externalRoleFilter?: string;
 }
 
-const UsuariosTab = ({ externalSearch, externalRoleFilter }: UsuariosTabProps) => {
+const UsuariosTab = ({ externalSearch, externalRoleFilter, onInviteClick }: UsuariosTabProps & { onInviteClick?: () => void }) => {
+  useEffect(() => {
+    const handleOpenInvite = () => setView('invite');
+    window.addEventListener('open-convidar-usuario', handleOpenInvite);
+    return () => window.removeEventListener('open-convidar-usuario', handleOpenInvite);
+  }, []);
+
   const { toast } = useToast();
   const [searchState, setSearchState] = useState('');
   const [roleFilterState, setRoleFilterState] = useState('all');
