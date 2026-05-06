@@ -148,37 +148,29 @@ const Home = () => {
             <AnimatedCard
               key={card.path}
               index={idx}
-              className="cursor-pointer group h-full flex flex-col p-4 sm:p-6 rounded-[18px] sm:rounded-[22px] transition-all duration-300 hover:scale-[1.02]"
+              className="cursor-pointer group h-full flex flex-col p-4 sm:p-6 rounded-[18px] sm:rounded-[22px] transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
               style={{
                 background: '#dde2e8',
                 boxShadow: '9px 9px 18px #a4afc2, -9px -9px 18px #ffffff',
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#1E40AF';
-                e.currentTarget.style.boxShadow = '12px 12px 24px #1E3A8A, -12px -12px 24px #ffffff00';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#dde2e8';
-                e.currentTarget.style.boxShadow = '9px 9px 18px #a4afc2, -9px -9px 18px #ffffff';
-              }}
               onClick={() => navigate(card.path)}
             >
-              <h3 className="text-lg font-semibold transition-all duration-300 group-hover:text-white group-hover:text-xl" style={{ fontFamily: 'Space Grotesk', color: '#4c5563' }}>
+              <h3 className="text-lg font-semibold transition-all duration-300 group-hover:text-[#1E40AF] group-hover:text-xl" style={{ fontFamily: 'Space Grotesk', color: '#4c5563' }}>
                 {card.title}
               </h3>
-              <p className="text-sm mt-2 leading-relaxed flex-1 transition-all duration-300 group-hover:text-blue-50 group-hover:text-base" style={{ color: '#7a8599' }}>
+              <p className="text-sm mt-2 leading-relaxed flex-1 transition-all duration-300 group-hover:text-[#1E40AF] group-hover:text-base" style={{ color: '#7a8599' }}>
                 {card.description}
               </p>
-              <div className="mt-4 pt-4 transition-all duration-300 group-hover:border-blue-400" style={{ borderTop: '1px solid #c5ccd6' }}>
+              <div className="mt-4 pt-4 transition-all duration-300 group-hover:border-[#1E40AF]" style={{ borderTop: '1px solid #c5ccd6' }}>
                 {card.countQuery && counts ? (
                   <>
-                    <span className="text-2xl font-bold transition-all duration-300 group-hover:text-white group-hover:text-3xl" style={{ color: '#4c5563' }}>
+                    <span className="text-2xl font-bold transition-all duration-300 group-hover:text-[#1E40AF] group-hover:text-3xl" style={{ color: '#4c5563' }}>
                       {counts[card.countQuery as keyof typeof counts] ?? 0}
                     </span>
-                    <span className="text-sm ml-2 transition-all duration-300 group-hover:text-blue-100 group-hover:text-base" style={{ color: '#7a8599' }}>registros</span>
+                    <span className="text-sm ml-2 transition-all duration-300 group-hover:text-[#1E40AF] group-hover:text-base" style={{ color: '#7a8599' }}>registros</span>
                   </>
                 ) : (
-                  <span className="text-sm transition-all duration-300 group-hover:text-blue-100 group-hover:text-base" style={{ color: '#7a8599' }}>Acessar módulo</span>
+                  <span className="text-sm transition-all duration-300 group-hover:text-[#1E40AF] group-hover:text-base" style={{ color: '#7a8599' }}>Acessar módulo</span>
                 )}
               </div>
             </AnimatedCard>
