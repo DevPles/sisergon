@@ -232,14 +232,24 @@ const DashboardPage = () => {
   const historyColab = historyColabId ? dossieData.find(d => d.id === historyColabId) : null;
 
   const KpiCard = ({ label, value, subtitle, variant }: any) => (
-    <Card className="relative overflow-hidden group hover:shadow-lg transition-shadow">
+    <Card className="relative overflow-hidden group hover:shadow-xl transition-all duration-300 hover:bg-[#1E40AF] cursor-default border-primary/10">
       <CardContent className="p-5">
-        <div>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
-          <p className={`text-2xl font-bold mt-1 ${variant === 'danger' ? 'text-destructive' : variant === 'success' ? 'text-emerald-600' : 'text-foreground'}`}>
+        <div className="transition-all duration-300 group-hover:scale-110">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider group-hover:text-blue-50 transition-colors duration-300">{label}</p>
+          <p className={`text-2xl font-bold mt-1 transition-all duration-300 ${
+            variant === 'danger' 
+              ? 'text-destructive group-hover:text-white' 
+              : variant === 'success' 
+                ? 'text-emerald-600 group-hover:text-white' 
+                : 'text-foreground group-hover:text-white'
+          }`}>
             {value}
           </p>
-          {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+          {subtitle && (
+            <p className="text-xs text-muted-foreground mt-0.5 group-hover:text-blue-100 transition-colors duration-300">
+              {subtitle}
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>
