@@ -141,8 +141,8 @@ const UsuariosTab = ({ externalSearch, externalRoleFilter, onInviteClick }: Usua
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                    <Button variant="ghost" size="sm" onClick={() => handleEdit(p)}>Editar</Button>
-                    <Button variant="ghost" size="sm" onClick={() => p.email && handleResetPassword(p.email)}>Resetar Senha</Button>
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(p)}>Editar</Button>
+                    <Button variant="outline" size="sm" onClick={() => p.email && handleResetPassword(p.email)}>Resetar Senha</Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -274,7 +274,7 @@ const UserForm = ({ empresas, user, onClose }: UserFormProps) => {
                 {uploading ? 'Enviando...' : 'Alterar foto'}
                 <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleAvatarUpload} />
               </Button>
-              {avatarUrl && <Button variant="ghost" size="sm" onClick={() => setAvatarUrl('')} className="text-destructive">Remover</Button>}
+              {avatarUrl && <Button variant="outline" size="sm" onClick={() => setAvatarUrl('')} className="text-destructive">Remover</Button>}
             </div>
           </div>
         </div>
@@ -384,7 +384,7 @@ const UserForm = ({ empresas, user, onClose }: UserFormProps) => {
         <div className="flex items-center justify-between">
           <div>
             {isEdit && (
-              <Button variant="ghost" size="sm" onClick={() => user.email && handleResetPassword(user.email)} className="text-muted-foreground">
+              <Button variant="outline" size="sm" onClick={() => user.email && handleResetPassword(user.email)} className="text-muted-foreground">
                 Enviar e-mail de redefinição de senha
               </Button>
             )}

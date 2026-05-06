@@ -100,8 +100,8 @@ const RiscosPsicossociaisList = () => {
                     <TableCell>{format(new Date(a.created_at), 'dd/MM/yyyy')}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" onClick={() => openEdit(a.id)}>Editar</Button>
-                        <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(a.id)}>Excluir</Button>
+                        <Button variant="outline" size="sm" onClick={() => openEdit(a.id)}>Editar</Button>
+                        <Button variant="outline" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(a.id)}>Excluir</Button>
                       </div>
                     </TableCell>
                   </TableRow>

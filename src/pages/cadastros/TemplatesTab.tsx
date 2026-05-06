@@ -839,7 +839,7 @@ const TemplatesTab = ({ selectedEmpresa: externalEmpresa, onSelectedEmpresaChang
               )}
             </Button>
             {(filterTipo !== '__all__' || filterStatus !== '__all__' || filterPadrao !== '__all__' || searchName) && (
-              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground" onClick={() => { setFilterTipo('__all__'); setFilterStatus('__all__'); setFilterPadrao('__all__'); setSearchName(''); }}>
+              <Button variant="outline" size="sm" className="text-xs text-muted-foreground" onClick={() => { setFilterTipo('__all__'); setFilterStatus('__all__'); setFilterPadrao('__all__'); setSearchName(''); }}>
                 Limpar
               </Button>
             )}

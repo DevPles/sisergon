@@ -627,7 +627,7 @@ const DashboardPage = () => {
                   <Input type="date" value={dossieDateTo} onChange={e => setDossieDateTo(e.target.value)} className="w-full sm:w-[150px]" />
                 </div>
                 {(dossieSearch || dossieEmpresa !== 'all' || dossieDateFrom || dossieDateTo) && (
-                  <Button variant="ghost" size="sm" onClick={() => { setDossieSearch(''); setDossieEmpresa('all'); setDossieDateFrom(''); setDossieDateTo(''); }}>
+                  <Button variant="outline" size="sm" onClick={() => { setDossieSearch(''); setDossieEmpresa('all'); setDossieDateFrom(''); setDossieDateTo(''); }}>
                     Limpar filtros
                   </Button>
                 )}
@@ -687,7 +687,7 @@ const DashboardPage = () => {
                       <TableCell className="text-center hidden lg:table-cell">{d.testes}</TableCell>
                       <TableCell className="text-right" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setHistoryColabId(d.id)}>
+                          <Button variant="outline" size="sm" className="text-xs px-2" onClick={() => setHistoryColabId(d.id)}>
                             Histórico
                           </Button>
                           <Button

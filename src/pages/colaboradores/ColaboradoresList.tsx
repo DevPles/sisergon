@@ -98,8 +98,8 @@ const ColaboradoresList = () => {
                     <TableCell><Badge variant={col.status === 'ativo' ? 'default' : 'secondary'}>{col.status}</Badge></TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1 sm:gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" onClick={() => setEditingId(col.id)}>Editar</Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(col.id)} className="text-destructive hover:text-destructive hidden sm:inline-flex">Excluir</Button>
+                        <Button variant="outline" size="sm" onClick={() => setEditingId(col.id)}>Editar</Button>
+                        <Button variant="outline" size="sm" onClick={() => deleteMutation.mutate(col.id)} className="text-destructive hover:text-destructive hidden sm:inline-flex">Excluir</Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -133,7 +133,7 @@ const ColaboradoresList = () => {
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <Button variant="outline" size="sm" onClick={() => { setSelected(null); setEditingId(selected.id); }}>Editar</Button>
-                <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(selected.id)}>Excluir</Button>
+                <Button variant="outline" size="sm" className="text-destructive" onClick={() => deleteMutation.mutate(selected.id)}>Excluir</Button>
               </div>
             </div>
           )}

@@ -545,18 +545,18 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
                         <div className="flex justify-end gap-1">
                           {p.mp_payment_link && (
                             <>
-                              <Button variant="ghost" size="sm" onClick={() => { navigator.clipboard.writeText(p.mp_payment_link); toast({ title: 'Link copiado!' }); }}>Link</Button>
-                              <Button variant="ghost" size="sm" onClick={() => window.open(p.mp_payment_link, '_blank')}>Abrir</Button>
+                              <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(p.mp_payment_link); toast({ title: 'Link copiado!' }); }}>Link</Button>
+                              <Button variant="outline" size="sm" onClick={() => window.open(p.mp_payment_link, '_blank')}>Abrir</Button>
                             </>
                           )}
                           {p.status === 'pendente' && !p.mp_payment_link && p.source === 'faturamento' && (
-                            <Button variant="ghost" size="sm" onClick={() => generateMPLink(p.id, Number(p.valor), p.descricao || 'Cobrança')}>Gerar Link MP</Button>
+                            <Button variant="outline" size="sm" onClick={() => generateMPLink(p.id, Number(p.valor), p.descricao || 'Cobrança')}>Gerar Link MP</Button>
                           )}
                           {p.status === 'pendente' && (
-                            <Button variant="ghost" size="sm" onClick={() => p.source === 'faturamento' ? marcarFaturaPaga.mutate(p.id) : marcarPago.mutate(p.id)}>Pago</Button>
+                            <Button variant="outline" size="sm" onClick={() => p.source === 'faturamento' ? marcarFaturaPaga.mutate(p.id) : marcarPago.mutate(p.id)}>Pago</Button>
                           )}
                           {p.status === 'pendente' && p.source === 'pagamento' && (
-                            <Button variant="ghost" size="sm" className="text-destructive" onClick={() => cancelarPagamento.mutate(p.id)}>Cancelar</Button>
+                            <Button variant="outline" size="sm" className="text-destructive" onClick={() => cancelarPagamento.mutate(p.id)}>Cancelar</Button>
                           )}
                         </div>
                       </TableCell>
@@ -604,7 +604,7 @@ const FaturamentoTab = ({ selectedEmpresa }: { selectedEmpresa: string }) => {
                     <TableCell>{c.validade || '—'}</TableCell>
                     <TableCell><Badge variant={c.status === 'ativo' ? 'default' : 'secondary'}>{c.status}</Badge></TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteContrato.mutate(c.id)}>Excluir</Button>
+                      <Button variant="outline" size="sm" className="text-destructive" onClick={() => deleteContrato.mutate(c.id)}>Excluir</Button>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -135,7 +135,7 @@ const ConsultoresTab = () => {
                 <TableCell>{cStats.avaliacoes}</TableCell>
                 <TableCell>{cStats.laudos}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="sm" onClick={() => setDetailConsultor(c)} title="Gerenciar vínculos">
+                  <Button variant="outline" size="sm" onClick={() => setDetailConsultor(c)} title="Gerenciar vínculos">
                     <Eye className="h-4 w-4 mr-1" /> Gerenciar
                   </Button>
                 </TableCell>
@@ -273,7 +273,7 @@ const ConsultorDetailPanel = ({ consultor, links, empresas, onDesvincular, onVin
                   <span className="font-medium text-sm">{(l as any).empresas?.razao_social}</span>
                   <Badge variant="secondary" className="ml-2 text-xs">{l.nivel_atuacao || 'padrão'}</Badge>
                 </div>
-                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => onDesvincular(l.id)}>
+                <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => onDesvincular(l.id)}>
                   <X className="h-4 w-4 mr-1" /> Desvincular
                 </Button>
               </div>

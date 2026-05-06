@@ -133,8 +133,8 @@ const EmpresasList = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1 sm:gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" onClick={() => setEditingId(emp.id)}>Editar</Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(emp.id)} className="text-destructive hover:text-destructive hidden sm:inline-flex">
+                        <Button variant="outline" size="sm" onClick={() => setEditingId(emp.id)}>Editar</Button>
+                        <Button variant="outline" size="sm" onClick={() => deleteMutation.mutate(emp.id)} className="text-destructive hover:text-destructive hidden sm:inline-flex">
                           Excluir
                         </Button>
                       </div>

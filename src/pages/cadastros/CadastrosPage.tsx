@@ -681,8 +681,8 @@ const CadastrosPage = () => {
                       <TableCell><Badge variant={emp.ativa ? 'default' : 'secondary'}>{emp.ativa ? 'Ativa' : 'Inativa'}</Badge></TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setEditingEmpresaId(emp.id)}>Editar</Button>
-                          <Button variant="ghost" size="sm" className="text-xs px-2 text-destructive hover:text-destructive" onClick={() => deleteEmpresa.mutate(emp.id)}>Excluir</Button>
+                          <Button variant="outline" size="sm" className="text-xs px-2" onClick={() => setEditingEmpresaId(emp.id)}>Editar</Button>
+                          <Button variant="outline" size="sm" className="text-xs px-2 text-destructive hover:text-destructive" onClick={() => deleteEmpresa.mutate(emp.id)}>Excluir</Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -717,8 +717,8 @@ const CadastrosPage = () => {
                       <TableCell><Badge variant={col.status === 'ativo' ? 'default' : 'secondary'}>{col.status}</Badge></TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="sm" className="text-xs px-2" onClick={() => setEditingColabId(col.id)}>Editar</Button>
-                          <Button variant="ghost" size="sm" className="text-xs px-2 text-destructive hover:text-destructive" onClick={() => deleteColab.mutate(col.id)}>Excluir</Button>
+                          <Button variant="outline" size="sm" className="text-xs px-2" onClick={() => setEditingColabId(col.id)}>Editar</Button>
+                          <Button variant="outline" size="sm" className="text-xs px-2 text-destructive hover:text-destructive" onClick={() => deleteColab.mutate(col.id)}>Excluir</Button>
                         </div>
                       </TableCell>
                     </TableRow>
