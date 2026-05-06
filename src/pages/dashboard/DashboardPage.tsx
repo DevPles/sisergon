@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { KpiCard } from '@/components/KpiCard';
 import { generateColaboradorDossiePdf, generateEmpresaDossiePdf } from '@/utils/dossiePdfReport';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -230,10 +231,6 @@ const DashboardPage = () => {
   });
 
   const historyColab = historyColabId ? dossieData.find(d => d.id === historyColabId) : null;
-
-  import { KpiCard } from '@/components/KpiCard';
-  // KpiCard removed from here as it is imported now
-
   const riskBadge = (classification: string) => {
     const map: Record<string, { label: string; variant: 'destructive' | 'secondary' | 'default' | 'outline' }> = {
       critico: { label: 'Crítico', variant: 'destructive' },
