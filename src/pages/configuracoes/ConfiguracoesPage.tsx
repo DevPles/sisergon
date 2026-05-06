@@ -27,18 +27,16 @@ const ConfiguracoesPage = () => {
         <CardContent className="p-0">
           <Tabs defaultValue="empresas" onValueChange={setActiveTab}>
             <div className="px-6 pt-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-              <div className="overflow-x-auto pb-1">
-                <TabsList className="w-auto justify-start inline-flex border border-border/40 bg-muted/20">
-                  <TabsTrigger value="empresas">Empresas</TabsTrigger>
-                  <TabsTrigger value="usuarios">Usuários</TabsTrigger>
-                  <TabsTrigger value="consultores">Consultores</TabsTrigger>
-                  <TabsTrigger value="planos">Planos e Contratos</TabsTrigger>
-                  <TabsTrigger value="laudos">Laudos</TabsTrigger>
-                  <TabsTrigger value="indicadores">Indicadores Globais</TabsTrigger>
-                  <TabsTrigger value="dashboard">Dashboard Executivo</TabsTrigger>
-                  <TabsTrigger value="config">Configurações Gerais</TabsTrigger>
-                </TabsList>
-              </div>
+              <TabsList className="w-auto justify-start flex flex-wrap border border-border/40 bg-muted/20 h-auto p-1">
+                <TabsTrigger value="empresas">Empresas</TabsTrigger>
+                <TabsTrigger value="usuarios">Usuários</TabsTrigger>
+                <TabsTrigger value="consultores">Consultores</TabsTrigger>
+                <TabsTrigger value="planos">Planos e Contratos</TabsTrigger>
+                <TabsTrigger value="laudos">Laudos</TabsTrigger>
+                <TabsTrigger value="indicadores">Indicadores Globais</TabsTrigger>
+                <TabsTrigger value="dashboard">Dashboard Executivo</TabsTrigger>
+                <TabsTrigger value="config">Configurações Gerais</TabsTrigger>
+              </TabsList>
               
               {activeTab === 'empresas' && (
                 <div className="flex items-center gap-2 bg-muted/40 p-1 rounded-full border border-border/50 shadow-sm">
