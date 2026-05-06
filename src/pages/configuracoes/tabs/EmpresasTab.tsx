@@ -61,30 +61,7 @@ const EmpresasTab = ({ externalSearch }: { externalSearch?: string }) => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/30 p-4 rounded-xl border border-border/50">
-        <div className="flex flex-1 items-center gap-3 min-w-0">
-          <div className="relative flex-1 max-w-sm">
-            <Input 
-              placeholder="Buscar por nome, CNPJ ou status..." 
-              value={search} 
-              onChange={(e) => setSearch(e.target.value)} 
-              className="pl-4 h-11 bg-background"
-            />
-          </div>
-          <span className="hidden sm:inline-block text-sm text-muted-foreground whitespace-nowrap bg-background px-3 py-1 rounded-full border border-border/50">
-            {empresas?.length ?? 0} registros
-          </span>
-        </div>
-        
-        <Button 
-          onClick={() => setShowForm(true)} 
-          className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
-        >
-          Nova Empresa
-        </Button>
-      </div>
-
+    <div className="space-y-4">
       <Table>
         <TableHeader>
           <TableRow>
