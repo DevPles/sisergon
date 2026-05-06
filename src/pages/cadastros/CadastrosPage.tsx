@@ -382,53 +382,53 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
           <Separator />
 
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Vínculo Funcional</p>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="space-y-2 md:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div className="space-y-2 md:col-span-6">
               <Label>Empresa *</Label>
               <Select value={form.empresa_id} onValueChange={(v) => set('empresa_id', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent>{empresas?.map((e) => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2 md:col-span-6">
               <Label>Unidade</Label>
               <Select value={form.unidade_id} onValueChange={(v) => set('unidade_id', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent>{unidades?.map((u) => <SelectItem key={u.id} value={u.id}>{u.nome}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 md:col-span-1"><Label>Matrícula</Label><Input value={form.matricula} onChange={(e) => set('matricula', e.target.value)} /></div>
-            <div className="space-y-2 md:col-span-1">
+            <div className="space-y-2 md:col-span-2"><Label>Matrícula</Label><Input value={form.matricula} onChange={(e) => set('matricula', e.target.value)} /></div>
+            <div className="space-y-2 md:col-span-4">
               <Label>Setor</Label>
               <Select value={form.setor_id} onValueChange={(v) => set('setor_id', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent>{setoresData?.map((s) => <SelectItem key={s.id} value={s.id}>{s.nome}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 md:col-span-1">
+            <div className="space-y-2 md:col-span-4">
               <Label>Cargo</Label>
               <Select value={form.cargo_id} onValueChange={(v) => set('cargo_id', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent>{cargosData?.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 md:col-span-1">
+            <div className="space-y-2 md:col-span-2">
               <Label>Status</Label>
               <Select value={form.status} onValueChange={(v) => set('status', v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent><SelectItem value="ativo">Ativo</SelectItem><SelectItem value="inativo">Inativo</SelectItem><SelectItem value="afastado">Afastado</SelectItem></SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 md:col-span-1"><Label>Data de Admissão</Label><Input type="date" value={form.data_admissao} onChange={(e) => set('data_admissao', e.target.value)} /></div>
-            <div className="space-y-2 md:col-span-1"><Label>Jornada</Label><Input value={form.jornada} onChange={(e) => set('jornada', e.target.value)} placeholder="Ex: 8h diárias" /></div>
-            <div className="space-y-2 md:col-span-1">
+            <div className="space-y-2 md:col-span-3"><Label>Data de Admissão</Label><Input type="date" value={form.data_admissao} onChange={(e) => set('data_admissao', e.target.value)} /></div>
+            <div className="space-y-2 md:col-span-3"><Label>Jornada</Label><Input value={form.jornada} onChange={(e) => set('jornada', e.target.value)} placeholder="Ex: 8h diárias" /></div>
+            <div className="space-y-2 md:col-span-3">
               <Label>Turno</Label>
               <Select value={form.turno} onValueChange={(v) => set('turno', v)}>
                 <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                 <SelectContent><SelectItem value="Diurno">Diurno</SelectItem><SelectItem value="Noturno">Noturno</SelectItem><SelectItem value="Revezamento">Revezamento</SelectItem></SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 md:col-span-1"><Label>Gestor Responsável</Label><Input value={form.gestor_responsavel} onChange={(e) => set('gestor_responsavel', e.target.value)} /></div>
+            <div className="space-y-2 md:col-span-3"><Label>Gestor Responsável</Label><Input value={form.gestor_responsavel} onChange={(e) => set('gestor_responsavel', e.target.value)} /></div>
           </div>
 
           {isEdit && linkedUserId && (
