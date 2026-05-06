@@ -20,10 +20,8 @@ const ConfiguracoesPage = () => {
       <Card>
         <CardContent className="p-0">
           <Tabs defaultValue="empresas">
-            <TabsContent value="empresas" className="mt-0">
-              <EmpresasTab />
-            </TabsContent>
-            <div className="p-6 pt-0">
+            <div className="p-6">
+              <TabsContent value="empresas" className="mt-0"><EmpresasTab /></TabsContent>
               <TabsContent value="usuarios" className="mt-0"><UsuariosTab /></TabsContent>
               <TabsContent value="consultores" className="mt-0"><ConsultoresTab /></TabsContent>
               <TabsContent value="planos" className="mt-0"><PlanosTab /></TabsContent>
