@@ -16,6 +16,7 @@ import { fetchCompanyLogoUrl, fetchEvaluatorLabel } from '@/utils/reportBranding
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Mic, ImagePlus, X } from 'lucide-react';
 
 
 /* ─── ARP Questions ─── */
@@ -37,6 +38,7 @@ const ARP_QUESTIONS = [
 ];
 
 const SCORE_LABELS = ['0 — Adequado', '1 — Leve', '2 — Moderado', '3 — Alto'];
+const SCORE_SHORT = ['Adequado', 'Leve', 'Moderado', 'Alto'];
 const QUESTIONS_PER_PAGE = 3;
 
 /* ─── Likert Blocks ─── */
@@ -653,13 +655,47 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
                       return (
                         <div key={i} className="border-b pb-3 last:border-b-0 last:pb-0">
                           <p className="text-sm font-medium text-foreground mb-2">{i + 1}) {q}</p>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {SCORE_LABELS.map((label, val) => (
-                              <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
-                                className="min-w-[110px]" onClick={() => handleValueChange(i, val)}>{label}</Button>
-                            ))}
+                          <div className="flex flex-col sm:flex-row gap-3">
+                            {/* 2x2 button grid */}
+                            <div className="grid grid-cols-2 gap-1.5 shrink-0">
+                              {SCORE_SHORT.map((label, val) => (
+                                <Button key={val} type="button" variant={values[i] === val ? 'default' : 'outline'} size="sm"
+                                  className="text-xs h-8 px-3 w-[100px]" onClick={() => handleValueChange(i, val)}>{val} — {label}</Button>
+                              ))}
+                            </div>
+                            {/* Observation textarea with mic */}
+                            <div className="relative flex-1 flex flex-col gap-2">
+                              <Textarea
+                                placeholder="Observação (opcional)"
+                                value={comments[i] || ''}
+                                onChange={e => setComments(prev => ({ ...prev, [i]: e.target.value }))}
+                                className="min-h-[68px] pr-10 text-sm resize-none"
+                                rows={2}
+                              />
+                              <button
+                                type="button"
+                                className="absolute right-2 top-4 p-1.5 rounded-full hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground"
+                                onClick={() => {
+                                  const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+                                  if (!SR) { toast({ title: 'Navegador não suporta reconhecimento de voz', variant: 'destructive' }); return; }
+                                  const recognition = new SR();
+                                  recognition.lang = 'pt-BR';
+                                  recognition.continuous = false;
+                                  recognition.interimResults = false;
+                                  recognition.onresult = (event: any) => {
+                                    const transcript = event.results[0][0].transcript;
+                                    setComments(prev => ({ ...prev, [i]: prev[i] ? `${prev[i]} ${transcript}` : transcript }));
+                                  };
+                                  recognition.onerror = () => { toast({ title: 'Erro no reconhecimento de voz', variant: 'destructive' }); };
+                                  recognition.start();
+                                  toast({ title: 'Ouvindo...', description: 'Fale sua observação' });
+                                }}
+                                title="Falar observação"
+                              >
+                                <Mic className="h-4 w-4" />
+                              </button>
+                            </div>
                           </div>
-                          <Input placeholder="Observação (opcional)" value={comments[i] || ''} onChange={e => setComments(prev => ({ ...prev, [i]: e.target.value }))} className="mt-1" />
                         </div>
                       );
                     });
