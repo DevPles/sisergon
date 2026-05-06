@@ -268,6 +268,9 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
     sexo: '', empresa_id: '', unidade_id: '', setor_id: '', cargo_id: '',
     data_admissao: '', jornada: '', turno: '', gestor_responsavel: '', status: 'ativo',
   });
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [criarUsuario, setCriarUsuario] = useState(false);
   const [userForm, setUserForm] = useState({ full_name: '', email: '', avatar_url: '' });
   const [linkedUserId, setLinkedUserId] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -290,6 +293,12 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
   const { data: cargosData } = useQuery({
     queryKey: ['cargos-select', form.empresa_id],
     queryFn: async () => { if (!form.empresa_id) return []; const { data } = await supabase.from('cargos').select('id, nome').eq('empresa_id', form.empresa_id).order('nome'); return data ?? []; },
+    enabled: !!form.empresa_id,
+  });
+
+  const { data: gestoresData } = useQuery({
+    queryKey: ['gestores-select', form.empresa_id],
+    queryFn: async () => { if (!form.empresa_id) return []; const { data } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', form.empresa_id).eq('status', 'ativo').order('nome_completo'); return data ?? []; },
     enabled: !!form.empresa_id,
   });
 
@@ -333,8 +342,27 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
   const mutation = useMutation({
     mutationFn: async () => {
       const payload = { ...form, data_nascimento: form.data_nascimento || null, data_admissao: form.data_admissao || null, unidade_id: form.unidade_id || null, setor_id: form.setor_id || null, cargo_id: form.cargo_id || null, sexo: form.sexo || null };
-      if (isEdit) { const { error } = await supabase.from('colaboradores').update(payload).eq('id', colaboradorId); if (error) throw error; }
-      else { const { error } = await supabase.from('colaboradores').insert(payload); if (error) throw error; }
+      if (isEdit) {
+        const { error } = await supabase.from('colaboradores').update(payload).eq('id', colaboradorId);
+        if (error) throw error;
+      } else {
+        const { data: newColab, error } = await supabase.from('colaboradores').insert(payload).select('id').single();
+        if (error) throw error;
+        if (criarUsuario && email) {
+          try {
+            const res = await supabase.functions.invoke('invite-user', {
+              body: { email, full_name: form.nome_completo, role: 'colaborador', empresa_id: form.empresa_id || null, password: senha || undefined },
+            });
+            if (res.error) throw new Error(res.error.message || 'Erro ao criar usuário');
+            const userId = res.data?.user_id;
+            if (userId && newColab?.id) {
+              await supabase.from('colaboradores').update({ user_id: userId } as any).eq('id', newColab.id);
+            }
+          } catch (err: any) {
+            toast({ title: 'Colaborador criado, mas erro ao criar conta', description: err.message, variant: 'destructive' });
+          }
+        }
+      }
       if (avatarFile && linkedUserId) {
         const ext = avatarFile.name.split('.').pop();
         const path = `colaborador-${linkedUserId}/avatar.${ext}`;
