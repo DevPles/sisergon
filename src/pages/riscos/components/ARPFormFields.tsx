@@ -528,7 +528,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
   return (
     <ScrollArea className="max-h-[75vh] pr-4">
       {/* Combined Score Header */}
-      <div className="mb-4 rounded-xl bg-muted/50 border border-border p-4 flex flex-wrap items-center gap-4">
+      <div className="mb-4 rounded-xl border border-border/50 p-4 flex flex-wrap items-center gap-4" style={{ background: 'rgba(164,175,194,0.15)' }}>
         <div className="flex items-center gap-2">
           <div>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wide">ARP Score</p>
@@ -570,7 +570,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
           </p>
           <p className="text-xs text-muted-foreground">{progressPercent}%</p>
         </div>
-        <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(164,175,194,0.3)' }}>
           <motion.div
             className="h-full rounded-full bg-primary"
             initial={{ width: 0 }}
@@ -584,7 +584,7 @@ const ARPFormFields = ({ assessmentId, onSaved, onCancel }: ARPFormFieldsProps) 
         {/* Step 0: Identification */}
         {currentStep === 0 && (
           <motion.div key="identification" {...fadeIn}>
-            <div className="mb-4 rounded-xl border border-border bg-background p-6">
+            <div className="mb-4 rounded-xl border border-border/50 p-6" style={{ background: 'rgba(164,175,194,0.15)' }}>
               <h3 className="text-base font-semibold text-foreground mb-3">Identificação</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
