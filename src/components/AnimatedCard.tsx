@@ -16,7 +16,6 @@ const AnimatedCard = ({ children, index = 0, className, style, onClick, onMouseE
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.35, delay: index * 0.06, ease: 'easeOut' }}
-    whileHover={{ y: -4, transition: { duration: 0.2 } }}
     whileTap={{ scale: 0.98 }}
     className={className}
     style={style}
