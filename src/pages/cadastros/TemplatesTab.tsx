@@ -82,7 +82,9 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
   const { toast } = useToast();
 
   const [form, setForm] = useState({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
-  const [recorrencia, setRecorrencia] = useState('');
+  const [mesesSelecionados, setMesesSelecionados] = useState<number[]>([]);
+  const [diaAbertura, setDiaAbertura] = useState('1');
+  const [diasEmAberto, setDiasEmAberto] = useState('15');
   const [usarLikert, setUsarLikert] = useState(false);
   const [selectedEmpresaId, setSelectedEmpresaId] = useState(initialEmpresaId || '__global__');
   const [stages, setStages] = useState<StageLocal[]>([]);
@@ -199,7 +201,9 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
   useEffect(() => {
     if (!open) {
       setForm({ nome: '', tipo: 'aep', descricao: '', status: 'ativo' });
-      setRecorrencia('');
+      setMesesSelecionados([]);
+      setDiaAbertura('1');
+      setDiasEmAberto('15');
       setUsarLikert(false);
       setSelectedEmpresaId(initialEmpresaId || '__global__');
       setStages([]);
@@ -418,26 +422,66 @@ const TemplateEditorModal = ({ editId, empresaId: initialEmpresaId, open, onClos
                 </SelectContent>
               </Select>
             </div>
+            {/* Agendamento */}
+            <div className="space-y-3">
+              <Label className="text-xs text-muted-foreground">Meses de aplicação</Label>
+              <div className="flex flex-wrap gap-1.5">
+                {['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'].map((m, i) => {
+                  const mes = i + 1;
+                  const selected = mesesSelecionados.includes(mes);
+                  return (
+                    <button
+                      key={mes}
+                      type="button"
+                      className={`px-2.5 py-1 rounded-md text-[11px] border transition-colors ${selected ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border text-muted-foreground hover:border-primary/50'}`}
+                      onClick={() => setMesesSelecionados(prev => selected ? prev.filter(v => v !== mes) : [...prev, mes].sort((a, b) => a - b))}
+                    >
+                      {m}
+                    </button>
+                  );
+                })}
+                <button
+                  type="button"
+                  className="px-2.5 py-1 rounded-md text-[11px] border border-border text-muted-foreground hover:border-primary/50"
+                  onClick={() => setMesesSelecionados(prev => prev.length === 12 ? [] : [1,2,3,4,5,6,7,8,9,10,11,12])}
+                >
+                  {mesesSelecionados.length === 12 ? 'Limpar' : 'Todos'}
+                </button>
+              </div>
+              <p className="text-[10px] text-muted-foreground">Selecione em quais meses o teste ficará disponível para o colaborador</p>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Recorrência</Label>
-                <Select value={recorrencia} onValueChange={setRecorrencia}>
-                  <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                <Label className="text-xs text-muted-foreground">Dia de abertura</Label>
+                <Select value={diaAbertura} onValueChange={setDiaAbertura}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="unico">Única vez</SelectItem>
-                    <SelectItem value="mensal">1× por mês</SelectItem>
-                    <SelectItem value="bimestral">1× a cada 2 meses</SelectItem>
-                    <SelectItem value="trimestral">4× por ano</SelectItem>
-                    <SelectItem value="semestral">2× por ano</SelectItem>
-                    <SelectItem value="anual">1× por ano</SelectItem>
+                    {Array.from({ length: 28 }, (_, i) => i + 1).map(d => (
+                      <SelectItem key={d} value={String(d)}>Dia {d}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-                <p className="text-[10px] text-muted-foreground">Frequência de aplicação do teste</p>
+                <p className="text-[10px] text-muted-foreground">Dia do mês em que o teste aparece para o colaborador</p>
               </div>
-              <div className="space-y-1.5 flex items-center gap-2 pt-5">
-                <Switch checked={usarLikert} onCheckedChange={setUsarLikert} />
-                <Label className="text-xs text-muted-foreground cursor-pointer">Usar escala Likert</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Período em aberto (dias)</Label>
+                <Select value={diasEmAberto} onValueChange={setDiasEmAberto}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5 dias</SelectItem>
+                    <SelectItem value="7">7 dias</SelectItem>
+                    <SelectItem value="10">10 dias</SelectItem>
+                    <SelectItem value="15">15 dias</SelectItem>
+                    <SelectItem value="20">20 dias</SelectItem>
+                    <SelectItem value="30">30 dias</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[10px] text-muted-foreground">Quantos dias o colaborador terá para realizar o teste</p>
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch checked={usarLikert} onCheckedChange={setUsarLikert} />
+              <Label className="text-xs text-muted-foreground cursor-pointer">Usar escala Likert</Label>
             </div>
           </TabsContent>
 
