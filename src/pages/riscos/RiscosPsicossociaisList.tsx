@@ -58,17 +58,15 @@ const RiscosPsicossociaisList = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-foreground">Riscos Psicossociais</h1>
           <p className="text-sm text-muted-foreground">Avaliação de fatores psicossociais e organizacionais — ARP</p>
         </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
           <Input placeholder="Buscar..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full sm:max-w-[220px]" />
           <span className="text-sm text-muted-foreground whitespace-nowrap">{assessments?.length ?? 0} registros</span>
-          <div className="flex gap-2">
-            <Button className="flex-1 sm:flex-none text-xs sm:text-sm" onClick={openNew}>Nova Avaliação</Button>
-          </div>
+          <Button className="w-full sm:w-auto text-xs sm:text-sm" onClick={openNew}>Nova Avaliação</Button>
         </div>
       </div>
 
