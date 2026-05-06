@@ -20,21 +20,10 @@ const ConfiguracoesPage = () => {
       <Card>
         <CardContent className="p-0">
           <Tabs defaultValue="empresas">
-            <div className="px-6 pt-6 overflow-x-auto flex justify-start">
-              <TabsList className="w-auto justify-start inline-flex">
-                <TabsTrigger value="empresas">Empresas</TabsTrigger>
-                <TabsTrigger value="usuarios">Usuários</TabsTrigger>
-                <TabsTrigger value="consultores">Consultores</TabsTrigger>
-                <TabsTrigger value="planos">Planos e Contratos</TabsTrigger>
-                <TabsTrigger value="laudos">Laudos</TabsTrigger>
-                <TabsTrigger value="indicadores">Indicadores Globais</TabsTrigger>
-                <TabsTrigger value="dashboard">Dashboard Executivo</TabsTrigger>
-                <TabsTrigger value="config">Configurações Gerais</TabsTrigger>
-              </TabsList>
-            </div>
-
-            <div className="p-6">
-              <TabsContent value="empresas" className="mt-0"><EmpresasTab /></TabsContent>
+            <TabsContent value="empresas" className="mt-0">
+              <EmpresasTab />
+            </TabsContent>
+            <div className="p-6 pt-0">
               <TabsContent value="usuarios" className="mt-0"><UsuariosTab /></TabsContent>
               <TabsContent value="consultores" className="mt-0"><ConsultoresTab /></TabsContent>
               <TabsContent value="planos" className="mt-0"><PlanosTab /></TabsContent>
