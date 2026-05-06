@@ -632,7 +632,6 @@ const CadastrosPage = () => {
                 )}
               </div>
             </div>
-            </div>
 
             <TabsContent value="empresas" className="mt-0">
               <div className="overflow-x-auto">
