@@ -698,6 +698,13 @@ const CadastrosPage = () => {
                     >
                       Novo Formulário
                     </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => navigate('/test-assignments')}
+                      className="h-9 px-4 rounded-full text-xs whitespace-nowrap shadow-sm"
+                    >
+                      Atribuir Testes
+                    </Button>
                   </div>
                 )}
 
