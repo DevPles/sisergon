@@ -786,6 +786,89 @@ export type Database = {
           },
         ]
       }
+      disc_questions: {
+        Row: {
+          created_at: string
+          grupo: number
+          id: string
+          ordem: number
+          perfil_mais: string
+          perfil_menos: string
+          texto_mais: string
+          texto_menos: string
+        }
+        Insert: {
+          created_at?: string
+          grupo: number
+          id?: string
+          ordem?: number
+          perfil_mais: string
+          perfil_menos: string
+          texto_mais: string
+          texto_menos: string
+        }
+        Update: {
+          created_at?: string
+          grupo?: number
+          id?: string
+          ordem?: number
+          perfil_mais?: string
+          perfil_menos?: string
+          texto_mais?: string
+          texto_menos?: string
+        }
+        Relationships: []
+      }
+      disc_responses: {
+        Row: {
+          colaborador_id: string
+          created_at: string
+          empresa_id: string
+          finalizado_em: string | null
+          id: string
+          instance_id: string | null
+          perfil_dominante: string | null
+          respostas: Json
+          scores: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          colaborador_id: string
+          created_at?: string
+          empresa_id: string
+          finalizado_em?: string | null
+          id?: string
+          instance_id?: string | null
+          perfil_dominante?: string | null
+          respostas?: Json
+          scores?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          colaborador_id?: string
+          created_at?: string
+          empresa_id?: string
+          finalizado_em?: string | null
+          id?: string
+          instance_id?: string | null
+          perfil_dominante?: string | null
+          respostas?: Json
+          scores?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disc_responses_instance_id_fkey"
+            columns: ["instance_id"]
+            isOneToOne: false
+            referencedRelation: "test_assignment_instances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documentos: {
         Row: {
           arquivo_nome: string | null
@@ -1924,6 +2007,110 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      test_assignment_instances: {
+        Row: {
+          assignment_id: string
+          colaborador_id: string
+          concluido_em: string | null
+          created_at: string
+          data_fim_periodo: string
+          data_inicio_periodo: string
+          empresa_id: string
+          id: string
+          notificado_vencido: boolean | null
+          resultado_id: string | null
+          status: string
+          tipo_teste: string
+          updated_at: string
+        }
+        Insert: {
+          assignment_id: string
+          colaborador_id: string
+          concluido_em?: string | null
+          created_at?: string
+          data_fim_periodo: string
+          data_inicio_periodo: string
+          empresa_id: string
+          id?: string
+          notificado_vencido?: boolean | null
+          resultado_id?: string | null
+          status?: string
+          tipo_teste: string
+          updated_at?: string
+        }
+        Update: {
+          assignment_id?: string
+          colaborador_id?: string
+          concluido_em?: string | null
+          created_at?: string
+          data_fim_periodo?: string
+          data_inicio_periodo?: string
+          empresa_id?: string
+          id?: string
+          notificado_vencido?: boolean | null
+          resultado_id?: string | null
+          status?: string
+          tipo_teste?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_assignment_instances_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "test_assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_assignments: {
+        Row: {
+          ativo: boolean
+          colaborador_id: string | null
+          created_at: string
+          created_by: string | null
+          data_fim_validade: string | null
+          data_inicio: string
+          dia_limite: number | null
+          empresa_id: string
+          id: string
+          recorrencia: string
+          setor_id: string | null
+          tipo_teste: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          colaborador_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          data_fim_validade?: string | null
+          data_inicio?: string
+          dia_limite?: number | null
+          empresa_id: string
+          id?: string
+          recorrencia?: string
+          setor_id?: string | null
+          tipo_teste: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          colaborador_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          data_fim_validade?: string | null
+          data_inicio?: string
+          dia_limite?: number | null
+          empresa_id?: string
+          id?: string
+          recorrencia?: string
+          setor_id?: string | null
+          tipo_teste?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       test_options: {
         Row: {
