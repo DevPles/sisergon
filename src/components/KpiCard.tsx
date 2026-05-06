@@ -15,26 +15,24 @@ export const KpiCard = ({ label, value, subtitle, variant = 'default', className
     className
   )}>
     <CardContent className="p-5">
-      <div className="transition-all duration-300 group-hover:scale-110">
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider group-hover:text-[#1E40AF] transition-colors duration-300">
-          {label}
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider group-hover:text-[#1E40AF] transition-colors duration-300">
+        {label}
+      </p>
+      <p className={cn(
+        "text-2xl font-bold mt-1 transition-all duration-300",
+        variant === 'danger' 
+          ? 'text-destructive group-hover:text-[#1E40AF]' 
+          : variant === 'success' 
+            ? 'text-emerald-600 group-hover:text-[#1E40AF]' 
+            : 'text-foreground group-hover:text-[#1E40AF]'
+      )}>
+        {value}
+      </p>
+      {subtitle && (
+        <p className="text-xs text-muted-foreground mt-0.5 group-hover:text-[#1E40AF] transition-colors duration-300">
+          {subtitle}
         </p>
-        <p className={cn(
-          "text-2xl font-bold mt-1 transition-all duration-300",
-          variant === 'danger' 
-            ? 'text-destructive group-hover:text-[#1E40AF]' 
-            : variant === 'success' 
-              ? 'text-emerald-600 group-hover:text-[#1E40AF]' 
-              : 'text-foreground group-hover:text-[#1E40AF]'
-        )}>
-          {value}
-        </p>
-        {subtitle && (
-          <p className="text-xs text-muted-foreground mt-0.5 group-hover:text-[#1E40AF] transition-colors duration-300">
-            {subtitle}
-          </p>
-        )}
-      </div>
+      )}
     </CardContent>
   </Card>
 );
