@@ -456,13 +456,41 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
                 <SelectContent><SelectItem value="Diurno">Diurno</SelectItem><SelectItem value="Noturno">Noturno</SelectItem><SelectItem value="Revezamento">Revezamento</SelectItem></SelectContent>
               </Select>
             </div>
-            <div className="space-y-2 md:col-span-3"><Label>Gestor Responsável</Label><Input value={form.gestor_responsavel} onChange={(e) => set('gestor_responsavel', e.target.value)} /></div>
+            <div className="space-y-2 md:col-span-3">
+              <Label>Gestor Responsável</Label>
+              <Select value={form.gestor_responsavel} onValueChange={(v) => set('gestor_responsavel', v)}>
+                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                <SelectContent>
+                  {gestoresData?.filter(g => g.id !== colaboradorId).map((g) => <SelectItem key={g.id} value={g.nome_completo}>{g.nome_completo}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+
+          <Separator />
+          <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Acesso do Colaborador</p>
+
+          {!isEdit && !linkedUserId && (
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div className="space-y-2 md:col-span-5">
+                <Label>E-mail</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@empresa.com" />
+              </div>
+              <div className="space-y-2 md:col-span-4">
+                <Label>Senha (opcional)</Label>
+                <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Deixe vazio para gerar automática" />
+              </div>
+              <div className="flex items-end md:col-span-3">
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" checked={criarUsuario} onChange={(e) => setCriarUsuario(e.target.checked)} id="criar-usuario" className="rounded border-border" />
+                  <Label htmlFor="criar-usuario" className="text-sm cursor-pointer">Criar conta de acesso</Label>
+                </div>
+              </div>
+            </div>
+          )}
 
           {isEdit && linkedUserId && (
             <>
-              <Separator />
-              <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Perfil de Usuário Vinculado</p>
               <div className="flex items-start gap-6">
                 <div className="flex flex-col items-center gap-2">
                   <div className="relative group">
@@ -491,6 +519,38 @@ const ColaboradorFormInline = ({ colaboradorId, onClose, onSaved }: { colaborado
                 </div>
               </div>
             </>
+          )}
+
+          {isEdit && !linkedUserId && (
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div className="space-y-2 md:col-span-5">
+                <Label>E-mail</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@empresa.com" />
+              </div>
+              <div className="space-y-2 md:col-span-4">
+                <Label>Senha (opcional)</Label>
+                <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Deixe vazio para gerar automática" />
+              </div>
+              <div className="flex items-end md:col-span-3">
+                <Button type="button" variant="outline" onClick={async () => {
+                  if (!email) { toast({ title: 'Informe o e-mail', variant: 'destructive' }); return; }
+                  try {
+                    const res = await supabase.functions.invoke('invite-user', {
+                      body: { email, full_name: form.nome_completo, role: 'colaborador', empresa_id: form.empresa_id || null, password: senha || undefined },
+                    });
+                    if (res.error) throw new Error(res.error.message || 'Erro ao criar usuário');
+                    const userId = res.data?.user_id;
+                    if (userId && colaboradorId) {
+                      await supabase.from('colaboradores').update({ user_id: userId } as any).eq('id', colaboradorId);
+                      setLinkedUserId(userId);
+                    }
+                    toast({ title: 'Conta de acesso criada!' });
+                  } catch (err: any) { toast({ title: 'Erro', description: err.message, variant: 'destructive' }); }
+                }} className="rounded-full shadow-[0_4px_14px_0_hsl(var(--border)/0.4)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200">
+                  Criar Conta de Acesso
+                </Button>
+              </div>
+            </div>
           )}
 
           <Separator />
