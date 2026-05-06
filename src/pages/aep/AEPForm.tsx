@@ -18,6 +18,7 @@ import { format } from 'date-fns';
 import { useCompanyTemplate, useTemplateQuestions } from '@/hooks/useCompanyTemplate';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { Mic, MicOff } from 'lucide-react';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import AutoSaveBadge from '@/components/AutoSaveBadge';
 
@@ -110,7 +111,7 @@ const AEP_BLOCKS = [
   },
 ];
 
-const SCORE_LABELS = ['0 — Adequado', '1 — Leve', '2 — Moderado', '3 — Alto'];
+const SCORE_LABELS = ['Adequado', 'Leve', 'Moderado', 'Alto'];
 
 const classifyScore = (score: number): string => {
   if (score <= 33) return 'baixo';
@@ -626,46 +627,81 @@ const AEPForm = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {activeBlocks[activeStep].questions.map((q, i) => {
                     const key = `${activeBlocks[activeStep].domain}-${i}`;
                     return (
-                      <div key={key} className="border-b pb-3 last:border-b-0 last:pb-0">
+                      <div key={key} className="border-b pb-4 last:border-b-0 last:pb-0">
                         <p className="text-sm font-medium text-foreground mb-2">
                           {i + 1}) {q}
                         </p>
-                        <div className="flex flex-wrap gap-2 mb-1">
-                          {SCORE_LABELS.map((label, val) => (
-                            <Button
-                              key={val}
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          {/* 2x2 button grid */}
+                          <div className="grid grid-cols-2 gap-1.5 shrink-0">
+                            {SCORE_LABELS.map((label, val) => (
+                              <Button
+                                key={val}
+                                type="button"
+                                variant={values[key] === val ? 'default' : 'outline'}
+                                size="sm"
+                                className="text-xs h-8 px-3 w-[100px]"
+                                onClick={() => {
+                                  const newValues = { ...values, [key]: val };
+                                  setValues(newValues);
+                                  const block = activeBlocks[activeStep];
+                                  const allAnswered = block.questions.every((_, qi) => {
+                                    const qKey = `${block.domain}-${qi}`;
+                                    return qKey === key ? true : newValues[qKey] !== undefined;
+                                  });
+                                  if (allAnswered && activeStep < activeBlocks.length - 1) {
+                                    setTimeout(() => setActiveStep((s) => s + 1), 350);
+                                  }
+                                }}
+                              >
+                                {val} — {label}
+                              </Button>
+                            ))}
+                          </div>
+                          {/* Observation input with mic */}
+                          <div className="relative flex-1">
+                            <Input
+                              placeholder="Observação (opcional)"
+                              value={comments[key] || ''}
+                              onChange={(e) => setComments((prev) => ({ ...prev, [key]: e.target.value }))}
+                              className="h-full min-h-[68px] pr-10 text-sm"
+                            />
+                            <button
                               type="button"
-                              variant={values[key] === val ? 'default' : 'outline'}
-                              size="sm"
-                              className="text-xs h-8 px-3"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-muted/50 transition-colors text-muted-foreground hover:text-foreground"
                               onClick={() => {
-                                const newValues = { ...values, [key]: val };
-                                setValues(newValues);
-                                // Auto-advance when last question of block is answered
-                                const block = activeBlocks[activeStep];
-                                const allAnswered = block.questions.every((_, qi) => {
-                                  const qKey = `${block.domain}-${qi}`;
-                                  return qKey === key ? true : newValues[qKey] !== undefined;
-                                });
-                                if (allAnswered && activeStep < activeBlocks.length - 1) {
-                                  setTimeout(() => setActiveStep((s) => s + 1), 350);
+                                const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+                                if (!SpeechRecognition) {
+                                  toast({ title: 'Navegador não suporta reconhecimento de voz', variant: 'destructive' });
+                                  return;
                                 }
+                                const recognition = new SpeechRecognition();
+                                recognition.lang = 'pt-BR';
+                                recognition.continuous = false;
+                                recognition.interimResults = false;
+                                recognition.onresult = (event: any) => {
+                                  const transcript = event.results[0][0].transcript;
+                                  setComments((prev) => ({
+                                    ...prev,
+                                    [key]: prev[key] ? `${prev[key]} ${transcript}` : transcript,
+                                  }));
+                                };
+                                recognition.onerror = () => {
+                                  toast({ title: 'Erro no reconhecimento de voz', variant: 'destructive' });
+                                };
+                                recognition.start();
+                                toast({ title: 'Ouvindo...', description: 'Fale sua observação' });
                               }}
+                              title="Falar observação"
                             >
-                              {label}
-                            </Button>
-                          ))}
+                              <Mic className="h-4 w-4" />
+                            </button>
+                          </div>
                         </div>
-                        <Input
-                          placeholder="Observação (opcional)"
-                          value={comments[key] || ''}
-                          onChange={(e) => setComments((prev) => ({ ...prev, [key]: e.target.value }))}
-                          className="mt-1 h-8 text-sm"
-                        />
                       </div>
                     );
                   })}
