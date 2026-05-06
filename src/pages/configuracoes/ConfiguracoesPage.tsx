@@ -16,6 +16,8 @@ import ConfigGeraisTab from './tabs/ConfigGeraisTab';
 const ConfiguracoesPage = () => {
   const [activeTab, setActiveTab] = useState('empresas');
   const [empresaSearch, setEmpresaSearch] = useState('');
+  const [usuarioSearch, setUsuarioSearch] = useState('');
+  const [usuarioRoleFilter, setUsuarioRoleFilter] = useState('all');
 
   const tabs = useMemo(() => [
     { value: 'empresas', label: 'Empresas' },
@@ -52,32 +54,69 @@ const ConfiguracoesPage = () => {
                 </SelectContent>
               </Select>
               
-              {activeTab === 'empresas' && (
-                <div className="flex items-center gap-2 bg-muted/40 p-1 rounded-full border border-border/50 shadow-sm">
-                  <Input 
-                    placeholder="Buscar empresa..." 
-                    value={empresaSearch}
-                    onChange={(e) => setEmpresaSearch(e.target.value)}
-                    className="h-8 w-40 sm:w-64 bg-transparent border-none focus-visible:ring-0 shadow-none text-sm"
-                  />
-                  <Button 
-                    size="sm"
-                    className="h-8 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs font-medium whitespace-nowrap shadow-md transition-all active:scale-95"
-                    onClick={() => {
-                      window.dispatchEvent(new CustomEvent('open-nova-empresa'));
-                    }}
-                  >
-                    Nova Empresa
-                  </Button>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                {activeTab === 'empresas' && (
+                  <div className="flex items-center gap-2 bg-muted/40 p-1 rounded-full border border-border/50 shadow-sm">
+                    <Input 
+                      placeholder="Buscar empresa..." 
+                      value={empresaSearch}
+                      onChange={(e) => setEmpresaSearch(e.target.value)}
+                      className="h-8 w-40 sm:w-64 bg-transparent border-none focus-visible:ring-0 shadow-none text-sm"
+                    />
+                    <Button 
+                      size="sm"
+                      className="h-8 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs font-medium whitespace-nowrap shadow-md transition-all active:scale-95"
+                      onClick={() => {
+                        window.dispatchEvent(new CustomEvent('open-nova-empresa'));
+                      }}
+                    >
+                      Nova Empresa
+                    </Button>
+                  </div>
+                )}
+
+                {activeTab === 'usuarios' && (
+                  <div className="flex items-center gap-2 bg-muted/40 p-1 rounded-full border border-border/50 shadow-sm">
+                    <Input 
+                      placeholder="Buscar por nome ou e-mail..." 
+                      value={usuarioSearch}
+                      onChange={(e) => setUsuarioSearch(e.target.value)}
+                      className="h-8 w-40 sm:w-64 bg-transparent border-none focus-visible:ring-0 shadow-none text-sm"
+                    />
+                    <Select value={usuarioRoleFilter} onValueChange={setUsuarioRoleFilter}>
+                      <SelectTrigger className="h-8 w-40 rounded-full border-none bg-transparent focus:ring-0 text-xs shadow-none">
+                        <SelectValue placeholder="Todos os perfis" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos os perfis</SelectItem>
+                        <SelectItem value="admin_master">Administrador Master</SelectItem>
+                        <SelectItem value="consultor">Consultor</SelectItem>
+                        <SelectItem value="empresa_admin">Empresa Admin</SelectItem>
+                        <SelectItem value="empresa_gestor">Empresa Gestor</SelectItem>
+                        <SelectItem value="colaborador">Colaborador</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button 
+                      size="sm"
+                      className="h-8 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs font-medium whitespace-nowrap shadow-md transition-all active:scale-95"
+                      onClick={() => {
+                        window.dispatchEvent(new CustomEvent('open-convidar-usuario'));
+                      }}
+                    >
+                      Convidar
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
             
             <div className="p-6">
               <TabsContent value="empresas" className="mt-0">
                 <EmpresasTab externalSearch={empresaSearch} />
               </TabsContent>
-              <TabsContent value="usuarios" className="mt-0"><UsuariosTab /></TabsContent>
+              <TabsContent value="usuarios" className="mt-0">
+                <UsuariosTab externalSearch={usuarioSearch} externalRoleFilter={usuarioRoleFilter} />
+              </TabsContent>
               <TabsContent value="consultores" className="mt-0"><ConsultoresTab /></TabsContent>
               <TabsContent value="planos" className="mt-0"><PlanosTab /></TabsContent>
               <TabsContent value="laudos" className="mt-0"><LaudosTab /></TabsContent>
