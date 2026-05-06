@@ -557,81 +557,80 @@ const CadastrosPage = () => {
       <Card className="overflow-hidden">
         <CardContent className="p-0 sm:p-2">
           <Tabs defaultValue="empresas" onValueChange={(v) => setActiveTab(v)}>
-            <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col items-start gap-4">
-              <TabsList className="flex flex-row w-auto h-auto gap-1 sm:gap-0 overflow-x-auto">
+            <div className="px-3 sm:px-6 pt-4 sm:pt-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="overflow-x-auto pb-1">
+                <TabsList className="flex flex-row w-auto h-auto gap-1 sm:gap-0 border border-border/40 bg-muted/20">
                 <TabsTrigger value="empresas" className="text-xs sm:text-sm w-full sm:w-auto">Empresas ({empresas?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="colaboradores" className="text-xs sm:text-sm w-full sm:w-auto">Colaboradores ({colaboradores?.length ?? 0})</TabsTrigger>
                 <TabsTrigger value="templates" className="text-xs sm:text-sm w-full sm:w-auto">Formulários</TabsTrigger>
                 <TabsTrigger value="faturamento" className="text-xs sm:text-sm w-full sm:w-auto">Faturamento</TabsTrigger>
-              </TabsList>
-              {activeTab === 'faturamento' && (
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                </TabsList>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {activeTab === 'faturamento' && (
                   <Select value={faturamentoEmpresa} onValueChange={setFaturamentoEmpresa}>
-                    <SelectTrigger className="w-full sm:w-72"><SelectValue placeholder="Selecione a empresa..." /></SelectTrigger>
+                    <SelectTrigger className="h-9 w-40 sm:w-60 bg-muted/40 rounded-full border-border/50 text-xs"><SelectValue placeholder="Empresa..." /></SelectTrigger>
                     <SelectContent>
-                      {empresas?.map(e => (
-                        <SelectItem key={e.id} value={e.id}>{e.razao_social}{e.nome_fantasia ? ` (${e.nome_fantasia})` : ''}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              {activeTab === 'templates' && (
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                  <Select value={templateEmpresa} onValueChange={setTemplateEmpresa}>
-                    <SelectTrigger className="w-full sm:w-56"><SelectValue placeholder="Todas / Global" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="__global__">Global (Padrão)</SelectItem>
                       {empresas?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                  <Button variant="outline" size="sm" onClick={() => setTemplateShowFilters(prev => !prev)} className="gap-1.5">
-                    <span className="text-xs">Filtros</span>
-                  </Button>
-                  <Button onClick={() => setTemplateNewTrigger(Date.now())} className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap">
-                    Novo Formulário
-                  </Button>
-                </div>
-              )}
-              {!['faturamento', 'templates'].includes(activeTab) && (
-                <div className="flex items-center gap-3 w-full bg-muted/30 p-4 rounded-xl border border-border/50">
-                  {activeTab === 'empresas' ? (
-                    <>
-                      <div className="flex-1 max-w-sm">
-                        <Input 
-                          placeholder="Buscar empresa..." 
-                          value={empresaSearch} 
-                          onChange={(e) => setEmpresaSearch(e.target.value)} 
-                          className="h-11 bg-background" 
-                        />
-                      </div>
-                      <Button 
-                        onClick={() => setShowEmpresaForm(true)} 
-                        className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap ml-auto"
-                      >
-                        Nova Empresa
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex-1 max-w-sm">
-                        <Input 
-                          placeholder="Buscar colaborador..." 
-                          value={colabSearch} 
-                          onChange={(e) => setColabSearch(e.target.value)} 
-                          className="h-11 bg-background" 
-                        />
-                      </div>
-                      <Button 
-                        onClick={() => setShowColabForm(true)} 
-                        className="h-11 px-6 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_4px_14px_0_hsl(var(--primary)/0.4)] hover:shadow-[0_6px_20px_0_hsl(var(--primary)/0.5)] hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap ml-auto"
-                      >
-                        Novo Colaborador
-                      </Button>
-                    </>
-                  )}
-                </div>
-              )}
+                )}
+
+                {activeTab === 'templates' && (
+                  <div className="flex items-center gap-2">
+                    <Select value={templateEmpresa} onValueChange={setTemplateEmpresa}>
+                      <SelectTrigger className="h-9 w-32 sm:w-48 bg-muted/40 rounded-full border-border/50 text-xs"><SelectValue placeholder="Global" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__global__">Global</SelectItem>
+                        {empresas?.map(e => <SelectItem key={e.id} value={e.id}>{e.razao_social}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Button 
+                      onClick={() => setTemplateNewTrigger(Date.now())}
+                      className="h-9 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs whitespace-nowrap shadow-sm"
+                    >
+                      Novo Formulário
+                    </Button>
+                  </div>
+                )}
+
+                {activeTab === 'empresas' && (
+                  <div className="flex items-center gap-2 bg-muted/40 p-1 rounded-full border border-border/50 shadow-sm">
+                    <Input 
+                      placeholder="Buscar empresa..." 
+                      value={empresaSearch}
+                      onChange={(e) => setEmpresaSearch(e.target.value)}
+                      className="h-8 w-32 sm:w-64 bg-transparent border-none focus-visible:ring-0 shadow-none text-xs"
+                    />
+                    <Button 
+                      size="sm"
+                      className="h-8 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs font-medium whitespace-nowrap shadow-md"
+                      onClick={() => setShowEmpresaForm(true)}
+                    >
+                      Nova Empresa
+                    </Button>
+                  </div>
+                )}
+
+                {activeTab === 'colaboradores' && (
+                  <div className="flex items-center gap-2 bg-muted/40 p-1 rounded-full border border-border/50 shadow-sm">
+                    <Input 
+                      placeholder="Buscar colaborador..." 
+                      value={colabSearch}
+                      onChange={(e) => setColabSearch(e.target.value)}
+                      className="h-8 w-32 sm:w-64 bg-transparent border-none focus-visible:ring-0 shadow-none text-xs"
+                    />
+                    <Button 
+                      size="sm"
+                      className="h-8 px-4 rounded-full bg-primary hover:bg-primary/90 text-white text-xs font-medium whitespace-nowrap shadow-md"
+                      onClick={() => setShowColabForm(true)}
+                    >
+                      Novo Colaborador
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
 
             <TabsContent value="empresas" className="mt-0">
